@@ -1,0 +1,38 @@
+# macOS
+.DS_Store
+
+# Artefactos de compilación LaTeX (todos viven junto al .tex porque usamos -cd)
+docs/Memoria/*.aux
+docs/Memoria/*.bbl
+docs/Memoria/*.blg
+docs/Memoria/*.fdb_latexmk
+docs/Memoria/*.fls
+docs/Memoria/*.loc
+docs/Memoria/*.lof
+docs/Memoria/*.log
+docs/Memoria/*.lot
+docs/Memoria/*.out
+docs/Memoria/*.soc
+docs/Memoria/*.synctex.gz
+docs/Memoria/*.toc
+docs/Memoria/*.xdv
+docs/Memoria/_minted-*
+docs/Memoria/docs/
+
+# El PDF compilado se ignora por defecto; quítalo de aquí si quieres versionar
+# la versión final del PDF.
+docs/Memoria/memoria.pdf
+
+# Zemax workspace (session files son específicos del usuario)
+*.ses
+simulations/zemax/*.ZDA
+simulations/zemax/*.CFG
+
+# Datos crudos (no se versionan, deben regenerarse desde Zemax)
+data_local/
+
+# Python (si usas scripts ZOS-API)
+__pycache__/
+*.pyc
+.venv/
+venv/

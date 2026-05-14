@@ -1,0 +1,138 @@
+% ============================================================================
+%  PORTADA — coincide con tamaños del template oficial UANDES (Plantilla.docx):
+%    Universidad/Facultad (top y pie):  16 pt
+%    Título de la tesis:                 18 pt
+%    Nombre del autor:                   16 pt
+%    "MEMORIA PARA OPTAR..." / título:   12 pt
+%    Profesor guía / co-guía:            12 pt
+%    SANTIAGO, mes, año:                 10 pt
+% ============================================================================
+\begin{titlepage}
+\tikzset{every picture/.style={line width=0.75pt}}
+
+\begin{tikzpicture}[x=0.75pt,y=0.75pt,yscale=-1,xscale=1]
+
+% Líneas decorativas verticales (margen izquierdo)
+\draw                       (130,0) -- (130,900);
+\draw [line width=3]        (125,0) -- (125,900);
+\draw                       (120,0) -- (120,900);
+% Líneas decorativas horizontales (bajo el header)
+\draw [line width=3]        (0,150) -- (540,150);
+\draw                       (0,155) -- (540,155);
+\draw                       (0,145) -- (540,145);
+
+% Logo UANDES
+\draw (62,71.84) node {\includegraphics[width=60pt,height=80.96pt]{logos/Logo-UANDES.png}};
+
+% Header: UNIVERSIDAD DE LOS ANDES (16 pt)
+\draw (220,37) node [anchor=north west][inner sep=0.75pt] [align=left]
+{\begin{minipage}[lt]{260pt}\setlength\topsep{0pt}
+\begin{center}
+{\fontsize{16}{19}\selectfont UNIVERSIDAD DE LOS ANDES\\
+FACULTAD DE INGENIERÍA Y\\
+CIENCIAS APLICADAS\par}
+\end{center}
+\end{minipage}};
+
+% Título de la tesis (18 pt, centrado verticalmente)
+\draw (220,310) node [anchor=north west][inner sep=0.75pt] [align=left]
+{\begin{minipage}[lt]{260pt}\setlength\topsep{0pt}
+\begin{center}
+{\fontsize{18}{22}\selectfont \MakeUppercase{\titulo} \par}
+\end{center}
+\end{minipage}};
+
+% Nombre del autor (16 pt)
+\draw (220,470) node [anchor=north west][inner sep=0.75pt] [align=left]
+{\begin{minipage}[lt]{260pt}\setlength\topsep{0pt}
+\begin{center}
+{\fontsize{16}{19}\selectfont \MakeUppercase{\nombreautor} \par}
+\end{center}
+\end{minipage}};
+
+% MEMORIA PARA OPTAR AL TITULO DE / título profesional (12 pt)
+\draw (220,575) node [anchor=north west][inner sep=0.75pt] [align=left]
+{\begin{minipage}[lt]{260pt}\setlength\topsep{0pt}
+\begin{center}
+{\fontsize{12}{14}\selectfont
+MEMORIA PARA OPTAR AL TITULO DE\\
+\makebox[\linewidth][c]{\tituloprofesional} \par}
+\end{center}
+\end{minipage}};
+
+% Profesor guía y profesor co-guía (12 pt)
+\draw (220,650) node [anchor=north west][inner sep=0.75pt] [align=left]
+{\begin{minipage}[lt]{260pt}\setlength\topsep{0pt}
+\begin{center}
+{\fontsize{12}{14}\selectfont
+PROFESOR GUÍA: \textsc{\nombreprofuno}%
+\ifdefempty{\nombreprofcoguia}{}{\\PROFESOR CO-GUÍA: \textsc{\nombreprofcoguia}}\par}
+\end{center}
+\end{minipage}};
+
+% Ciudad, mes y año (10 pt)
+\draw (220,720) node [anchor=north west][inner sep=0.75pt] [align=left]
+{\begin{minipage}[lt]{260pt}\setlength\topsep{0pt}
+\begin{center}
+{\fontsize{10}{12}\selectfont SANTIAGO, \MakeUppercase{\mes} DE \anho \par}
+\end{center}
+\end{minipage}};
+
+% Footer: UNIVERSIDAD DE LOS ANDES (16 pt)
+\draw (220,800) node [anchor=north west][inner sep=0.75pt] [align=left]
+{\begin{minipage}[lt]{260pt}\setlength\topsep{0pt}
+\begin{center}
+{\fontsize{16}{19}\selectfont UNIVERSIDAD DE LOS ANDES\\
+FACULTAD DE INGENIERÍA Y\\
+CIENCIAS APLICADAS\par}
+\end{center}
+\end{minipage}};
+
+\end{tikzpicture}
+
+\end{titlepage}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% El template oficial UANDES (Word) NO incluye ni página de firma
+% del profesor ni página de copyright. Ambas fueron eliminadas.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Espaciado entre líneas
+\onehalfspacing
+
+% Numeración romana para preliminares.
+\pagenumbering{roman}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% AGRADECIMIENTOS — bold, alineado a la izquierda según docx.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\cleardoublepage
+\addcontentsline{toc}{section}{AGRADECIMIENTOS}
+{\noindent\textbf{AGRADECIMIENTOS}\par}
+\vspace{1.5em}
+\agradecimientos
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% ÍNDICES — orden según docx: general, tablas, ilustraciones.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\cleardoublepage
+\tableofcontents
+\cleardoublepage
+\listoftables
+\cleardoublepage
+\listoffigures
+\cleardoublepage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% RESUMEN — viene DESPUÉS de los índices (según docx).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\refstepcounter{dummy}
+\addcontentsline{toc}{section}{RESUMEN}
+{\noindent\textbf{RESUMEN}\par}
+\vspace{1.5em}
+\resumen
+
+% Volver a numeración árabe para los capítulos
+\cleardoublepage
+\normalsize
+\pagenumbering{arabic}

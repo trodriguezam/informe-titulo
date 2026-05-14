@@ -1,0 +1,85 @@
+\documentclass[12pt,oneside]{report}
+\input{core/preambulo.tex}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% =========================================================================
+%  METADATA DE LA MEMORIA — editar SOLO acá. La portada lee de estos valores.
+% =========================================================================
+\newcommand{\nombreautor}{NOMBRE COMPLETO DEL ALUMNO}
+\newcommand{\mes}{Mes}            % Mes de entrega (Marzo, Julio, Agosto, ...)
+\newcommand{\anho}{Año}           % Año de entrega
+\newcommand{\titulo}{Título de la Memoria}
+% Ejemplos de \tituloprofesional según carrera UANDES:
+%   INGENIERO CIVIL EN COMPUTACIÓN
+%   INGENIERO CIVIL INDUSTRIAL
+%   INGENIERO CIVIL MECÁNICO
+%   INGENIERO COMERCIAL
+\newcommand{\tituloprofesional}{TÍTULO PROFESIONAL EN MAYÚSCULAS}
+\newcommand{\nombreprofuno}{NOMBRE DEL PROFESOR GUÍA}
+\newcommand{\nombreprofcoguia}{}  % Dejar vacío si no aplica. Si aplica: nombre del co-guía.
+
+%%%%%%%%%% Resumen (máximo 1 página) %%%%%%%%%%
+\newcommand{\resumen}{%
+Escribir el resumen una vez terminada la tesis. Debe ocupar máximo una página.
+}
+
+%%%%%%%%%% Agradecimientos %%%%%%%%%%
+\newcommand{\agradecimientos}{%
+Escribir aquí los agradecimientos.
+}
+
+%%%%%%%%%% Dedicatoria (opcional) %%%%%%%%%%
+\newcommand{\dedicatoria}{\it
+A...
+}
+\renewcommand{\baselinestretch}{1.5}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Por favor coloque todas las definiciones de simbolos a continuacion
+% y no en los archivos de capitulos. Esto evitara la  existencia de
+% multiples definiciones para las mismas palabras.
+
+\newcommand{\mydef}
+	{\stackrel{\mathrm{def}}{=}}
+\newcommand{\e}
+	{\hbox{\large{e}}}
+\newcommand{\mi}
+	{\hbox{\large{i}}}
+\newcommand{\RR}{\mathbb{R}}
+
+% NOTA: el \geometry definitivo (3cm L/R, 2.5cm T/B) se establece en core/preambulo.tex
+% para cumplir con el template oficial UANDES. No sobrescribir aquí.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+% Importante: no introducir contenido (ni siquiera \label) entre \begin{document}
+% y \input{...primeras_paginas.tex}, porque eso fuerza la apertura de una página
+% antes del titlepage y genera una página en blanco inicial.
+\input{core/primeras_paginas.tex}
+
+%%%%%%%%%%%%%%%%Ingreso de capitulos%%%%%%%%%%%%%%%%%%%%%%
+
+\input{chapters/chapter01.tex}
+\input{chapters/chapter02.tex}
+\input{chapters/chapter03.tex}
+\input{chapters/chapter04.tex}
+\input{chapters/chapter05.tex}
+% Ingenieros prefieren la bibliografia antes que los anexos
+
+\cleardoublepage
+\addcontentsline{toc}{chapter}{\bibname}
+\bibliographystyle{newapa}
+\bibliography{referencias}
+
+\appendix % seguido de archivos de apendices
+% Nota: \chapter{Anexos} en attachments/anexo_a.tex genera su propia entrada
+% en el índice como "A. Anexos". No agregar otra entry manual aquí.
+\cleardoublepage
+\input{attachments/anexo_a.tex}    % archivo de apendice
+
+%\input{apendice_b}    % otro archivo de apendice
+
+\end{document}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

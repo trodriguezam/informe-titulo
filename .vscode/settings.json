@@ -1,0 +1,67 @@
+{
+  // ====================================================================
+  //  LaTeX Workshop — receta de compilación para esta tesis.
+  //  Para que Cmd+Opt+B (Build LaTeX project) compile correctamente
+  //  con xelatex + shell-escape + cd al directorio del .tex.
+  // ====================================================================
+
+  // Definición de las herramientas individuales.
+  "latex-workshop.latex.tools": [
+    {
+      "name": "latexmk-xelatex-shellesc",
+      "command": "latexmk",
+      "args": [
+        "-cd",
+        "-xelatex",
+        "-shell-escape",
+        "-synctex=1",
+        "-interaction=nonstopmode",
+        "-file-line-error",
+        "%DOC%"
+      ],
+      "env": {}
+    },
+    {
+      "name": "latexmk-clean",
+      "command": "latexmk",
+      "args": ["-cd", "-C", "%DOC%"],
+      "env": {}
+    }
+  ],
+
+  // Receta default (la que dispara Cmd+Opt+B).
+  "latex-workshop.latex.recipes": [
+    {
+      "name": "Build memoria (xelatex + shell-escape)",
+      "tools": ["latexmk-xelatex-shellesc"]
+    },
+    {
+      "name": "Clean auxiliary files",
+      "tools": ["latexmk-clean"]
+    }
+  ],
+
+  // Archivo raíz: memoria.tex. No preguntar cada vez.
+  "latex-workshop.latex.rootFile.doNotPrompt": true,
+  "latex-workshop.latex.rootFile.useSubFile": false,
+
+  // No recompilar automáticamente al guardar (evita recompilar a cada keystroke).
+  // Cambiar a "onSave" si lo prefieres.
+  "latex-workshop.latex.autoBuild.run": "never",
+
+  // No limpiar artefactos automáticamente al cerrar el proyecto.
+  // Para limpiar manualmente: ejecuta la receta "Clean auxiliary files".
+  "latex-workshop.latex.autoClean.run": "never",
+
+  // Visor PDF: pestaña de VSCode al lado del .tex.
+  "latex-workshop.view.pdf.viewer": "tab",
+
+  // Patrones para la receta de limpieza.
+  "latex-workshop.latex.clean.fileTypes": [
+    "*.aux", "*.bbl", "*.blg", "*.idx", "*.ind", "*.lof",
+    "*.lot", "*.out", "*.toc", "*.acn", "*.acr", "*.alg",
+    "*.glg", "*.glo", "*.gls", "*.fls", "*.log", "*.fdb_latexmk",
+    "*.snm", "*.synctex.gz", "*.nav", "*.xdv", "*.loc", "*.soc",
+    "_minted-*", "*.run.xml", "*.bcf"
+  ]
+}
