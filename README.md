@@ -2,11 +2,10 @@
 
 Plantilla en LaTeX para memorias de título de la **Facultad de Ingeniería y Ciencias Aplicadas, Universidad de los Andes (Chile)**, con el formato (márgenes, tipografía, portada, índices, capítulos) ajustado para coincidir con el template oficial `.docx` de la facultad.
 
-Basada en el [template original de Jaime Cisternas](https://github.com/ingUANDES/PlantillaMemoria) (2010), con las siguientes mejoras:
+Basada en el [template original](https://github.com/ingUANDES/PlantillaMemoria) (2010), con las siguientes mejoras:
 
 - Compatible con TeX Live moderno (2024+) — `minted v3+`, fontspec.
 - Portada calzada al `.docx` oficial (16pt header, 18pt título, 16pt nombre, 12pt resto).
-- Sin página en blanco inicial, sin firma del profesor ni copyright (no están en el `.docx` oficial).
 - Capítulos del índice en MAYÚSCULAS (`1. INTRODUCCIÓN`, `BIBLIOGRAFÍA`, `A. ANEXOS`).
 - Todos los títulos a 12pt.
 - Índices renombrados: "Índice de Ilustraciones" / "Índice de Tablas".
@@ -262,3 +261,4 @@ Este template es para todos los compañeros de la carrera. Si descubres bugs o m
 
 - **Template original**: [Jaime Cisternas](mailto:jcisternas@uandes.cl), Facultad de Ingeniería UANDES, 2010.
 - **Adaptación moderna** (formato `.docx`-aligned, TeX Live 2024+, VSCode setup): Manuel Tagle, 2026.
+- **Asistente de IA**: Muchas gracias a Claude Code por ayudar a escribir y revisar este README... y hacer los cambios y arreglo de bugs en el template. ¡Muy recomendado para tareas de programación y documentación!

@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this repo is
 
-LaTeX template for undergraduate theses ("memoria de título") at **Facultad de Ingeniería y Ciencias Aplicadas, Universidad de los Andes (UANDES, Chile)**. Adapted from the [original template by Jaime Cisternas (2010)](https://github.com/ingUANDES/PlantillaMemoria) to match the current official `.docx` template from the Faculty.
+LaTeX template for undergraduate theses ("memoria de título") at **Facultad de Ingeniería y Ciencias Aplicadas, Universidad de los Andes (UANDES, Chile)**. Adapted from the [original template (2010)](https://github.com/ingUANDES/PlantillaMemoria) to match the current official `.docx` template from the Faculty.
 
 The thesis text is in **Spanish** (`babel [spanish, activeacute]`). When editing prose, default to Chilean academic Spanish.
 
