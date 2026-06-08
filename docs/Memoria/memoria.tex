@@ -64,11 +64,13 @@ A...
 \input{chapters/chapter02.tex}
 \input{chapters/chapter03.tex}
 \input{chapters/chapter04.tex}
-\input{chapters/chapter05.tex}
 % Ingenieros prefieren la bibliografia antes que los anexos
 
 \cleardoublepage
-\addcontentsline{toc}{chapter}{\bibname}
+\refstepcounter{chapter}
+\addcontentsline{toc}{chapter}{\thechapter.\enspace\MakeUppercase{\bibname}}
+{\noindent\bfseries\thechapter. \MakeUppercase{\bibname}\par}
+\vspace{1em}
 \bibliographystyle{newapa}
 \bibliography{referencias}
 

@@ -230,9 +230,48 @@
 % En el índice, los capítulos también aparecen como "1. TÍTULO"
 \renewcommand{\thechapter}{\arabic{chapter}}
 
-% Capítulos del Índice General en MAYÚSCULAS (coincide con el template docx).
-% Subsecciones y sub-subsecciones mantienen su capitalización natural.
+% Formato del Índice General según template UANDES:
+%   - Capítulos (h1): MAYÚSCULAS, negrita, con puntos guía hasta el número de página.
+%   - Secciones (h2): MAYÚSCULAS, con puntos guía (ya los tiene por defecto).
+%   - Puntos guía más densos (\@dotsep reducido).
 \makeatletter
-\let\old@l@chapter\l@chapter
-\renewcommand{\l@chapter}[2]{\old@l@chapter{\protect\MakeUppercase{#1}}{#2}}
+
+% Capítulos: ALL CAPS + dotfill (reemplaza el \hfil sin puntos del report.cls)
+\renewcommand{\l@chapter}[2]{%
+  \ifnum \c@tocdepth >\m@ne
+    \addpenalty{-\@highpenalty}%
+    \vskip 1.0em \@plus\p@
+    \setlength\@tempdima{1.5em}%
+    \begingroup
+      \parindent \z@ \rightskip \@pnumwidth
+      \parfillskip -\@pnumwidth
+      \leavevmode \bfseries
+      \advance\leftskip\@tempdima
+      \hskip -\leftskip
+      \protect\MakeUppercase{#1}\nobreak\dotfill\nobreak
+      \hb@xt@\@pnumwidth{\hss #2}\par
+      \penalty\@highpenalty
+    \endgroup
+  \fi}
+
+% Secciones: ALL CAPS (los puntos guía ya los genera \@dottedtocline)
+\let\old@l@section\l@section
+\renewcommand{\l@section}[2]{\old@l@section{\protect\MakeUppercase{#1}}{#2}}
+
+% Puntos más densos (default LaTeX = 4.5; reducir da más puntos visibles)
+\renewcommand{\@dotsep}{2.5}
+
+\makeatother
+
+% Override de \thebibliography para suprimir el \section* automático de newapa,
+% permitiendo que memoria.tex añada un encabezado numerado propio.
+\makeatletter
+\renewcommand{\thebibliography}[1]{%
+  \list{\relax}{%
+    \setlength{\labelsep}{0em}%
+    \setlength{\itemindent}{-\bibhang}%
+    \setlength{\leftmargin}{\bibhang}}%
+  \def\newblock{\hskip .11em plus .33em minus .07em}%
+  \sloppy\clubpenalty4000\widowpenalty4000
+  \sfcode`\.=1000\relax}
 \makeatother
