@@ -15,8 +15,8 @@ The thesis text is in **Spanish** (`babel [spanish, activeacute]`). When editing
 - `docs/Memoria/core/primeras_paginas.tex` — title page (TikZ-based), agradecimientos, ToC/LoT/LoF, resumen.
 - `docs/Memoria/chapters/chapterNN.tex` — one chapter per file, included from `memoria.tex`.
 - `docs/Memoria/attachments/anexo_*.tex` — appendices, after `\appendix`.
-- `docs/Memoria/referencias.bib` — bibliography, BibTeX, cited with `\citeA{key}` (the `newapa` style uses `\citeA`, not `\cite`).
-- `docs/Memoria/core/{newapa.sty,newapa.bst,setspace.sty,julialogo.sty}` — bundled style files; do **not** assume CTAN versions.
+- `docs/Memoria/referencias.bib` — bibliography, BibTeX. Cite with `\citep{key}` for `(Autor, Año)` or `\citet{key}` for `Autor (Año)` — uses `natbib` + Harvard `agsm` style.
+- `docs/Memoria/core/{newapa.sty,newapa.bst,setspace.sty,julialogo.sty}` — bundled style files (newapa kept for reference but no longer loaded).
 
 ## Building
 
@@ -50,7 +50,7 @@ VS Code: `.vscode/settings.json` defines the build recipe for the LaTeX Workshop
 
 - **Figure filenames**: no spaces. Use `mi-figura.pdf`, not `mi figura.pdf`.
 - **Figures**: PDF for line drawings, PNG for synthetic pixel images, JPG for photos.
-- **Bibliography**: edit `referencias.bib` by hand. Do not auto-format (the `newapa.bst` is finicky).
+- **Bibliography**: edit `referencias.bib` by hand. Uses `natbib` + `agsm.bst` (Harvard). Cite with `\citep{key}` → `(Autor, Año)` or `\citet{key}` → `Autor (Año)`. Do **not** use `\citeA` (era de `newapa`, ya no carga).
 - **Build artifacts** (`*.aux`, `*.bbl`, `*.blg`, `*.log`, `_minted-*`, etc.) are gitignored.
 - **Author metadata** lives only in `memoria.tex` lines 5–25. Do not duplicate into `primeras_paginas.tex`.
 - **Co-guide block** is conditional: empty `\nombreprofcoguia` → the line is hidden via `\ifdefempty`.
@@ -67,7 +67,7 @@ VS Code: `.vscode/settings.json` defines the build recipe for the LaTeX Workshop
 | ToC entry style (uppercase vs natural) | idem, the `\l@chapter` override at the bottom |
 | Title page layout (TikZ coordinates) | `docs/Memoria/core/primeras_paginas.tex` |
 | Margins / paper / geometry | `docs/Memoria/core/preambulo.tex:14` |
-| Bibliography style | `docs/Memoria/memoria.tex` (`\bibliographystyle{newapa}`) |
+| Bibliography style | `docs/Memoria/memoria.tex` (`\bibliographystyle{agsm}`) |
 
 ## Compared to the original template at github.com/ingUANDES/PlantillaMemoria
 
