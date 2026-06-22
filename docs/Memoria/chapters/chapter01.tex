@@ -3,176 +3,36 @@
 
 \section{DESCRIPCIÓN DE LA PROBLEMÁTICA}
 
-La formación práctica en procedimientos quirúrgicos de urgencia es uno de los
-desafíos más críticos de la educación médica moderna. Maniobras como la
-cricotirotomía de emergencia —una incisión a través de la membrana
-cricotiroidea para establecer una vía aérea permeable— exigen que el
-profesional actúe con precisión, bajo presión y en un tiempo reducido, sobre la
-base de un conocimiento profundo de la anatomía cervical del paciente. A
-diferencia de otras competencias clínicas que pueden desarrollarse de forma
-gradual mediante observación o simulación computacional, estas intervenciones
-requieren una destreza táctil y espacial que solo se adquiere con la práctica
-repetida sobre estructuras físicas tridimensionales. En este contexto, los
-fantomas anatómicos —modelos físicos que replican la anatomía humana—
-constituyen una de las herramientas estándar para el entrenamiento
-prequirúrgico en entornos controlados \citep{raekerjordan2022phantoms}.\\
+La formación práctica en procedimientos quirúrgicos de urgencia es uno de los desafíos más críticos de la educación médica moderna. Maniobras como la cricotirotomía de emergencia —una incisión a través de la membrana cricotiroidea para establecer una vía aérea permeable— exigen que el profesional actúe con precisión, bajo presión y en un tiempo reducido, sobre la base de un conocimiento profundo de la anatomía cervical del paciente. A diferencia de otras competencias clínicas que pueden desarrollarse de forma gradual mediante observación o simulación computacional, estas intervenciones requieren una destreza táctil y espacial que solo se adquiere con la práctica repetida sobre estructuras físicas tridimensionales. En este contexto, los fantomas anatómicos —modelos físicos que replican la anatomía humana— constituyen una de las herramientas estándar para el entrenamiento prequirúrgico en entornos controlados \citep{raekerjordan2022phantoms}.\\
 
-Sin embargo, el mercado de fantomas médicos comerciales presenta una limitación
-estructural significativa: sus modelos reproducen una anatomía genérica y
-estandarizada, que no refleja la variabilidad anatómica real de los pacientes
-\citep{raekerjordan2022phantoms}. La región del cuello, en particular, presenta
-diferencias considerables entre individuos según factores como la edad, el
-índice de masa corporal, condiciones patológicas preexistentes o variantes
-congénitas. Un estudiante que practica la cricotirotomía decenas de veces sobre
-el mismo fantoma comercial desarrolla un conocimiento estático de la anatomía
-cervical, que puede resultar insuficiente al enfrentarse a la diversidad
-morfológica de los pacientes reales. De hecho, la cricotirotomía es un
-procedimiento de baja frecuencia y alto riesgo cuya curva de aprendizaje recién
-comienza a caracterizarse, y entre las brechas de entrenamiento identificadas
-figuran la familiarización anatómica insuficiente y el uso de maniquíes poco
-realistas \citep{mcmurray2023cricothyroidotomy}.\\
+Sin embargo, el mercado de fantomas médicos comerciales presenta una limitación estructural significativa: sus modelos reproducen una anatomía genérica y estandarizada, que no refleja la variabilidad anatómica real de los pacientes \citep{raekerjordan2022phantoms}. La región del cuello, en particular, presenta diferencias considerables entre individuos según factores como la edad, el índice de masa corporal, condiciones patológicas preexistentes o variantes congénitas. Un estudiante que practica la cricotirotomía decenas de veces sobre el mismo fantoma comercial desarrolla un conocimiento estático de la anatomía cervical, que puede resultar insuficiente al enfrentarse a la diversidad morfológica de los pacientes reales. De hecho, la cricotirotomía es un procedimiento de baja frecuencia y alto riesgo cuya curva de aprendizaje recién comienza a caracterizarse, y entre las brechas de entrenamiento identificadas figuran la familiarización anatómica insuficiente y el uso de maniquíes poco realistas \citep{mcmurray2023cricothyroidotomy}.\\
 
-La impresión 3D ha abierto una vía prometedora para superar esta limitación. En
-principio, es posible generar un fantoma personalizado a partir de las imágenes
-médicas de un paciente real —en particular, tomografías computarizadas (TC) en
-formato DICOM o NIfTI—, reproduciendo con fidelidad su anatomía individual. Este
-proceso, sin embargo, implica una cadena de pasos técnicos complejos:
-adquisición del escáner, segmentación de las estructuras anatómicas relevantes,
-exportación a modelos tridimensionales, preparación para impresión y
-fabricación física. De estos pasos, la segmentación es el principal cuello de
-botella: identificar y delimitar manualmente estructuras como la tráquea, los
-músculos escalenos, las glándulas parótidas o las vértebras cervicales en un
-escáner volumétrico exige varias horas de trabajo de un radiólogo o anatomista
-con experiencia. A modo de referencia, contornear un único caso de cabeza y
-cuello para planificación radioterápica toma en promedio cerca de 2,7 horas
-\citep{harari2010contouring}, y el conjunto de 64 estructuras delimitado por el
-radiólogo en este proyecto es considerablemente más extenso.\\
+La impresión 3D ha abierto una vía prometedora para superar esta limitación. En principio, es posible generar un fantoma personalizado a partir de las imágenes médicas de un paciente real —en particular, tomografías computarizadas (TC) en formato DICOM o NIfTI—, reproduciendo con fidelidad su anatomía individual. Este proceso, sin embargo, implica una cadena de pasos técnicos complejos: adquisición del escáner, segmentación de las estructuras anatómicas relevantes, exportación a modelos tridimensionales, preparación para impresión y fabricación física. De estos pasos, la segmentación es el principal cuello de botella: identificar y delimitar manualmente estructuras como la tráquea, los músculos escalenos, las glándulas parótidas o las vértebras cervicales en un escáner volumétrico exige varias horas de trabajo de un radiólogo o anatomista con experiencia. A modo de referencia, contornear un único caso de cabeza y cuello para planificación radioterápica toma en promedio cerca de 2,7 horas \citep{harari2010contouring}, y el conjunto de 64 estructuras delimitado por el radiólogo en este proyecto es considerablemente más extenso.\\
 
-Esta dependencia del trabajo manual experto hace que la producción de fantomas
-personalizados sea hoy inviable a escala para las instituciones educativas. Cada
-nuevo caso clínico que se quisiera convertir en fantoma requeriría una inversión
-significativa de tiempo de personal altamente calificado, lo que restringe el
-acceso a esta herramienta a casos excepcionales o a proyectos de investigación
-con financiamiento dedicado. La consecuencia práctica es que los estudiantes de
-medicina siguen entrenando, en su mayoría, sobre los mismos modelos genéricos, y
-pierden la oportunidad de exponerse a la variabilidad anatómica que encontrarán
-en su práctica clínica.\\
+Esta dependencia del trabajo manual experto hace que la producción de fantomas personalizados sea hoy inviable a escala para las instituciones educativas. Cada nuevo caso clínico que se quisiera convertir en fantoma requeriría una inversión significativa de tiempo de personal altamente calificado, lo que restringe el acceso a esta herramienta a casos excepcionales o a proyectos de investigación con financiamiento dedicado. La consecuencia práctica es que los estudiantes de medicina siguen entrenando, en su mayoría, sobre los mismos modelos genéricos, y pierden la oportunidad de exponerse a la variabilidad anatómica que encontrarán en su práctica clínica.\\
 
-El presente proyecto nace de la identificación de esta brecha. Si se lograra
-automatizar la segmentación anatómica a partir de imágenes TC e integrar ese
-proceso en un flujo de trabajo cohesivo que culmine en la impresión de un
-fantoma físico personalizado, sería posible producir modelos anatómicos diversos
-con un costo operacional sustancialmente menor. Ello permitiría a las
-instituciones médicas acceder a una biblioteca creciente de fantomas basados en
-casos reales, enriqueciendo la calidad del entrenamiento en procedimientos de
-urgencia como la cricotirotomía.
+El presente proyecto nace de la identificación de esta brecha. Si se lograra automatizar la segmentación anatómica a partir de imágenes TC e integrar ese proceso en un flujo de trabajo cohesivo que culmine en la impresión de un fantoma físico personalizado, sería posible producir modelos anatómicos diversos con un costo operacional sustancialmente menor. Ello permitiría a las instituciones médicas acceder a una biblioteca creciente de fantomas basados en casos reales, enriqueciendo la calidad del entrenamiento en procedimientos de urgencia como la cricotirotomía.\\
 
 \section{ESTADO ACTUAL DEL PROBLEMA}
 
-La fabricación de fantomas médicos personalizados mediante impresión 3D es un
-área de investigación activa, pero su adopción clínica masiva enfrenta barreras
-técnicas y operacionales que aún no se han resuelto de manera integral. El flujo
-de trabajo descrito en la literatura para convertir una imagen médica en un
-modelo físico comprende, en términos generales, tres etapas: segmentación de la
-imagen, refinamiento de la malla e impresión 3D \citep{bucking2017workflow}. En
-la práctica, la segmentación se realiza habitualmente de forma manual o
-semiautomática en software especializado —como ITK-SNAP o 3D Slicer—, una etapa
-laboriosa que demanda conocimiento anatómico avanzado \citep{tack2016review}. Si
-bien numerosos estudios demuestran la viabilidad técnica del concepto, con
-fantomas que reproducen con alta fidelidad estructuras como el árbol bronquial,
-el corazón o la columna vertebral, no proponen soluciones escalables que eliminen
-la dependencia del trabajo experto.\\
+La fabricación de fantomas médicos personalizados mediante impresión 3D es un área de investigación activa, pero su adopción clínica masiva enfrenta barreras técnicas y operacionales que aún no se han resuelto de manera integral. El flujo de trabajo descrito en la literatura para convertir una imagen médica en un modelo físico comprende, en términos generales, tres etapas: segmentación de la imagen, refinamiento de la malla e impresión 3D \citep{bucking2017workflow}. En la práctica, la segmentación se realiza habitualmente de forma manual o semiautomática en software especializado —como ITK-SNAP o 3D Slicer—, una etapa laboriosa que demanda conocimiento anatómico avanzado \citep{tack2016review}. Si bien numerosos estudios demuestran la viabilidad técnica del concepto, con fantomas que reproducen con alta fidelidad estructuras como el árbol bronquial, el corazón o la columna vertebral, no proponen soluciones escalables que eliminen la dependencia del trabajo experto.\\
 
-En cuanto a la segmentación automática, el avance más relevante de los últimos
-años ha sido TotalSegmentator, un modelo basado en la arquitectura nnU-Net
-entrenado sobre 1.204 tomografías computarizadas con anotaciones de 104
-estructuras anatómicas \citep{wasserthal2023totalsegmentator}. La herramienta
-segmenta automáticamente en pocos minutos un amplio conjunto de estructuras
-—principalmente de tronco, abdomen, huesos y vasos— y alcanza un coeficiente Dice
-global de 0,943 en su conjunto de prueba \citep{wasserthal2023totalsegmentator}.
-Su tarea base, sin embargo, no fue concebida para la región cervical: las
-estructuras finas del cuello relevantes para la cricotirotomía no forman parte de
-esas 104 clases. Versiones posteriores de la herramienta incorporaron tareas
-especializadas de cabeza y cuello que cubren buena parte de esas estructuras; aun
-así, emplearla para generar un fantoma cervical completo exige orquestar varias
-de esas tareas y consolidar sus salidas, y un subconjunto de estructuras
-permanece sin cobertura. Caracterizar esa cobertura y resolver esa orquestación
-es, precisamente, parte del problema que aborda este trabajo.\\
+En cuanto a la segmentación automática, el avance más relevante de los últimos años ha sido TotalSegmentator, un modelo basado en la arquitectura nnU-Net entrenado sobre 1.204 tomografías computarizadas con anotaciones de 104 estructuras anatómicas \citep{wasserthal2023totalsegmentator}. La herramienta segmenta automáticamente en pocos minutos un amplio conjunto de estructuras —principalmente de tronco, abdomen, huesos y vasos— y alcanza un coeficiente Dice global de 0,943 en su conjunto de prueba \citep{wasserthal2023totalsegmentator}. Su tarea base, sin embargo, no fue concebida para la región cervical: las estructuras finas del cuello relevantes para la cricotirotomía no forman parte de esas 104 clases. Versiones posteriores de la herramienta incorporaron tareas especializadas de cabeza y cuello que cubren buena parte de esas estructuras; aun así, emplearla para generar un fantoma cervical completo exige orquestar varias de esas tareas y consolidar sus salidas, y un subconjunto de estructuras permanece sin cobertura. Caracterizar esa cobertura y resolver esa orquestación es, precisamente, parte del problema que aborda este trabajo.\\
 
-Paralelamente han surgido modelos de segmentación basados en prompts visuales,
-como MedSAM, que adapta la arquitectura Segment Anything Model (SAM) de Meta al
-dominio médico mediante entrenamiento sobre un gran conjunto de imágenes médicas
-\citep{ma2024medsam}. MedSAM entrega buenos resultados cuando se le proveen
-\textit{bounding boxes} que delimitan la región de interés, pero esa misma
-dependencia de prompts manuales lo aleja de un flujo completamente automático
-(\textit{zero-touch}): sin intervención humana para definir las regiones, su
-desempeño se degrada de forma significativa.\\
+Paralelamente han surgido modelos de segmentación basados en prompts visuales, como MedSAM, que adapta la arquitectura Segment Anything Model (SAM) de Meta al dominio médico mediante entrenamiento sobre un gran conjunto de imágenes médicas \citep{ma2024medsam}. MedSAM entrega buenos resultados cuando se le proveen \textit{bounding boxes} que delimitan la región de interés, pero esa misma dependencia de prompts manuales lo aleja de un flujo completamente automático (\textit{zero-touch}): sin intervención humana para definir las regiones, su desempeño se degrada de forma significativa.\\
 
-En el ámbito de la fabricación, la disponibilidad de impresoras multimaterial de
-costo relativamente accesible —como la Prusa XL— ha facilitado la producción de
-modelos anatómicos que diferencian tejidos mediante filamentos de distinta dureza
-y color. Diversos trabajos han mostrado que los modelos de vía aérea impresos en
-3D constituyen una alternativa viable, reutilizable y de bajo costo frente a los
-maniquíes comerciales y a las tráqueas porcinas para el entrenamiento en
-cricotirotomía \citep{doucet2017trachea}. No obstante, la fidelidad táctil de los
-materiales de impresión respecto del tejido blando real sigue siendo una
-limitación reconocida. Sobre todo, la integración de esta etapa de fabricación en
-un flujo automatizado que parta directamente de la imagen médica permanece como
-un problema abierto.\\
+En el ámbito de la fabricación, la disponibilidad de impresoras multimaterial de costo relativamente accesible —como la Prusa XL— ha facilitado la producción de modelos anatómicos que diferencian tejidos mediante filamentos de distinta dureza y color. Diversos trabajos han mostrado que los modelos de vía aérea impresos en 3D constituyen una alternativa viable, reutilizable y de bajo costo frente a los maniquíes comerciales y a las tráqueas porcinas para el entrenamiento en cricotirotomía \citep{doucet2017trachea}. No obstante, la fidelidad táctil de los materiales de impresión respecto del tejido blando real sigue siendo una limitación reconocida. Sobre todo, la integración de esta etapa de fabricación en un flujo automatizado que parta directamente de la imagen médica permanece como un problema abierto.\\
 
-En el contexto chileno, el acceso a fantomas personalizados para entrenamiento
-quirúrgico es limitado y tiende a concentrarse en centros académicos con mayores
-recursos; los programas de simulación clínica suelen depender de materiales
-importados de alto costo o de modelos genéricos que no representan la diversidad
-anatómica de la población. Hasta donde se ha podido constatar, no existe una
-solución integrada, de código abierto y accesible, que permita a un equipo
-clínico sin formación en ingeniería generar un fantoma personalizado a partir de
-los datos clínicos de un paciente. Este trabajo se propone cubrir esa brecha.
+En el contexto chileno, el acceso a fantomas personalizados para entrenamiento quirúrgico es limitado y tiende a concentrarse en centros académicos con mayores recursos; los programas de simulación clínica suelen depender de materiales importados de alto costo o de modelos genéricos que no representan la diversidad anatómica de la población. Hasta donde se ha podido constatar, no existe una solución integrada, de código abierto y accesible, que permita a un equipo clínico sin formación en ingeniería generar un fantoma personalizado a partir de los datos clínicos de un paciente. Este trabajo se propone cubrir esa brecha.\\
 
 \section{ALCANCE DEL PROYECTO}
 
-El presente trabajo de titulación tiene como objetivo el diseño e implementación
-de un sistema que automatice la generación de fantomas anatómicos personalizados
-de la región cervical a partir de tomografías computarizadas en formato NIfTI,
-orientado al entrenamiento en procedimientos de vía aérea de urgencia, con énfasis
-en la cricotirotomía. El sistema integra segmentación automática basada en
-inteligencia artificial, procesamiento y exportación de modelos tridimensionales
-e impresión 3D multimaterial, conformando un flujo de trabajo completo y accesible
-para equipos clínicos sin formación técnica especializada.\\
+El presente trabajo de titulación tiene como objetivo el diseño e implementación de un sistema que automatice la generación de fantomas anatómicos personalizados de la región cervical a partir de tomografías computarizadas en formato NIfTI, orientado al entrenamiento en procedimientos de vía aérea de urgencia, con énfasis en la cricotirotomía. El sistema integra segmentación automática basada en inteligencia artificial, procesamiento y exportación de modelos tridimensionales e impresión 3D multimaterial, conformando un flujo de trabajo completo y accesible para equipos clínicos sin formación técnica especializada.\\
 
-El proyecto abarca el diseño y la evaluación de un módulo de segmentación
-automática que opera sobre escáneres TC. Para fundamentar su construcción se
-evaluaron tres herramientas de segmentación —TotalSegmentator, MedSAM y YOLO—
-sobre diez casos reales de escáneres cervicales, usando como referencia
-(\textit{ground truth}) las segmentaciones manuales realizadas por un radiólogo
-especialista sobre 64 estructuras anatómicas. La evaluación combinó métricas
-cuantitativas (coeficiente Dice, IoU y cobertura anatómica) con consideraciones de
-tiempo de procesamiento, lo que permitió seleccionar de forma fundamentada la
-herramienta más adecuada para integrar en el flujo automatizado.\\
+El proyecto abarca el diseño y la evaluación de un módulo de segmentación automática que opera sobre escáneres TC. Para fundamentar su construcción se evaluaron tres herramientas de segmentación —TotalSegmentator, MedSAM y YOLO— sobre diez casos reales de escáneres cervicales, usando como referencia (\textit{ground truth}) las segmentaciones manuales realizadas por un radiólogo especialista sobre 64 estructuras anatómicas. La evaluación combinó métricas cuantitativas (coeficiente Dice, IoU y cobertura anatómica) con consideraciones de tiempo de procesamiento, lo que permitió seleccionar de forma fundamentada la herramienta más adecuada para integrar en el flujo automatizado.\\
 
-El flujo de trabajo completo se implementa en 3D Slicer mediante dos módulos
-personalizados de interfaz guiada, que abstraen la complejidad técnica para el
-usuario médico. El módulo de segmentación cubre la carga y el preprocesamiento del
-escáner TC —incluido el recorte de valores HU atípicos—, la segmentación
-automática de las estructuras relevantes para el cuello y la cricotirotomía, y la
-consolidación de los segmentos. El módulo de corte y preparación para impresión
-permite seccionar el modelo con planos interactivos, centrarlo, orientar su base y
-escalarlo, generando los archivos STL definitivos. Finalmente, estos modelos se
-configuran en PrusaSlicer para su impresión en una Prusa XL multimaterial.\\
+El flujo de trabajo completo se implementa en 3D Slicer mediante dos módulos personalizados de interfaz guiada, que abstraen la complejidad técnica para el usuario médico. El módulo de segmentación cubre la carga y el preprocesamiento del escáner TC —incluido el recorte de valores HU atípicos—, la segmentación automática de las estructuras relevantes para el cuello y la cricotirotomía, y la consolidación de los segmentos. El módulo de corte y preparación para impresión permite seccionar el modelo con planos interactivos, centrarlo, orientar su base y escalarlo, generando los archivos STL definitivos. Finalmente, estos modelos se configuran en PrusaSlicer para su impresión en una Prusa XL multimaterial.\\
 
-El proyecto contempla además la validación clínica del fantoma producido. Se
-realizará una sesión de evaluación con la Dra. Garrido, médica con experiencia en
-procedimientos de vía aérea de urgencia, quien valorará la fidelidad anatómica y la
-utilidad pedagógica del fantoma generado automáticamente frente a un fantoma
-comercial estándar. Esta instancia permitirá recoger retroalimentación clínica
-directa sobre los requisitos que debe cumplir el fantoma para constituir un
-instrumento de entrenamiento válido en la práctica de la cricotirotomía.\\
+El proyecto contempla además la validación clínica del fantoma producido. Se realizará una sesión de evaluación con la Dra. Garrido, médica con experiencia en procedimientos de vía aérea de urgencia, quien valorará la fidelidad anatómica y la utilidad pedagógica del fantoma generado automáticamente frente a un fantoma comercial estándar. Esta instancia permitirá recoger retroalimentación clínica directa sobre los requisitos que debe cumplir el fantoma para constituir un instrumento de entrenamiento válido en la práctica de la cricotirotomía.\\
 
-El alcance no incluye la certificación del fantoma como dispositivo clínico, la
-producción en serie ni la integración con sistemas hospitalarios o plataformas de
-gestión de imágenes médicas (PACS). Tampoco se contempla, en esta etapa, extender
-el flujo a regiones anatómicas distintas del cuello y la cabeza, si bien la
-arquitectura modular del sistema está diseñada para facilitar esa extensión futura.
-Por último, la asignación de filamentos por tipo de tejido (dureza, color y
-material) para la Prusa XL queda planteada en su estructura de datos, pero su
-definición e implementación final se dejan como trabajo futuro.
+El alcance no incluye la certificación del fantoma como dispositivo clínico, la producción en serie ni la integración con sistemas hospitalarios o plataformas de gestión de imágenes médicas (PACS). Tampoco se contempla, en esta etapa, extender el flujo a regiones anatómicas distintas del cuello y la cabeza, si bien la arquitectura modular del sistema está diseñada para facilitar esa extensión futura. Por último, la asignación de filamentos por tipo de tejido (dureza, color y material) para la Prusa XL queda planteada en su estructura de datos, pero su definición e implementación final se dejan como trabajo futuro.\\
