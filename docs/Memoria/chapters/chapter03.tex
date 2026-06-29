@@ -3,6 +3,30 @@
 
 \section{ÍTEMS PRINCIPALES}
 
+El producto desarrollado se compone de cuatro ítems principales que, en conjunto, conforman el recorrido completo desde la imagen médica hasta el fantoma físico imprimible: a) un módulo de segmentación automática; b) una infraestructura de cómputo remoto sobre GPU que sustenta dicha segmentación; c) un módulo de corte y exportación; y d) el fantoma anatómico impreso, entendido como el entregable final del sistema. Los dos primeros ítems operan encadenados para producir las estructuras anatómicas segmentadas a partir del escáner; el tercero las adapta a las restricciones geométricas de la impresión 3D; y el cuarto materializa el resultado en un modelo físico apto para el entrenamiento clínico. Cada ítem se describe a continuación, dejando la forma en que se relacionan entre sí para la sección de arquitectura.\\
+
+\subsection{Módulo de segmentación automática}
+
+El módulo de segmentación, denominado \textit{Segmentación Cuello} dentro de 3D Slicer e identificado en el código como \texttt{FantomaModule}, constituye el punto de entrada del sistema. Su responsabilidad es transformar un escáner TC cervical, entregado en formato NIfTI (\texttt{.nii} o \texttt{.nii.gz}), en un conjunto de estructuras anatómicas segmentadas y coloreadas, visibles en la vista tridimensional de Slicer. El usuario selecciona el archivo TC, confirma el modo de procesamiento e inicia la ejecución; el resto del flujo ocurre de forma automática.\\
+
+Internamente, el módulo orquesta cuatro etapas sucesivas: el preprocesamiento de la imagen (que incluye el recorte de valores de unidades Hounsfield para descartar artefactos de relleno del escáner), la segmentación propiamente tal mediante \citep{wasserthal2023totalsegmentator}, la consolidación de las máscaras resultantes en un único conjunto de estructuras, y la carga de dichas estructuras en la escena con una asignación de color según el tipo de tejido. Toda esta complejidad permanece oculta tras una interfaz guiada en español, de modo que el operador no requiere conocimientos de procesamiento de imágenes ni de la herramienta de segmentación subyacente. Como salida, el módulo genera un archivo independiente por cada estructura detectada, además de un reporte del proceso con las estructuras encontradas y los tiempos de ejecución.\\
+
+\subsection{Infraestructura de segmentación remota sobre GPU}
+
+La segmentación con \citet{wasserthal2023totalsegmentator} es computacionalmente intensiva y se beneficia significativamente del uso de una unidad de procesamiento gráfico. Para evitar que el equipo clínico deba contar con hardware especializado, este ítem traslada el cómputo a una máquina dedicada con GPU, a la que el módulo de segmentación accede de forma transparente. La comunicación se realiza mediante SSH y SCP sobre una red privada virtual, lo que permite enviar el escáner preprocesado, ejecutar la segmentación en el servidor y recuperar las estructuras resultantes sin intervención manual del usuario.\\
+
+Este ítem desacopla la carga de cómputo del puesto de trabajo del médico: el equipo local solo necesita ejecutar 3D Slicer y mantener la conexión con el servidor, mientras que el procesamiento pesado recae en la máquina remota. De este modo, el mismo flujo de trabajo puede ejecutarse desde computadores de prestaciones modestas, ampliando la portabilidad del sistema.\\
+
+\subsection{Módulo de corte y exportación}
+
+El módulo de corte, denominado \textit{Corte 3D} en la interfaz y \texttt{CorteModule} en el código, toma la segmentación generada por el módulo anterior y la prepara para la impresión. Mediante planos de corte interactivos en las orientaciones axial, coronal y sagital, el usuario recorta los bordes del modelo hasta dejarlo con la forma y el tamaño adecuados para la cama de impresión; una opción de corte simétrico facilita conservar únicamente la zona central del cuello. El módulo incorpora además rutinas de preparación del modelo —limpieza de triángulos degenerados, eliminación de fragmentos flotantes y cierre de superficies— que aseguran que la malla resultante sea imprimible.\\
+
+Una vez aplicados los cortes, el módulo exporta el resultado a archivos STL, generando uno por cada estructura anatómica. La exportación contempla el centrado del modelo sobre la base de impresión, la rotación según el plano de corte principal y un factor de escala configurable. Estos archivos quedan listos para abrirse en PrusaSlicer y ser enviados a la impresora.\\
+
+\subsection{Fantoma anatómico impreso}
+
+El último ítem corresponde al entregable físico del sistema: el fantoma de cuello impreso en 3D. A partir de los archivos STL exportados, la impresión multimaterial en la Prusa XL produce un modelo en el que las distintas estructuras anatómicas se diferencian por color y material según el tipo de tejido. Este fantoma constituye el objetivo final del producto, al proporcionar un modelo anatómicamente fiel y personalizado sobre el cual los estudiantes de medicina pueden practicar la cricotirotomía, sustituyendo a los maniquíes genéricos por casos que reflejan la diversidad anatómica de pacientes reales.\\
+
 \section{ARQUITECTURA DEL SISTEMA}
 
 \section{IMPLEMENTACIÓN DE LA SOLUCIÓN}
