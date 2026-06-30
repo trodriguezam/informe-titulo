@@ -1,6 +1,10 @@
 # macOS
 .DS_Store
 
+docs/Memoria/figuras/*.aux
+docs/Memoria/figuras/*.log
+docs/Memoria/figuras/*.pdf
+
 # Artefactos de compilación LaTeX (todos viven junto al .tex porque usamos -cd)
 docs/Memoria/*.aux
 docs/Memoria/*.bbl

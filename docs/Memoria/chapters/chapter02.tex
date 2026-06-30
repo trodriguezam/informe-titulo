@@ -3,7 +3,7 @@
 
 \section{DESCRIPCIÓN DE LA SOLUCIÓN}
 
-Frente a la falta de fantomas anatómicamente diversos para el entrenamiento de procedimientos de emergencia como la cricotirotomía, se propone un sistema que automatiza la generación de fantomas de cuello personalizados a partir de CTs de pacientes reales. La solución reemplaza el flujo manual de segmentación, corrección y exportación, el cual es lento y dependiente de un operador con experiencia en herramientas de modelamiento 3D, por un pipeline reproducible que un estudiante o docente de medicina puede ejecutar sin conocimientos de procesamiento de imágenes ni de impresión 3D.\\
+Frente a la falta de fantomas anatómicamente diversos para el entrenamiento de procedimientos de emergencia como la cricotiroidotomía, se propone un sistema que automatiza la generación de fantomas de cuello personalizados a partir de CTs de pacientes reales. La solución reemplaza el flujo manual de segmentación, corrección y exportación, el cual es lento y dependiente de un operador con experiencia en herramientas de modelamiento 3D, por un pipeline reproducible que un estudiante o docente de medicina puede ejecutar sin conocimientos de procesamiento de imágenes ni de impresión 3D.\\
 
 El sistema se organiza en cuatro etapas: a) ingreso de la TC en formato NIfTI; b) segmentación automática de las estructuras anatómicas relevantes para la vía aérea y el cuello (vértebras cervicales, cartílagos, tráquea, músculos, glándulas, tejidos blandos, entre otras); c) exportación de cada estructura segmentada a un archivo STL independiente, con asignación de color según el tipo de tejido; y d) preparación de los STL en PrusaSlicer para su impresión multimaterial en una impresora Prusa XL. Estas cuatro etapas se exponen al usuario final a través de un módulo personalizado de 3D Slicer, de modo que la complejidad del pipeline (ejecución remota en GPU, consolidación de segmentos, mapeo de colores) queda oculta detrás de una interfaz simple.\\
 
@@ -40,7 +40,7 @@ El cómputo de la segmentación, el cual presenta un uso intenso de GPU, se ejec
 \subsection{Atributos de calidad}
 
 \begin{enumerate}
-  \item \textbf{Precisión:} las estructuras críticas para la observación de la cricotirotomía (vía aérea, cartílagos, vértebras cervicales) deben alcanzar un coeficiente de Dice promedio igual o superior a 0.90 frente a la segmentación de referencia del radiólogo.
+  \item \textbf{Precisión:} las estructuras críticas para la observación de la cricotiroidotomía (vía aérea, cartílagos, vértebras cervicales) deben alcanzar un coeficiente de Dice promedio igual o superior a 0.90 frente a la segmentación de referencia del radiólogo.
   \item \textbf{Usabilidad:} el módulo debe ocultar la complejidad técnica del pipeline (ejecución remota, consolidación de segmentos, mapeo de colores) detrás de una interfaz simple, utilizable por personal médico sin formación en procesamiento de imágenes.
   \item \textbf{Portabilidad:} el módulo debe funcionar tanto en Windows como en macOS, sin depender de hardware gráfico especializado en el equipo local.
   \item \textbf{Mantenibilidad:} la separación entre el módulo de segmentación (FantomaModule) y el módulo de corte y exportación (CorteModule) debe permitir modificar uno sin afectar el funcionamiento del otro.
