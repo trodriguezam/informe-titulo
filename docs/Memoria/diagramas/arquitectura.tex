@@ -33,7 +33,7 @@
 ]
 
 % ---- Columna local (vertical) ----
-\node[box]                          (ct)     at (0,0)        {Escáner CT de entrada\\(NIfTI)};
+\node[box]                          (ct)     at (0,0)        {Escáner TC de entrada\\(NIfTI)};
 \node[box, below=0.7cm of ct]       (prep)                    {Preprocesamiento\\\scriptsize(recorte de unidades Hounsfield)};
 \node[box, below=2.0cm of prep]     (consol)                  {Consolidación de\\estructuras};
 \node[box, below=0.7cm of consol]   (slicer)                  {Carga en 3D Slicer\\\scriptsize(coloreado por tipo de tejido)};
@@ -52,7 +52,7 @@
 \draw[flow] (stl)    -- (prusa) node[lbl, midway] {STL};
 
 % ---- Flechas SCP (ida y vuelta al servidor) ----
-\draw[scp] (prep.east) -- (ts.west) node[lbl, pos=0.52] {CT preprocesado (SCP)};
+\draw[scp] (prep.east) -- (ts.west) node[lbl, pos=0.52] {TC preprocesado (SCP)};
 \draw[scp] (ts.west) -- (consol.east) node[lbl, pos=0.48] {máscaras (SCP)};
 
 % ---- Zona remota (fondo) ----

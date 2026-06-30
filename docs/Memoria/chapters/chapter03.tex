@@ -29,15 +29,15 @@ El último ítem corresponde al entregable físico del sistema: el fantoma de cu
 
 \section{ARQUITECTURA DEL SISTEMA}
 
-La arquitectura del sistema se organiza en torno a dos ejes de separación que ordenan el diseño y facilitan su mantenimiento. El primero distingue, dentro de cada módulo de 3D Slicer, la capa de presentación —la interfaz guiada con la que interactúa el usuario— de la capa de lógica, encapsulada en bibliotecas independientes (\texttt{FantomaModuleLib} y \texttt{CorteModuleLib}); de este modo, la interfaz puede modificarse sin alterar el procesamiento, y viceversa. El segundo eje distingue el cómputo local del remoto: la interacción del usuario y la preparación de los datos ocurren en el equipo clínico, mientras que la segmentación, intensiva en recursos, se ejecuta en un servidor con GPU. Esta doble separación permite que el sistema sea portable y que cada componente evolucione de forma aislada.\\
+La arquitectura del sistema se organiza en torno a dos ejes de separación que ordenan el diseño y facilitan su mantenimiento. El primero distingue, dentro de cada módulo de 3D Slicer, la capa de presentación (la interfaz guiada con la que interactúa el usuario) de la capa de lógica, encapsulada en bibliotecas independientes (\texttt{FantomaModuleLib} y \texttt{CorteModuleLib}); de este modo, la interfaz puede modificarse sin alterar el procesamiento, y viceversa. El segundo eje distingue el cómputo local del remoto: la interacción del usuario y la preparación de los datos ocurren en el equipo clínico, mientras que la segmentación, intensiva en recursos, se ejecuta en un equipo con GPU. Esta doble separación permite que el sistema sea portable y que cada componente evolucione de forma aislada.\\
 
 \subsection{Flujo de datos}
 
 El recorrido de los datos a través del sistema sigue una secuencia lineal de etapas, desde el escáner CT de entrada hasta los archivos STL listos para imprimir. La Ilustración~\ref{fig:arquitectura} resume este flujo.\\
 
-El proceso comienza cuando el usuario selecciona un escáner CT en formato NIfTI a través del módulo de segmentación. La imagen se preprocesa localmente, recortando los valores de unidades Hounsfield para descartar artefactos de relleno del escáner, y el resultado se transfiere al servidor remoto mediante SCP. En el servidor, \citet{wasserthal2023totalsegmentator} ejecuta sucesivamente las distintas tareas de segmentación sobre la GPU, generando una máscara por cada estructura anatómica reconocida. Estas máscaras se recuperan al equipo local, también por SCP, donde la etapa de consolidación las unifica en un único conjunto de estructuras. A continuación, las estructuras se cargan en la escena de 3D Slicer con una asignación de color según el tipo de tejido, momento en que el usuario puede inspeccionar visualmente el resultado en la vista tridimensional.\\
+El proceso comienza cuando el usuario selecciona un escáner TC en formato NIfTI a través del módulo de segmentación. La imagen se preprocesa localmente, recortando los valores altamente saturados para descartar artefactos de relleno del escáner, y el resultado se transfiere al servidor remoto mediante SCP. En el servidor, \citet{wasserthal2023totalsegmentator} ejecuta sucesivamente las distintas tareas de segmentación sobre la GPU, generando una máscara por cada estructura anatómica reconocida. Estas máscaras se recuperan al equipo local, también por SCP, donde la etapa de consolidación las unifica en un único conjunto de estructuras. A continuación, las estructuras se cargan en la escena de 3D Slicer con una asignación de color según el tipo de tejido, momento en que el usuario puede inspeccionar visualmente el resultado en la vista tridimensional.\\
 
-A partir de ese punto, el módulo de corte toma el control: el usuario recorta el modelo mediante planos interactivos, aplica las rutinas de preparación de malla y exporta cada estructura a un archivo STL. Estos archivos abandonan el sistema y continúan su recorrido en PrusaSlicer, donde se generan las instrucciones de impresión para la Prusa XL.\\
+A partir de ese punto, el módulo de corte toma el control: el usuario recorta el modelo mediante planos interactivos, aplica las rutinas de preparación de malla y exporta cada estructura a su archivo STL correspondiente. Estos archivos abandonan el sistema y continúan su recorrido en el laminador, donde se generan las instrucciones de impresión para la impresora 3D.\\
 
 \begin{figure}[h]
   \centering
@@ -48,12 +48,54 @@ A partir de ese punto, el módulo de corte toma el control: el usuario recorta e
 
 \subsection{Encadenamiento entre módulos}
 
-Los dos módulos de Slicer no se comunican directamente entre sí, sino a través de la escena compartida de la aplicación. El módulo de segmentación deposita en la escena un nodo de segmentación con las estructuras detectadas; el módulo de corte, al activarse, ofrece al usuario seleccionar ese nodo como entrada. Esta comunicación indirecta mantiene a ambos módulos desacoplados: el módulo de corte puede operar sobre cualquier segmentación presente en la escena —no solo la generada por el pipeline—, y el módulo de segmentación no necesita conocer las operaciones posteriores de corte y exportación.\\
+Los dos módulos de Slicer no se comunican directamente entre sí, sino a través de la escena compartida de la aplicación. El módulo de segmentación deposita en la escena un nodo de segmentación con las estructuras detectadas; el módulo de corte, al activarse, ofrece al usuario seleccionar ese nodo como entrada. Esta comunicación indirecta mantiene a ambos módulos desacoplados: el módulo de corte puede operar sobre cualquier segmentación presente en la escena (no solo la generada por el pipeline), y el módulo de segmentación no necesita conocer las operaciones posteriores de corte y exportación.\\
 
 \subsection{Comunicación entre el equipo local y el servidor remoto}
 
-La conexión entre el equipo clínico y el servidor con GPU se establece sobre una red privada virtual, que asigna a ambos extremos una dirección estable dentro de una red cifrada, independiente de la red física en que se encuentren. Sobre esta red, el sistema utiliza SSH para ejecutar comandos en el servidor y SCP para transferir archivos en ambos sentidos, apoyándose en un alias de conexión configurado una sola vez en cada equipo. La autenticación se realiza mediante un par de claves, sin contraseñas interactivas, lo que permite que el módulo orqueste la segmentación remota de forma autónoma, sin intervención del usuario durante el proceso.\\
+La conexión entre el equipo clínico y el servidor con GPU se establece sobre una VPN, que asigna a ambos extremos una dirección estable dentro de una red cifrada, independiente de la red física en que se encuentren. Sobre esta red, el sistema utiliza SSH para ejecutar comandos en el servidor y SCP para transferir archivos en ambos sentidos, apoyándose en un alias de conexión configurado una sola vez en cada equipo. La autenticación se realiza mediante un par de claves, sin contraseñas interactivas, lo que permite que el módulo orqueste la segmentación remota de forma autónoma, sin intervención del usuario durante el proceso.\\
 
 Una consideración de diseño relevante surge de la imposibilidad de ejecutar la segmentación dentro del hilo principal de 3D Slicer, debido a conflictos entre el mecanismo de creación de procesos de la herramienta de segmentación y el entorno de la aplicación. Para resolverlo, el procesamiento se delega a un proceso independiente lanzado desde el módulo, de modo que la interfaz permanezca receptiva y muestre el progreso mientras la segmentación avanza en segundo plano.\\
 
 \section{IMPLEMENTACIÓN DE LA SOLUCIÓN}
+
+La solución se implementó como dos módulos (\textit{scripted modules}) de 3D Slicer, escritos en Python. Toda la interfaz se construye de forma programática, sin archivos de descripción de interfaz externos, y la lógica de procesamiento se aísla en bibliotecas independientes (\texttt{FantomaModuleLib} y \texttt{CorteModuleLib}), de modo que la capa de presentación y la de procesamiento puedan evolucionar por separado. A continuación se detallan las decisiones de implementación de cada componente, así como las métricas con que se evaluó el motor de segmentación.\\
+
+\subsection{Módulo de segmentación}
+
+El módulo de segmentación implementa el flujo que va desde el escáner TC hasta las estructuras cargadas en la escena. La primera etapa es un preprocesamiento de la imagen que recorta los valores de unidades Hounsfield al rango $[-1024, 3071]$, con el fin de descartar valores atípicos provenientes del relleno del escáner que, de no corregirse, degradan la segmentación posterior.\\
+
+La segmentación propiamente tal se obtiene ejecutando sucesivamente varias tareas de \citet{wasserthal2023totalsegmentator}, entre ellas \texttt{total}, \texttt{body}, \texttt{head\_glands\_cavities}, \texttt{head\_muscles}, \texttt{headneck\_bones\_vessels}, \texttt{headneck\_muscles} y \texttt{tissue\_types}, cuyas máscaras se complementan para cubrir el conjunto de estructuras de interés del cuello. Una restricción técnica relevante es que la herramienta de segmentación no puede ejecutarse dentro del hilo principal de Slicer, debido a un conflicto entre su mecanismo interno de creación de procesos y el entorno de la aplicación. Para resolverlo, la segmentación se delega a un proceso independiente, lanzado mediante un \textit{script} auxiliar escrito en disco e invocado como subproceso; mientras este se ejecuta, un hilo de fondo mantiene la interfaz receptiva y reporta el progreso al usuario.\\
+
+Una vez generadas todas las máscaras, la etapa de consolidación las unifica en un único conjunto de estructuras. Aquí se aplica un filtro espacial: se conserva toda máscara que contenga al menos un vóxel no nulo y se descartan silenciosamente las vacías. Este criterio hace que el pipeline sea agnóstico a la imagen de entrada provocando que las estructuras que no aparecen en el volumen quedan vacías y se eliminan solas, sin necesidad de mantener una lista fija de nombres. Finalmente, cada estructura conservada se carga en la escena con un color asignado según su tipo de tejido, recurriendo a un color por defecto cuando la estructura no tiene una entrada específica en el mapa de colores.\\
+
+\subsection{Ejecución remota sobre GPU}
+
+La ejecución remota se implementó utilizando exclusivamente herramientas estándar (SSH y SCP) disponibles en los tres sistemas operativos de destino (Linux, MacOS y Windows), sin dependencias adicionales. La conexión se apoya en un alias configurado una sola vez en el archivo de configuración de SSH de cada equipo, y la autenticación se realiza mediante un par de claves sin contraseña interactiva, lo que permite que el módulo orqueste el proceso completo de forma autónoma. La secuencia consiste en crear un directorio de trabajo en el servidor, transferir la TC preprocesada, ejecutar el \textit{script} de segmentación sobre la GPU, recuperar las estructuras resultantes y limpiar los archivos temporales del servidor.\\
+
+Durante la implementación se debieron resolver incompatibilidades propias de la comunicación entre sistemas operativos distintos, en particular en la codificación de caracteres de la salida de los comandos remotos, que se normalizó a UTF-8 para evitar fallos de lectura. Asimismo, se forzó el vaciado inmediato de los \textit{buffers} de salida de los subprocesos, de modo que el progreso reportado al usuario refleje el avance real y no aparente bloqueos.\\
+
+\subsection{Módulo de corte y exportación}
+
+El módulo de corte opera sobre el nodo de segmentación presente en la escena. Para cada estructura, este obtiene su representación de superficie mediante la interfaz correspondiente de Slicer y le aplica los planos de corte definidos por el usuario en las orientaciones axial, coronal y sagital, con una opción de corte simétrico que conserva únicamente la zona central. Antes de exportar, se ejecutan rutinas de preparación de la malla como limpieza de triángulos degenerados, eliminación de fragmentos flotantes y cierre de superficies, que garantizan que el modelo resultante pueda ser impreso.\\
+
+La exportación a STL contempla tres transformaciones geométricas configurables: el centrado del modelo sobre la base de impresión, dejando su cara inferior en la cota cero; la rotación según el plano de corte que se haya utilizado como base; y un factor de escala. El resultado es un archivo STL por estructura, con la orientación y posición adecuadas para poder abrirse directamente en un laminador para impresion 3D.\\
+
+\subsection{Evaluación del motor de segmentación}
+
+La elección de \citet{wasserthal2023totalsegmentator} como motor de la solución no fue \textit{a priori}, sino el resultado de una evaluación comparativa frente a otras dos alternativas (MedSAM y YOLO) sobre diez casos reales de escáneres cervicales. Como referencia se utilizó la segmentación manual de 64 estructuras anatómicas realizada por un radiólogo especialista. A diferencia del pipeline del fantoma, esta evaluación exige una correspondencia estricta entre cada estructura predicha y su contraparte anotada, ya que sin dicha correspondencia no es posible calcular las métricas de superposición.\\
+
+La comparación se basó en cuatro criterios. Los dos primeros son métricas de superposición volumétrica. Sea $P$ el conjunto de vóxeles segmentados por el modelo y $G$ el conjunto de vóxeles de la segmentación de referencia. El coeficiente de Dice se define como:
+
+\begin{equation}
+\mathrm{Dice}(P,G) = \frac{2\,|P \cap G|}{|P| + |G|}
+\end{equation}
+
+y mide la superposición entre ambas regiones, ponderando al doble la intersección. La intersección sobre la unión (\textit{Intersection over Union}, IoU) se define como:
+
+\begin{equation}
+\mathrm{IoU}(P,G) = \frac{|P \cap G|}{|P \cup G|}
+\end{equation}
+
+y constituye una medida más estricta de la misma superposición. Ambos coeficientes toman valores en el intervalo $[0,1]$, donde $1$ indica coincidencia perfecta, y están relacionados de forma monótona mediante $\mathrm{IoU} = \mathrm{Dice}\,/\,(2 - \mathrm{Dice})$.\\
+
+A estas dos métricas se sumaron dos criterios de carácter práctico: la cobertura anatómica, entendida como la proporción de las estructuras de referencia que el modelo logra segmentar con contenido no vacío, y el tiempo de procesamiento por caso, considerando la transferencia de archivos y la segmentación. La combinación de estos cuatro criterios permitió fundamentar la selección del motor, cuyos resultados se presentan y discuten en el Capítulo~\ref{ch:resultados}.\\
