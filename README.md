@@ -153,7 +153,7 @@ Cada capítulo es un archivo en `docs/Memoria/chapters/chapterNN.tex`. Para agre
 ### Citas y bibliografía
 
 - Edita `docs/Memoria/referencias.bib` manualmente (formato BibTeX).
-- En el texto cita con `\citeA{clave}` (no `\cite{}` — el estilo `newapa` usa `\citeA`).
+- En el texto cita con `\citep{clave}` → "(Autor, Año)" o `\citet{clave}` → "Autor (Año)". El proyecto usa `natbib` + estilo Harvard `agsm`. **No** uses `\citeA` (era de `newapa`, que ya no se carga).
 - La bibliografía se genera automáticamente al compilar.
 
 ### Figuras
@@ -238,7 +238,7 @@ El archivo `Plantilla Memoria.docx` (raíz del repo) es el template oficial de l
 |---|---|---|
 | `Cmd+Opt+B` no compila | Falta la extensión LaTeX Workshop | Instalarla desde el Marketplace |
 | `Package minted Error: Package option "outputdir"...` | Versión vieja del template | Asegurarse de que el preámbulo dice `\usepackage{minted}` sin opciones |
-| `\citeA` undefined | Falta el paquete `newapa` | Verificar que `core/newapa.sty` exista |
+| `\citep` undefined | Falta `natbib` | Verificar que `preambulo.tex` cargue `\usepackage[round,authoryear,sort]{natbib}` | Verificar que `core/newapa.sty` exista |
 | Citas aparecen como `[?]` | No se corrió bibtex | Recompilar (latexmk hace las pasadas necesarias automáticamente) |
 | `command not found: pygmentize` | Falta Pygments | `pip install Pygments` |
 | Página en blanco antes de la portada | `\label` o contenido entre `\begin{document}` y `\input{primeras_paginas}` | No agregar nada ahí |
