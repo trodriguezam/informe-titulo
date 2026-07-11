@@ -70,7 +70,32 @@ El tiempo de segmentación de TotalSegmentator se situó en torno a los cinco mi
 
 \subsection{Generación del modelo imprimible}
 
-Como resultado del flujo completo, el sistema produce, a partir de una TC cervical, un conjunto de archivos STL (uno por estructura anatómica) centrados, orientados y cerrados, listos para abrirse en un laminador e imprimirse en una impresora 3D. De este modo, el recorrido que va desde la imagen médica hasta el modelo físico imprimible queda cubierto de forma automatizada y operable por personal sin formación en procesamiento de imágenes, cumpliendo el objetivo planteado para el producto.\\
+Como resultado del flujo completo, el sistema produce, a partir de una TC cervical, un conjunto de archivos STL (uno por estructura anatómica) centrados, orientados y cerrados, aptos para cargarse en un laminador e imprimirse sin correcciones previas. De este modo, el recorrido que va desde la imagen médica hasta el modelo imprimible queda cubierto de forma automatizada y operable por personal sin formación en procesamiento de imágenes, cumpliendo el objetivo planteado para el producto.\\
+
+Sobre esa base, y de forma opcional, los modelos admiten un paso adicional de optimización en el laminador: la simplificación de la malla —reduciendo el número de polígonos aproximadamente a la mitad— aligera el archivo y mejora la calidad del laminado sin pérdida perceptible de detalle anatómico. Este ajuste se realizó manualmente en las impresiones efectuadas y, si bien no es condición necesaria para imprimir, incorporarlo al propio módulo mejoraría el resultado de forma automática (véase la sección de mejoras).\\
+
+\subsection{Fantoma físico impreso}
+
+El recorrido completo se validó materialmente mediante la impresión de varios fantomas a partir de los archivos generados por el sistema, lo que confirma que el pipeline entrega un objeto físico coherente con la TC de entrada. Los modelos se imprimieron en PLA por deposición de material fundido, a un 60\% del tamaño anatómico real, escala necesaria para ajustar las piezas a las dimensiones de la cama de impresión. La pieza más detallada requirió aproximadamente 23,5 horas de impresión.\\
+
+La Ilustración~\ref{fig:fantoma-axial} muestra un corte transversal del cuello, en el que se distinguen la piel y el tejido graso subcutáneo, la musculatura cervical, la vértebra y la vía aérea, cada estructura diferenciada por color. La Ilustración~\ref{fig:fantoma-sagital} presenta cortes sagitales de un segundo caso, donde se aprecian las vértebras cervicales, la mandíbula y el trayecto de la vía aérea. En ambos casos, las estructuras reproducen la anatomía individual del paciente de origen, que es precisamente la diversidad morfológica que los fantomas comerciales genéricos no ofrecen.\\
+
+Las impresiones se realizaron con un único material (PLA) y con varios colores, lo que permite distinguir visualmente los tejidos pero mantiene una rigidez uniforme en toda la pieza. En consecuencia, los fantomas obtenidos hasta la fecha habilitan la observación y el reconocimiento anatómico de la región de la cricotiroidotomía, pero no reproducen la consistencia diferenciada del tejido blando que requeriría la práctica de la incisión con realismo táctil. Esta limitación, anticipada en el Capítulo~\ref{ch:problematica}, se aborda entre las mejoras propuestas. La validación clínica del fantoma con el equipo médico se encuentra pendiente.\\
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.8\textwidth]{imagenes/fantoma-axial.png}
+  \caption{Corte transversal del fantoma cervical impreso, con las estructuras 
+  anatómicas diferenciadas por color: piel y tejido graso subcutáneo, musculatura, vértebra y vía aérea.}
+  \label{fig:fantoma-axial}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.8\textwidth]{imagenes/fantoma-sagital.png}
+  \caption{Cortes sagitales de un fantoma impreso, mostrando vértebras cervicales, mandíbula y vía aérea.}
+  \label{fig:fantoma-sagital}
+\end{figure}
 
 \section{POSIBLES MEJORAS}
 
@@ -81,7 +106,7 @@ Aunque el sistema cumple los objetivos planteados para el producto, la evaluaci�
 
   \item \textbf{Automatización del corte:} actualmente el recorte del modelo se realiza de forma manual mediante planos interactivos. Una mejora consistiría en detectar automáticamente la región de interés en torno a la membrana cricotiroidea y proponer los planos de corte de manera asistida, reduciendo la interacción requerida y la variabilidad entre usuarios.
 
-  \item \textbf{Integración hacia la impresión:} el flujo entrega archivos STL que deben abrirse manualmente en PrusaSlicer. Incorporar al propio módulo la asignación automática de materiales y colores por tipo de tejido, e idealmente la generación del laminado, acortaría el recorrido hasta la impresión y reduciría los pasos a cargo del usuario.
+  \item \textbf{Integración hacia la impresión:} el flujo entrega archivos STL imprimibles que, no obstante, deben abrirse manualmente en el laminador, donde además resulta conveniente simplificar la malla para optimizar el resultado. Incorporar al propio módulo esta simplificación, junto con la asignación automática de materiales y colores por tipo de tejido e idealmente la generación del laminado, acortaría el recorrido hasta la impresión y reduciría los pasos a cargo del usuario.
 
   \item \textbf{Reducción de la dependencia de infraestructura remota:} el sistema delega la segmentación en una GPU remota, lo que exige conectividad y configuración previa. Optimizar la ejecución para que pueda correr localmente en tiempos razonables aumentaría la autonomía y portabilidad del sistema, especialmente en entornos clínicos con recursos limitados.
 
