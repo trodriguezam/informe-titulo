@@ -1,0 +1,36 @@
+\chapter{Conclusiones}
+\label{ch:conclusiones}
+
+\section{CUMPLIMIENTO DE LOS OBJETIVOS}
+
+El problema que dio origen a este trabajo era concreto: la generación de fantomas anatómicos personalizados resultaba inviable a escala porque dependía de la segmentación manual de un especialista, un proceso que consume varias horas de trabajo experto por cada caso. Esa dependencia condenaba a los estudiantes de medicina a entrenar sobre los mismos modelos genéricos, sin exposición a la variabilidad anatómica que encontrarán en la práctica clínica.\\
+
+El sistema desarrollado cierra esa brecha. A partir de un escáner TC en formato NIfTI, produce de forma automatizada un conjunto de estructuras anatómicas segmentadas, recortadas y exportadas a archivos STL imprimibles, en un tiempo de procesamiento cercano a los cinco minutos por caso. Lo que antes exigía la dedicación de un radiólogo durante horas se resuelve ahora sin intervención experta, mediante una interfaz guiada operable por personal sin formación en procesamiento de imágenes. El objetivo central del proyecto se cumple.\\
+
+El recorrido completo quedó además validado materialmente. Los archivos generados por el sistema se imprimieron efectivamente, produciendo fantomas físicos que reproducen la anatomía cervical individual de los casos de origen. Con ello, la cadena que va desde la imagen médica hasta el objeto tangible —adquisición, segmentación, exportación y fabricación— queda cubierta de extremo a extremo, que era precisamente el eslabón que la literatura revisada dejaba sin resolver de manera integrada \citep{bucking2017workflow}.\\
+
+\section{PRINCIPALES HALLAZGOS}
+
+La evaluación comparativa de los tres modelos de segmentación entregó conclusiones que exceden la mera selección de una herramienta. TotalSegmentator se impuso con claridad, alcanzando un coeficiente de Dice promedio de 0,979 sobre las estructuras que efectivamente segmenta y una cobertura de 58 de las 64 estructuras anotadas por el radiólogo. Las seis estructuras restantes se concentran en la región craneofacial y ninguna resulta crítica para la observación de la cricotiroidotomía, cuyo punto anatómico de interés queda íntegramente cubierto.\\
+
+Un hallazgo metodológico relevante surgió al examinar la cobertura de los modelos alternativos. Evaluados de forma nominal, tanto MedSAM como YOLO parecían detectar la totalidad de las estructuras de referencia; sin embargo, esa cifra resultó ser un artefacto de las coincidencias triviales sobre estructuras ausentes del volumen analizado. Al descartar esos casos y exigir una superposición mínima frente a una referencia con contenido real, el desempeño de YOLO se desplomó a unas pocas estructuras de alto contraste y gran superficie. La lección es de alcance general: en tareas de segmentación multiclase sobre volúmenes médicos, las métricas de cobertura pueden inducir a error si no se filtran explícitamente las estructuras sin contraparte anotada.\\
+
+Finalmente, el sistema demostró no estar atado a la anatomía cervical: la segmentación exitosa de un caso correspondiente a una región distinta confirmó que la arquitectura generaliza, y que la limitación actual reside en la configuración de las tareas de segmentación y no en el diseño del flujo.\\
+
+\section{LIMITACIONES DEL TRABAJO}
+
+El alcance de lo logrado debe enunciarse con precisión. Los fantomas impresos hasta la fecha son piezas rígidas de un único material, diferenciadas por color pero no por consistencia. Habilitan, por tanto, la observación y el reconocimiento anatómico de la región de interés, pero no reproducen la sensación táctil de la incisión sobre tejido blando, que es una de las competencias que el entrenamiento en cricotiroidotomía busca desarrollar. El fantoma es hoy una herramienta de estudio anatómico personalizado más que un simulador de la maniobra completa.\\
+
+Asimismo, la validación clínica con el equipo médico se encuentra pendiente. Sin ella, la utilidad formativa del fantoma constituye una expectativa fundamentada en la literatura y en el criterio de diseño, pero no un resultado verificado con usuarios reales. Esta validación es, a juicio de los autores, la prioridad más urgente para la continuación del trabajo, por encima de cualquier mejora técnica adicional.\\
+
+Por último, la base de evaluación se compone de diez casos, un número suficiente para fundamentar la selección del motor de segmentación pero limitado para caracterizar el comportamiento del sistema frente a anatomías patológicas o atípicas, que son precisamente aquellas en que un fantoma personalizado aportaría mayor valor.\\
+
+\section{PROYECCIÓN E IMPACTO}
+
+Más allá del artefacto construido, el trabajo sugiere una forma distinta de entender el acceso al entrenamiento quirúrgico. Los fantomas comerciales son costosos, importados y anatómicamente uniformes; producir uno personalizado requería hasta ahora recursos que solo centros con financiamiento dedicado podían permitirse. El sistema desarrollado invierte esa lógica: se apoya íntegramente en software de código abierto y opera sobre imágenes médicas que las instituciones de salud ya poseen, generadas en el curso normal de la atención clínica. No exige, por tanto, adquirir modelos nuevos ni someter a ningún paciente a estudios adicionales; reutiliza información existente.\\
+
+Esto abre la posibilidad de que una institución constituya progresivamente una biblioteca de casos propios, en lugar de depender de un catálogo externo de modelos genéricos. Cada tomografía cervical archivada se convierte en un fantoma potencial, y el costo marginal de incorporar un caso nuevo pasa a ser el del material de impresión y el tiempo de máquina. La diversidad anatómica sobre la que un estudiante puede entrenar deja de estar limitada por el presupuesto y pasa a estarlo únicamente por la disponibilidad de casos, que en un hospital es abundante.\\
+
+Existe también una dimensión de autonomía que conviene señalar. Un flujo construido sobre herramientas abiertas y ejecutable en equipamiento modesto puede ser adoptado, auditado y modificado por la propia institución, sin quedar atado a un proveedor ni a licencias que condicionen su continuidad. En un contexto donde los programas de simulación clínica en el país dependen mayoritariamente de material importado de alto costo, esa independencia no es un detalle menor.\\
+
+El camino por recorrer sigue siendo considerable, y las líneas de trabajo identificadas en el Capítulo~\ref{ch:resultados} lo delinean. Pero el resultado central de esta memoria es que ese camino ya no es hipotético: existe un sistema funcional, un flujo reproducible y un objeto físico que lo demuestra.\\
