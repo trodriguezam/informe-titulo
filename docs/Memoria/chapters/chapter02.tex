@@ -3,15 +3,29 @@
 
 \section{DESCRIPCIÓN DE LA SOLUCIÓN}
 
-Frente a la falta de fantomas anatómicamente diversos para el entrenamiento de procedimientos de emergencia como la cricotiroidotomía, se propone un sistema que automatiza la generación de fantomas de cuello personalizados a partir de escáneres de TC de pacientes reales. La solución reemplaza el flujo manual de segmentación, corrección y exportación, el cual es lento y dependiente de un operador con experiencia en herramientas de modelamiento 3D, por un pipeline reproducible que un estudiante o docente de medicina puede ejecutar sin conocimientos de procesamiento de imágenes ni de impresión 3D.\\
+Frente a la falta de fantomas anatómicamente diversos para el entrenamiento de procedimientos de emergencia como la cricotiroidotomía, se propone un sistema que automatiza la generación de fantomas de cuello personalizados a partir de escáneres de TC de pacientes reales. La solución reemplaza el flujo manual de segmentación, corrección y exportación, lento y dependiente de un operador con experiencia en herramientas de modelamiento 3D, por un flujo reproducible que un estudiante o docente de medicina puede ejecutar sin conocimientos de procesamiento de imágenes ni de impresión 3D.\\
 
-El sistema se organiza en cuatro etapas: a) ingreso de la TC en formato NIfTI; b) segmentación automática de las estructuras anatómicas relevantes para la vía aérea y el cuello (vértebras cervicales, cartílagos, tráquea, músculos, glándulas, tejidos blandos, entre otras); c) exportación de cada estructura segmentada a un archivo STL independiente, con asignación de color según el tipo de tejido; y d) preparación de los STL en PrusaSlicer para su impresión multimaterial en una impresora Prusa XL. Estas cuatro etapas se exponen al usuario final a través de un módulo personalizado de 3D Slicer, de modo que la complejidad del pipeline (ejecución remota en GPU, consolidación de segmentos, mapeo de colores) queda oculta detrás de una interfaz simple.\\
+El sistema se organiza en cuatro etapas: a) ingreso de la TC en formato NIfTI; b) segmentación automática de las estructuras anatómicas relevantes para la vía aérea y el cuello (vértebras cervicales, cartílagos, tráquea, músculos, glándulas y tejidos blandos, entre otras); c) exportación de cada estructura segmentada a un archivo STL independiente, con asignación de color según el tipo de tejido; y d) preparación de los archivos STL en el laminador para su impresión. Estas cuatro etapas se exponen al usuario final a través de dos módulos personalizados de 3D Slicer, de modo que la complejidad interna del flujo (ejecución remota en GPU, consolidación de segmentos, mapeo de colores) queda oculta detrás de una interfaz simple.\\
 
-Para la etapa de segmentación automática se evaluaron comparativamente tres alternativas (TotalSegmentator, MedSAM y YOLO) sobre una base de diez casos de cuello con segmentación manual de referencia realizada por un radiólogo. Como resultado de esta evaluación se seleccionó TotalSegmentator \citep{wasserthal2023totalsegmentator} como motor de segmentación de la solución, dado su desempeño consistentemente superior frente a las estructuras de interés del proyecto.\\
+% SUGERENCIA DE FIGURA — diagrama de las cuatro etapas (a–d) de la solución.
+% Ubicación recomendada: aquí, inmediatamente después de enunciarlas.
+% Figura recomendada: un diagrama de las cuatro etapas a–d, justo después de enunciarlas. Es distinto del diagrama de arquitectura de ch03: este es conceptual (qué hace el sistema), aquel es técnico (cómo fluyen los datos). Dejé el comentario marcado.
 
-A diferencia del flujo de comparación de modelos, que exige mantener una correspondencia estricta con las estructuras anotadas manualmente por el radiólogo, el pipeline del fantoma adopta un criterio más permisivo: se conserva cualquier estructura detectada con contenido no vacío, independientemente de si fue parte del conjunto de referencia. Este enfoque hace que el sistema sea agnóstico a la imagen de entrada, permitiendo procesar casos nuevos sin necesidad de una segmentación manual previa que sirva de comparación.\\
+Para la etapa de segmentación automática se evaluaron comparativamente tres alternativas (TotalSegmentator, MedSAM y YOLO) sobre una base de diez casos de cuello con segmentación manual de referencia realizada por un radiólogo. Como resultado de esa evaluación se seleccionó TotalSegmentator \citep{wasserthal2023totalsegmentator} como motor de segmentación de la solución, dado su desempeño consistentemente superior sobre las estructuras de interés del proyecto.\\
 
-El cómputo de la segmentación, el cual presenta un uso intenso de GPU, se ejecuta de forma remota en una máquina dedicada, comunicándose mediante SSH sobre una red privada. Esta decisión de arquitectura permite que el módulo de Slicer corra en un equipo sin GPU dedicada, ampliando el alcance de la herramienta a los computadores típicamente disponibles en un contexto docente.\\
+A diferencia del flujo de comparación de modelos, que exige mantener una correspondencia estricta con las estructuras anotadas manualmente por el radiólogo, el flujo del fantoma adopta un criterio más permisivo: conserva cualquier estructura detectada con contenido no vacío, con independencia de si formó parte del conjunto de referencia. Este enfoque hace que el sistema sea agnóstico a la imagen de entrada y permite procesar casos nuevos sin necesidad de una segmentación manual previa que sirva de comparación.\\
+
+El cómputo de la segmentación, intensivo en uso de GPU, se ejecuta de forma remota en una máquina dedicada, comunicándose mediante SSH sobre una red privada. Esta decisión de arquitectura permite que los módulos de Slicer corran en un equipo sin GPU dedicada, ampliando el alcance de la herramienta a los computadores típicamente disponibles en un contexto docente.\\
+
+\section{VIABILIDAD DE LA SOLUCIÓN}
+
+La viabilidad de la solución se sostiene sobre tres consideraciones.\\
+
+En lo técnico, cada etapa del flujo se apoya en componentes que ya existen y están validados de forma independiente: TotalSegmentator para la segmentación, 3D Slicer como plataforma de visualización y desarrollo de módulos, y las herramientas estándar de impresión 3D para la fabricación. El aporte del trabajo no consiste en construir un modelo de segmentación desde cero, sino en orquestar estas piezas en un recorrido continuo y automatizado, que es precisamente el eslabón que la literatura revisada deja sin resolver. La factibilidad de cada componente por separado reduce el riesgo técnico del conjunto.\\
+
+En lo económico, el sistema se construye íntegramente sobre software de código abierto y sin costo de licencia, y opera sobre imágenes médicas que las instituciones de salud ya poseen, generadas en el curso normal de la atención clínica. El único costo recurrente es el material de impresión. El insumo más caro del flujo manual, que son las horas de un radiólogo, desaparece.\\
+
+En lo operacional, el usuario final no requiere formación en procesamiento de imágenes ni hardware especializado: interactúa con una interfaz guiada y el cómputo exigente se delega a una máquina remota. Esto mantiene el requerimiento de infraestructura del lado del usuario dentro de lo que un equipo docente ya tiene disponible.\\
 
 \section{REQUISITOS}
 
@@ -22,34 +36,50 @@ El cómputo de la segmentación, el cual presenta un uso intenso de GPU, se ejec
   \item Ejecutar la segmentación automática de las estructuras anatómicas relevantes para la vía aérea y el cuello, delegando el cómputo a una máquina remota con GPU mediante conexión SSH.
   \item Consolidar los segmentos obtenidos descartando únicamente aquellos sin contenido (máscaras vacías), de manera agnóstica a la imagen de entrada.
   \item Exportar cada estructura segmentada a un archivo STL independiente, asignando un color según el tipo de tejido al que pertenece.
-  \item Permitir el corte y reorientación de las estructuras exportadas mediante planos interactivos, previo a su impresión.
+  \item Permitir el corte y la reorientación de las estructuras exportadas mediante planos interactivos, previo a su impresión.
   \item Generar un reporte que indique qué estructuras fueron detectadas y cuáles no, para cada caso procesado.
-  \item Permitir la visualización de las superficies 3D generadas dentro de 3D Slicer antes de exportar a impresión.
+  \item Permitir la visualización de las superficies tridimensionales generadas dentro de 3D Slicer antes de exportar a impresión.
 \end{enumerate}
 
 \subsection{Requisitos operacionales}
 
 \begin{enumerate}
   \item El sistema debe operar como un módulo instalable dentro de 3D Slicer (versión 5.10 o superior), sin requerir conocimientos de programación por parte del usuario final.
-  \item El equipo del usuario no requiere GPU dedicada: el cómputo intensivo de la segmentación se ejecuta de forma remota en la máquina del profesor guía, mediante una red privada (Tailscale) y autenticación por llave SSH.
-  \item La máquina remota debe contar con TotalSegmentator instalado y, para las tareas que lo requieran (\textit{tissue\_types}), con la licencia académica correspondiente activada.
-  \item Los archivos STL resultantes deben ser compatibles con PrusaSlicer para su preparación e impresión en una impresora Prusa XL multimaterial.
+  \item El equipo del usuario no requiere GPU dedicada: el cómputo intensivo de la segmentación se ejecuta de forma remota, mediante una red privada y autenticación por llave SSH.
+  \item La máquina remota debe contar con TotalSegmentator instalado y, para las tareas que lo requieran, con la licencia académica correspondiente activada.
+  \item Los archivos STL resultantes deben poder cargarse en un laminador estándar sin requerir reparación previa de la malla.
   \item El tiempo de procesamiento esperado por caso, incluyendo transferencia de archivos y segmentación remota, no debe superar los 30 minutos.
 \end{enumerate}
 
-\subsection{Atributos de calidad}
+\section{CRITERIOS Y RESTRICCIONES}
+
+\subsection{Criterios de calidad del producto}
 
 \begin{enumerate}
-  \item \textbf{Precisión:} las estructuras críticas para la observación de la cricotiroidotomía (vía aérea, cartílagos, vértebras cervicales) deben alcanzar un coeficiente de Dice promedio igual o superior a 0.90 frente a la segmentación de referencia del radiólogo.
-  \item \textbf{Usabilidad:} el módulo debe ocultar la complejidad técnica del pipeline (ejecución remota, consolidación de segmentos, mapeo de colores) detrás de una interfaz simple, utilizable por personal médico sin formación en procesamiento de imágenes.
-  \item \textbf{Portabilidad:} el módulo debe funcionar tanto en Windows como en macOS, sin depender de hardware gráfico especializado en el equipo local.
-  \item \textbf{Mantenibilidad:} la separación entre el módulo de segmentación (FantomaModule) y el módulo de corte y exportación (CorteModule) debe permitir modificar uno sin afectar el funcionamiento del otro.
+  \item \textbf{Precisión:} las estructuras críticas para la observación de la cricotiroidotomía (vía aérea, cartílagos y vértebras cervicales) deben alcanzar un coeficiente de Dice promedio igual o superior a 0,90 frente a la segmentación de referencia del radiólogo.
+  \item \textbf{Usabilidad:} los módulos deben ocultar la complejidad técnica del flujo (ejecución remota, consolidación de segmentos, mapeo de colores) detrás de una interfaz simple, utilizable por personal médico sin formación en procesamiento de imágenes.
+  \item \textbf{Portabilidad:} los módulos deben funcionar tanto en Windows como en macOS, sin depender de hardware gráfico especializado en el equipo local.
+  \item \textbf{Mantenibilidad:} la separación entre el módulo de segmentación y el módulo de corte y exportación debe permitir modificar uno sin afectar el funcionamiento del otro.
 \end{enumerate}
+
+\subsection{Criterios de selección del motor de segmentación}
+
+La elección de la herramienta de segmentación no se dio por sentada, sino que se resolvió mediante una comparación sobre cuatro criterios, cuya definición formal y cuyos resultados se presentan en los Capítulos~\ref{ch:diseno-del-producto} y~\ref{ch:resultados} respectivamente:
+
+\begin{enumerate}
+  \item \textbf{Coeficiente de Dice:} cuánto se superpone la estructura predicha por el modelo con la delimitada por el radiólogo.
+  \item \textbf{Intersección sobre la unión (IoU):} la misma superposición medida de forma más estricta.
+  \item \textbf{Cobertura anatómica:} cuántas de las 64 estructuras de referencia logra segmentar cada modelo con contenido real.
+  \item \textbf{Tiempo de procesamiento:} el costo temporal por caso, considerando transferencia de archivos y segmentación.
+\end{enumerate}
+
+Los dos primeros criterios miden qué tan bien segmenta el modelo aquello que detecta; el tercero, cuánto de la anatomía alcanza a cubrir; y el cuarto, si el flujo resulta operable en la práctica. Un modelo preciso pero de cobertura reducida, o de cobertura amplia pero lento, no sirve al propósito del sistema, de modo que los cuatro criterios debían considerarse en conjunto.\\
 
 \subsection{Restricciones}
 
 \begin{enumerate}
-  \item Los diez casos de evaluación y la segmentación manual de referencia (ground truth) del radiólogo se mantienen únicamente en el equipo local del equipo de trabajo; la infraestructura remota se utiliza exclusivamente para la segmentación del pipeline del fantoma.
-  \item El uso de la tarea \textit{tissue\_types} de TotalSegmentator está condicionado a la disponibilidad de una licencia académica activa.
-  \item La impresión multimaterial está restringida al equipo disponible en el proyecto (Prusa XL), por lo que el mapeo de colores y materiales se diseña en función de sus capacidades.
+  \item Los diez casos de evaluación y la segmentación manual de referencia (\textit{ground truth}) del radiólogo se mantienen únicamente en el equipo local del equipo de trabajo; la infraestructura remota se utiliza exclusivamente para la segmentación del flujo del fantoma.
+  \item El uso de la tarea \textit{tissue\_types} de TotalSegmentator, que aporta las estructuras de tejido blando, está condicionado a una licencia académica gratuita, activada previamente en la máquina remota. Las demás tareas empleadas no requieren licencia.
+  \item Los fantomas de este trabajo se imprimen con un único material, diferenciando los tejidos por color pero no por consistencia. La impresión con materiales de distinta dureza por tipo de tejido queda fuera del alcance y se plantea como mejora futura en el Capítulo~\ref{ch:resultados}.
+  \item El sistema opera sobre escáneres de cuello y cabeza. Procesar otras regiones anatómicas requiere reconfigurar las tareas de segmentación, aunque la arquitectura del flujo no cambia.
 \end{enumerate}

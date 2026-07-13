@@ -1,9 +1,13 @@
 # macOS
 .DS_Store
 
-docs/Memoria/figuras/*.aux
-docs/Memoria/figuras/*.log
-docs/Memoria/figuras/*.pdf
+docs/Memoria/diagramas/*.aux
+docs/Memoria/diagramas/*.log
+docs/Memoria/diagramas/*.pdf
+docs/Memoria/diagramas/*.fdb_latexmk
+docs/Memoria/diagramas/*.fls
+docs/Memoria/diagramas/*.synctex.gz
+docs/Memoria/diagramas/*.xdv
 
 # Artefactos de compilación LaTeX (todos viven junto al .tex porque usamos -cd)
 docs/Memoria/*.aux

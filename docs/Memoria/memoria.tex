@@ -14,47 +14,13 @@
 
 %%%%%%%%%% Resumen (máximo 1 página) %%%%%%%%%%
 \newcommand{\resumen}{%
-El entrenamiento en procedimientos quirúrgicos de urgencia, como la 
-cricotiroidotomía, depende de fantomas anatómicos que reproducen una anatomía 
-genérica y estandarizada, ajena a la variabilidad morfológica real de los 
-pacientes. La alternativa —construir un fantoma a partir de las imágenes médicas 
-de un caso concreto— resulta hoy inviable a escala, porque exige que un 
-especialista delimite manualmente las estructuras anatómicas sobre el escáner, un 
-trabajo que consume varias horas por cada caso y que restringe esta herramienta a 
-proyectos con financiamiento dedicado.\\
+El entrenamiento en procedimientos quirúrgicos de urgencia, como la cricotiroidotomía, depende de fantomas anatómicos que reproducen una anatomía genérica y estandarizada, ajena a la variabilidad morfológica real de los pacientes. La alternativa, que consiste en construir un fantoma a partir de las imágenes médicas de un caso concreto, resulta hoy inviable a escala, porque exige que un especialista delimite manualmente las estructuras anatómicas sobre el escáner, un trabajo que consume varias horas por cada caso y que restringe esta herramienta a proyectos con financiamiento dedicado.\\
 
-Este trabajo aborda dicha brecha mediante un sistema que automatiza el recorrido 
-completo desde la imagen médica hasta el modelo físico imprimible. A partir de una 
-tomografía computarizada cervical en formato NIfTI, el sistema delimita 
-automáticamente las estructuras anatómicas relevantes, las consolida en un único 
-conjunto, permite recortar el modelo mediante planos interactivos y exporta un 
-archivo STL por estructura, listo para imprimirse. Todo el flujo se expone al 
-usuario a través de dos módulos personalizados de 3D Slicer, de modo que la 
-complejidad técnica queda oculta tras una interfaz guiada, operable por personal 
-sin formación en procesamiento de imágenes.\\
+Este trabajo aborda dicha brecha mediante un sistema que automatiza el recorrido completo desde la imagen médica hasta el modelo físico imprimible. A partir de una tomografía computarizada cervical en formato NIfTI, el sistema delimita automáticamente las estructuras anatómicas relevantes, las consolida en un único conjunto, permite recortar el modelo mediante planos interactivos y exporta un archivo STL por estructura, listo para imprimirse. Todo el flujo se expone al usuario a través de dos módulos personalizados de 3D Slicer, de modo que la complejidad técnica queda oculta tras una interfaz guiada, operable por personal sin formación en procesamiento de imágenes.\\
 
-El núcleo técnico del sistema es la segmentación automática, y su elección no fue 
-tomada de antemano. Se evaluaron comparativamente tres modelos —TotalSegmentator, 
-MedSAM y YOLO— sobre diez escáneres cervicales reales, contrastándolos contra la 
-segmentación manual de 64 estructuras anatómicas realizada por un radiólogo 
-especialista. TotalSegmentator resultó claramente superior, con un coeficiente de 
-Dice promedio de 0,979 y una cobertura de 58 de las 64 estructuras de referencia, 
-en un tiempo cercano a los cinco minutos por caso. Las estructuras no cubiertas se 
-concentran en la región craneofacial y ninguna resulta crítica para observar la 
-cricotiroidotomía, cuyo punto anatómico de interés queda íntegramente comprendido. 
-El análisis reveló además que las métricas de cobertura pueden inducir a error si 
-no se descartan explícitamente las coincidencias triviales sobre estructuras 
-ausentes del volumen evaluado.\\
+El núcleo técnico del sistema es la segmentación automática, y su elección no fue tomada de antemano. Se evaluaron comparativamente tres modelos (TotalSegmentator, MedSAM y YOLO) sobre diez escáneres cervicales reales, contrastándolos contra la segmentación manual de 64 estructuras anatómicas realizada por un radiólogo especialista. TotalSegmentator resultó superior en las cuatro métricas empleadas, con un coeficiente de Dice promedio de 0,979 y una cobertura efectiva del 90,8\% de las estructuras de referencia, sostenida de forma estable a lo largo de los diez casos. Las estructuras no cubiertas se concentran en la región craneofacial y ninguna resulta crítica para observar la cricotiroidotomía. El análisis reveló además que las métricas de cobertura pueden inducir a error si no se verifica que la estructura de referencia tenga contenido real en el volumen evaluado\\
 
-El sistema se validó materialmente: los archivos que produce se imprimieron 
-efectivamente, dando lugar a fantomas físicos que reproducen la anatomía individual 
-de los casos de origen. Las piezas obtenidas, rígidas y de un único material, 
-habilitan el reconocimiento anatómico de la región de interés, si bien reproducir 
-la consistencia táctil del tejido blando y validar la herramienta con usuarios 
-clínicos quedan como trabajo pendiente. El aporte central es un flujo reproducible, 
-construido sobre software de código abierto, que opera sobre imágenes clínicas ya 
-existentes y reduce el costo de producir fantomas anatómicamente diversos a una 
-fracción del actual.
+El sistema se validó materialmente: los archivos que produce se imprimieron efectivamente, dando lugar a fantomas físicos que reproducen la anatomía individual de los casos de origen. Las piezas obtenidas, rígidas y de un único material, habilitan el reconocimiento anatómico de la región de interés, si bien reproducir la consistencia táctil del tejido blando y validar la herramienta con usuarios clínicos quedan como trabajo pendiente. El aporte central es un flujo reproducible, construido sobre software de código abierto, que opera sobre imágenes clínicas ya existentes y elimina la dependencia del trabajo manual de un especialista, que era el principal obstáculo para producir fantomas anatómicamente diversos.
 }
 
 %%%%%%%%%% Agradecimientos %%%%%%%%%%
