@@ -42,6 +42,8 @@ Esa cifra resultó ser un artefacto. El coeficiente de Dice está indefinido cua
 
 Por ello se adoptó una definición más estricta, la cobertura efectiva: la proporción de estructuras cuyo Dice supera $0{,}3$, calculada únicamente sobre aquellas que tienen contenido real en el volumen de cada caso. Bajo este criterio, TotalSegmentator alcanza un 90,8\% de cobertura, con un rango entre 90,5\% y 93,0\% a lo largo de los diez casos. MedSAM desciende a un 81,4\%, con un rango bastante más amplio (entre 76,7\% y 87,5\%), pese a contar con los recuadros de referencia como guía. YOLO cae a un 13,4\%.\\
 
+El umbral de $0{,}3$ se fijó de forma deliberadamente permisiva: no busca certificar una segmentación de calidad clínica, sino distinguir una predicción que guarda relación espacial con la estructura anotada de una que no la tiene. Un umbral más exigente habría penalizado aún más a MedSAM y YOLO, de modo que la conclusión comparativa es conservadora respecto de ellos.\\
+
 El detalle de las estructuras que cada modelo supera de forma consistente resulta más informativo que las cifras agregadas. TotalSegmentator supera el umbral en 58 estructuras en al menos ocho de los diez casos; MedSAM, en 50; YOLO, en apenas 7. Y esas siete son el contorno corporal (\texttt{body}, \texttt{body\_trunc}, \texttt{body\_extremities}, \texttt{head}), la piel, la grasa subcutánea y el músculo esquelético como masa global: todas envolturas externas o regiones de gran volumen y alto contraste. YOLO no logra segmentar de forma fiable ninguna estructura anatómica interna, que son precisamente las que un fantoma de cricotiroidotomía necesita.\\
 
 Estos resultados son coherentes con la naturaleza de cada modelo. YOLO fue concebido para detección bidimensional en imágenes naturales y se evaluó procesando la TC corte a corte, una tarea para la que no fue diseñado. MedSAM, aunque especializado en imágenes médicas, depende de indicaciones que en un flujo autónomo no están disponibles, y mostró dificultades particulares en estructuras finas o de bajo contraste. TotalSegmentator está entrenado específicamente para segmentación volumétrica multiclase sobre TC, lo que explica su superioridad. Su estabilidad frente a la variabilidad de los casos, incluido aquel con un campo de visión reducido, fue un criterio determinante en su selección como motor del sistema.\\
@@ -61,6 +63,8 @@ Estos resultados son coherentes con la naturaleza de cada modelo. YOLO fue conce
 \end{figure}
 
 \subsection{Cobertura anatómica del sistema integrado}
+
+Las cifras de esta subsección se expresan sobre el total nominal de 64 estructuras, a diferencia de la cobertura efectiva de la Tabla~\ref{tab:comparacion}, cuyo denominador se ajusta caso a caso según las estructuras con contenido real. Ambas coinciden en los casos donde la referencia está completa.\\
 
 Integrado en el flujo, TotalSegmentator detecta 58 de las 64 estructuras anotadas por el radiólogo, equivalente a un 90,6\% de cobertura. La incorporación de la tarea \texttt{tissue\_types} permitió recuperar las estructuras de tejido blando que antes quedaban fuera (\texttt{skeletal\_muscle}, \texttt{subcutaneous\_fat} y \texttt{torso\_fat}), elevando la cobertura desde 55 hasta 58 estructuras. Las categorías de vértebras, músculos, glándulas, ojos y tejidos blandos se cubren en su totalidad, y la vía aérea casi por completo.\\
 
