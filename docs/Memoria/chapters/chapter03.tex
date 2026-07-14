@@ -95,7 +95,7 @@ Una restricción técnica relevante es que TotalSegmentator no puede ejecutarse 
 
 Una vez generadas todas las máscaras, la etapa de consolidación las unifica en un único conjunto de estructuras aplicando un filtro espacial: se conserva toda máscara que contenga al menos un vóxel no nulo y se descartan las vacías. Este criterio, y no una lista fija de nombres, es lo que hace al sistema agnóstico a la imagen de entrada. Las estructuras que no aparecen en el volumen analizado quedan vacías y se eliminan solas, sin necesidad de mantener un catálogo que actualizar cada vez que se agrega una tarea.\\
 
-La decisión tiene una consecuencia deliberada: el módulo conserva todas las estructuras con contenido real, incluidas aquellas que el radiólogo no anotó. El conjunto de referencia de 64 estructuras sirve para comparar modelos, no para limitar la salida del sistema. El alcance de esta diferencia se cuantifica en el Capítulo~\ref{ch:resultados}.\\
+La decisión tiene una consecuencia deliberada: el módulo conserva todas las estructuras con contenido real, incluidas aquellas que no forman parte del conjunto de referencia. Ese conjunto sirve para comparar modelos, no para limitar la salida del sistema. El alcance de esta diferencia se cuantifica en el Capítulo~\ref{ch:resultados}.\\
 
 Finalmente, cada estructura conservada se carga en la escena con un color asignado según su tipo de tejido, recurriendo a un color por defecto cuando la estructura no tiene una entrada específica en el mapa de colores.\\
 
@@ -113,9 +113,11 @@ La exportación a STL contempla tres transformaciones geométricas configurables
 
 \subsection{Evaluación del motor de segmentación}
 
-La elección de TotalSegmentator no fue \textit{a priori}, sino el resultado de una evaluación comparativa frente a otras dos alternativas (MedSAM y YOLO) sobre diez casos reales de escáneres cervicales, tomando como referencia la segmentación manual de 64 estructuras anatómicas realizada por un radiólogo especialista. A diferencia del flujo del fantoma, esta evaluación exige una correspondencia estricta entre cada estructura predicha y su contraparte anotada, ya que sin dicha correspondencia no es posible calcular las métricas de superposición.\\
+La elección de TotalSegmentator no fue \textit{a priori}, sino el resultado de una evaluación comparativa frente a otras dos alternativas (MedSAM y YOLO) sobre diez casos reales de escáneres cervicales. Como término de comparación se dispuso de una segmentación de referencia de 64 estructuras anatómicas, elaborada por un radiólogo especialista. A diferencia del flujo del fantoma, esta evaluación exige una correspondencia estricta entre cada estructura predicha y su contraparte en la referencia, ya que sin ella no es posible calcular métricas de superposición.\\
 
-La comparación se basó en los cuatro criterios enunciados en el Capítulo~\ref{ch:solucion-planteada}. Los dos primeros son métricas de superposición volumétrica. Sea $P$ el conjunto de vóxeles segmentados por el modelo y $G$ el conjunto de vóxeles de la segmentación de referencia. El coeficiente de Dice se define como:
+El primer criterio de selección, enunciado en el Capítulo~\ref{ch:solucion-planteada}, es de carácter eliminatorio y no requiere cálculo alguno: el modelo debe segmentar sin indicaciones manuales por estructura. MedSAM no lo satisface, ya que opera a partir de recuadros delimitadores que acotan cada región de interés; en la evaluación estos se extrajeron de la propia referencia, lo que constituye una condición favorable que en un uso real no existiría. YOLO sí opera sin indicaciones, pero requiere un emparejamiento posterior entre sus detecciones y las estructuras esperadas, que también se resolvió recurriendo a la referencia. Ambas alternativas se evaluaron de todos modos, con el fin de cuantificar cuánto se aproximan a una segmentación clínicamente validada aun operando en condiciones privilegiadas.\\
+
+Los criterios cuantitativos se apoyan en dos métricas de superposición volumétrica. Sea $P$ el conjunto de vóxeles segmentados por el modelo y $G$ el conjunto de vóxeles de la segmentación de referencia. El coeficiente de Dice se define como:
 
 \begin{equation}
 \mathrm{Dice}(P,G) = \frac{2\,|P \cap G|}{|P| + |G|}
@@ -129,4 +131,6 @@ y mide la superposición entre ambas regiones, ponderando al doble la intersecci
 
 y constituye una medida más estricta de la misma superposición. Ambos coeficientes toman valores en el intervalo $[0,1]$, donde $1$ indica coincidencia perfecta, y están relacionados de forma monótona mediante $\mathrm{IoU} = \mathrm{Dice}\,/\,(2 - \mathrm{Dice})$.\\
 
-A estas dos métricas se sumaron dos criterios de carácter práctico: la cobertura anatómica, entendida como la proporción de las estructuras de referencia que el modelo logra segmentar con contenido no vacío, y el tiempo de procesamiento por caso, considerando la transferencia de archivos y la segmentación. Los resultados de esta evaluación se presentan y discuten en el Capítulo~\ref{ch:resultados}.\\
+Una particularidad de estas métricas exige atención. Cuando $P$ y $G$ están ambos vacíos, el denominador se anula y el coeficiente queda indefinido. La convención habitual, adoptada también por la implementación empleada en este trabajo, es asignarle en ese caso el valor $1$, entendiendo que el modelo acertó al no predecir nada donde no había nada que predecir. Esta convención es razonable de forma aislada, pero introduce un sesgo cuando se promedia sobre un conjunto de estructuras que no siempre están presentes en el volumen analizado, cuestión que se aborda en el Capítulo~\ref{ch:resultados}.\\
+
+A estas dos métricas se sumaron dos criterios de carácter práctico: la cobertura anatómica, entendida como la proporción de las estructuras de referencia que el modelo logra segmentar con contenido no vacío, y el tiempo de procesamiento por caso. Los resultados de esta evaluación, junto con una limitación relevante en la naturaleza de la segmentación de referencia, se presentan y discuten en el Capítulo~\ref{ch:resultados}.\\
