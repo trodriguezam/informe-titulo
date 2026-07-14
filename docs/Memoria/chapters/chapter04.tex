@@ -21,24 +21,26 @@ La evaluación se realizó sobre los diez casos de TC cervical, tomando como ref
 
 \begin{table}[h]
   \centering
-  \caption{Desempeño promedio de los tres modelos sobre los diez casos de TC cervical.}
+  \caption{Desempeño promedio de los tres modelos sobre los diez casos de TC cervical, calculado sobre las 618 estructuras con referencia no vacía.}
   \label{tab:comparacion}
   \begin{tabular}{lcccc}
     \hline
     \textbf{Modelo} & \textbf{Cobertura efectiva} & \textbf{Dice} & \textbf{IoU} & \textbf{Tiempo} \\
     \hline
-    TotalSegmentator & 90,8\% & 0,979 & 0,966 & $\sim$4,9 min \\
-    MedSAM           & 81,4\% & 0,589 & 0,452 & $\sim$5,3 min \\
-    YOLOv8x-seg      & 13,4\% & 0,110 & 0,090 & $\sim$0,8 min \\
+    TotalSegmentator & 90,8\% & 0,892 & 0,879 & $\sim$4,9 min \\
+    MedSAM           & 81,4\% & 0,553 & 0,415 & $\sim$5,3 min \\
+    YOLOv8x-seg      & 13,4\% & 0,108 & 0,085 & $\sim$0,8 min \\
     \hline
   \end{tabular}
 \end{table}
 
-TotalSegmentator \citep{wasserthal2023totalsegmentator} obtuvo el mejor desempeño en las métricas de superposición, con un Dice promedio de $0{,}979$ y un IoU de $0{,}966$, valores estables a lo largo de los diez casos. Esto indica que, para las estructuras que efectivamente segmenta, su salida es prácticamente coincidente con la del radiólogo. MedSAM alcanzó un Dice promedio de $0{,}589$. YOLO se ubicó muy por debajo, con un Dice promedio en torno a $0{,}110$ y mediana nula, lo que refleja que en la mayoría de las estructuras su predicción no tiene superposición apreciable con la referencia.\\
+Las tres métricas se calculan con el mismo criterio para los tres modelos: sobre las estructuras que tienen contenido real en el volumen de cada caso, y contabilizando como cero aquellas que el modelo no logra segmentar. TotalSegmentator obtuvo el mejor desempeño, con un Dice promedio de $0{,}892$ y un IoU de $0{,}879$. Considerando únicamente las estructuras que efectivamente detecta, su Dice asciende a $0{,}979$, lo que indica que su salida es prácticamente coincidente con la del radiólogo allí donde segmenta; la diferencia entre ambas cifras corresponde a las seis estructuras craneofaciales que no cubre. MedSAM alcanzó un Dice de $0{,}553$ y YOLO uno de $0{,}108$, con mediana nula, lo que refleja que en la mayoría de las estructuras su predicción no tiene superposición apreciable con la referencia.\\
 
 La columna de cobertura requiere una aclaración metodológica, y es en ella donde apareció el hallazgo más relevante de la evaluación. Tanto MedSAM como YOLOv8 \citep{jocher2023yolov8} (YOLO) se evaluaron en condiciones favorables, entregándoles información que en un uso real no estaría disponible: a MedSAM se le dieron como guía los recuadros delimitadores extraídos de la propia segmentación de referencia, y a YOLO se le aplicó un emparejamiento por solapamiento contra esa misma referencia. Bajo esas condiciones, ambos alcanzaban una detección nominal de 64 de 64 estructuras.\\
 
 Esa cifra resultó ser un artefacto. El coeficiente de Dice está indefinido cuando ambas máscaras, la predicha y la de referencia, están vacías, y la convención habitual es asignarle el valor 1 en ese caso, entendiendo que el modelo acertó al no predecir nada donde no había nada. En la práctica, no todos los escáneres cubren la misma región anatómica: en uno de los diez casos, solo 43 de las 64 estructuras de referencia tienen contenido real, porque el campo de visión del escáner no alcanza al resto. Sobre las 21 restantes, cualquier modelo que no prediga nada obtiene un Dice de 1 sin haber segmentado absolutamente nada. Contadas así, esas estructuras inflan la cobertura de los tres modelos.\\
+
+Conviene notar que este filtro no favorece al modelo seleccionado, sino lo contrario. Sobre las estructuras de referencia vacía, TotalSegmentator sí genera una predicción, de modo que obtiene un Dice de cero; MedSAM y YOLO, en cambio, no predicen nada y reciben el 1 trivial. Descartar esas estructuras eleva el promedio de TotalSegmentator (de $0{,}888$ a $0{,}892$) y reduce el de MedSAM (de $0{,}568$ a $0{,}553$) y el de YOLO (de $0{,}138$ a $0{,}108$). El criterio se adoptó por corrección metodológica, y su efecto resulta ser desfavorable para los modelos alternativos únicamente porque eran ellos quienes se beneficiaban del artefacto.\\
 
 Por ello se adoptó una definición más estricta, la cobertura efectiva: la proporción de estructuras cuyo Dice supera $0{,}3$, calculada únicamente sobre aquellas que tienen contenido real en el volumen de cada caso. Bajo este criterio, TotalSegmentator alcanza un 90,8\% de cobertura, con un rango entre 90,5\% y 93,0\% a lo largo de los diez casos. MedSAM desciende a un 81,4\%, con un rango bastante más amplio (entre 76,7\% y 87,5\%), pese a contar con los recuadros de referencia como guía. YOLO cae a un 13,4\%.\\
 
