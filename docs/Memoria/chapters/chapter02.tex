@@ -23,7 +23,7 @@ La viabilidad de la solución se sostiene sobre tres consideraciones.\\
 
 En lo técnico, cada etapa del flujo se apoya en componentes que ya existen y están validados de forma independiente: TotalSegmentator para la segmentación, 3D Slicer como plataforma de visualización y desarrollo de módulos, y las herramientas estándar de impresión 3D para la fabricación. El aporte del trabajo no consiste en construir un modelo de segmentación desde cero, sino en orquestar estas piezas en un recorrido continuo y automatizado, que es precisamente el eslabón que la literatura revisada deja sin resolver. La factibilidad de cada componente por separado reduce el riesgo técnico del conjunto.\\
 
-En lo económico, el sistema se construye íntegramente sobre software de código abierto y sin costo de licencia, y opera sobre imágenes médicas que las instituciones de salud ya poseen, generadas en el curso normal de la atención clínica. El único costo recurrente es el material de impresión. El insumo más caro del flujo manual, que son las horas de un radiólogo, desaparece.\\
+En lo económico, el sistema se construye íntegramente sobre software de código abierto y sin costo de licencia, y opera sobre imágenes médicas que las instituciones de salud ya poseen, generadas en el curso normal de la atención clínica. Ello elimina el insumo más caro del flujo manual, que son las horas de trabajo de un radiólogo. Subsisten dos costos: el material de impresión, que es el único recurrente, y un equipo con GPU dedicada para la segmentación, que constituye una inversión inicial. Este último se comparte entre todos los casos que se procesen, de modo que su costo por fantoma decrece a medida que la herramienta se utiliza, y puede evitarse por completo ejecutando la segmentación en CPU a costa de un mayor tiempo de procesamiento.\\
 
 En lo operacional, el usuario final no requiere formación en procesamiento de imágenes ni hardware especializado: interactúa con una interfaz guiada y el cómputo exigente se delega a una máquina remota. Esto mantiene el requerimiento de infraestructura del lado del usuario dentro de lo que un equipo docente ya tiene disponible.\\
 
@@ -37,14 +37,13 @@ En lo operacional, el usuario final no requiere formación en procesamiento de i
   \item Consolidar los segmentos obtenidos descartando únicamente aquellos sin contenido (máscaras vacías), de manera agnóstica a la imagen de entrada.
   \item Exportar cada estructura segmentada a un archivo STL independiente, asignando un color según el tipo de tejido al que pertenece.
   \item Permitir el corte y la reorientación de las estructuras exportadas mediante planos interactivos, previo a su impresión.
-  \item Generar un reporte que indique qué estructuras fueron detectadas y cuáles no, para cada caso procesado.
   \item Permitir la visualización de las superficies tridimensionales generadas dentro de 3D Slicer antes de exportar a impresión.
 \end{enumerate}
 
 \subsection{Requisitos operacionales}
 
 \begin{enumerate}
-  \item El sistema debe operar como un módulo instalable dentro de 3D Slicer (versión 5.10 o superior), sin requerir conocimientos de programación por parte del usuario final.
+  \item El sistema debe operar como un módulo instalable dentro de 3D Slicer (versión 5.10 o superior). El usuario final no requiere conocimientos de programación, si bien la puesta en marcha inicial supone seguir instrucciones técnicas de configuración, en particular el establecimiento de la conexión con el servidor remoto.
   \item El equipo del usuario no requiere GPU dedicada: el cómputo intensivo de la segmentación se ejecuta de forma remota, mediante una red privada y autenticación por llave SSH.
   \item La máquina remota debe contar con TotalSegmentator instalado y, para las tareas que lo requieran, con la licencia académica correspondiente activada.
   \item Los archivos STL resultantes deben poder cargarse en un laminador estándar sin requerir reparación previa de la malla.
@@ -58,7 +57,7 @@ En lo operacional, el usuario final no requiere formación en procesamiento de i
 \begin{enumerate}
   \item \textbf{Autonomía:} el motor de segmentación debe operar sin requerir indicaciones manuales por estructura (como recuadros delimitadores o marcas de referencia). Un modelo que dependa de ellas no puede sostener un flujo automatizado, ya que en un uso real esas indicaciones solo podrían provenir de una segmentación previa, que es justamente lo que el sistema busca evitar.
   \item \textbf{Cobertura de las estructuras del procedimiento:} el sistema debe producir las estructuras que delimitan el punto de incisión de la cricotiroidotomía, esto es, el cartílago tiroides, el cricoides, el hioides, la laringe y la tráquea. Sin ellas el fantoma pierde su propósito, con independencia de cuántas otras estructuras logre segmentar.
-  \item \textbf{Usabilidad:} los módulos deben ocultar la complejidad técnica del flujo (ejecución remota, consolidación de segmentos, mapeo de colores) detrás de una interfaz simple, utilizable por personal médico sin formación en procesamiento de imágenes.
+  \item \textbf{Usabilidad:} los módulos deben ocultar la complejidad técnica del flujo (ejecución remota, consolidación de segmentos, mapeo de colores) detrás de una interfaz simple, utilizable por personal médico sin formación en procesamiento de imágenes. El sistema entrega archivos STL, de modo que la etapa final de impresión supone un manejo básico de un laminador, competencia que queda fuera de lo que el sistema abstrae.
   \item \textbf{Portabilidad:} los módulos deben funcionar tanto en Windows como en macOS, sin depender de hardware gráfico especializado en el equipo local.
   \item \textbf{Mantenibilidad:} la separación entre el módulo de segmentación y el módulo de corte y exportación debe permitir modificar uno sin afectar el funcionamiento del otro.
 \end{enumerate}
@@ -69,7 +68,7 @@ La elección de la herramienta de segmentación no se dio por sentada, sino que 
 
 \begin{enumerate}
   \item \textbf{Cobertura anatómica:} cuántas de las estructuras de la referencia logra segmentar el modelo con contenido real.
-  \item \textbf{Concordancia con la referencia:} cuánto se superpone cada estructura predicha con su contraparte en la segmentación de referencia, medida mediante el coeficiente de Dice y la intersección sobre la unión (IoU).
+  \item \textbf{Concordancia con la referencia clínica:} las estructuras segmentadas deben alcanzar un coeficiente de Dice promedio igual o superior a 0,85 respecto de la segmentación de referencia validada por el especialista. Este criterio mide reproducibilidad frente al material clínico disponible, y no precisión frente a una anotación independiente, distinción que se desarrolla en el Capítulo~\ref{ch:resultados}.
   \item \textbf{Tiempo de procesamiento:} el costo temporal por caso, considerando transferencia de archivos y segmentación.
 \end{enumerate}
 

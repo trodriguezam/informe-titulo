@@ -66,6 +66,8 @@ La solución se implementó como dos módulos (\textit{scripted modules}) de 3D 
 
 La primera etapa del módulo de segmentación es un preprocesamiento que recorta los valores de la imagen al rango $[-1024, 3071]$ unidades Hounsfield, con el fin de descartar valores atípicos provenientes del relleno del escáner que, de no corregirse, degradan la segmentación posterior.\\
 
+El rango escogido no es arbitrario: corresponde al rango de doce bits con signo en que los escáneres de TC codifican nativamente la densidad. Ninguna estructura anatómica humana lo excede, ya que el hueso cortical más denso rara vez supera los 2.000 HU; los valores por sobre ese límite provienen de material metálico, como amalgamas dentales o implantes, o de artefactos del relleno del escáner. La operación satura esos valores en el extremo del rango en lugar de eliminarlos, de modo que no se pierde ningún vóxel ni, por tanto, ninguna estructura.\\
+
 La segmentación se obtiene ejecutando sucesivamente siete tareas de TotalSegmentator, cuyas máscaras se complementan para cubrir el conjunto de estructuras de interés del cuello. Ninguna tarea aislada basta: la tarea base no fue entrenada para la región cervical, y las estructuras que definen el punto anatómico de la cricotiroidotomía (el cartílago tiroides y el cricoides) provienen de una tarea especializada de cabeza y cuello. La Tabla~\ref{tab:tasks} detalla el aporte de cada una.\\
 
 \begin{table}[h]
@@ -97,7 +99,9 @@ Una vez generadas todas las máscaras, la etapa de consolidación las unifica en
 
 La decisión tiene una consecuencia deliberada: el módulo conserva todas las estructuras con contenido real, incluidas aquellas que no forman parte del conjunto de referencia. Ese conjunto sirve para comparar modelos, no para limitar la salida del sistema. El alcance de esta diferencia se cuantifica en el Capítulo~\ref{ch:resultados}.\\
 
-Finalmente, cada estructura conservada se carga en la escena con un color asignado según su tipo de tejido, recurriendo a un color por defecto cuando la estructura no tiene una entrada específica en el mapa de colores.\\
+Finalmente, cada estructura conservada se carga en la escena con un color asignado según su tipo de tejido. La asignación se resuelve mediante un diccionario que asocia el nombre de cada estructura a un color, definido en la configuración del módulo y no en el código de procesamiento, de modo que ampliarlo o modificarlo no exige tocar la lógica del flujo. Los colores no son arbitrarios sino que agrupan las estructuras por familia anatómica: tonos óseos para vértebras y cráneo, rojizos para la musculatura, azules para el sistema venoso, y así sucesivamente. El propósito es doble: facilitar el reconocimiento anatómico en la vista tridimensional de Slicer, y determinar el color con que cada pieza se imprimirá, ya que la asignación se conserva al exportar los archivos STL. Cuando una estructura no tiene entrada en el diccionario, se le asigna un color por defecto y se registra el hecho, lo que permite detectar las estructuras nuevas que aportan las tareas de segmentación sin que el flujo se interrumpa.\\
+
+El módulo emite además un reporte en formato JSON con las estructuras detectadas, las descartadas por máscara vacía y los tiempos de cada etapa. Este registro no responde a un requisito del producto, ya que el usuario clínico no lo necesita para operar el sistema, sino a una necesidad de este trabajo: es el instrumento que permitió medir la cobertura y los tiempos que se reportan en el Capítulo~\ref{ch:resultados}.\\
 
 \subsection{Ejecución remota sobre GPU}
 
