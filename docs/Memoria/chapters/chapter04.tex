@@ -183,7 +183,7 @@ Integrado en el flujo, el sistema produce 58 de las 64 estructuras que contiene 
 
 Conviene invertir la lectura habitual de estas cifras. El sistema no busca reproducir las 64 estructuras de la referencia, sino producir un modelo anatómico útil para la región de cabeza y cuello, y bajo ese objetivo la cifra relevante no es 58 de 64, sino 121: el número de estructuras con contenido real que el flujo conserva y entrega para un caso cervical, casi el doble de las que contiene la referencia. Entre ellas están las cuatro que delimitan el punto de incisión de la cricotiroidotomía (cartílago tiroides, cricoides, hioides y laringe), que la referencia del radiólogo ni siquiera incluye. El sistema demuestra así que, con la configuración de tareas adecuada, es capaz de generar una zona anatómica considerablemente más detallada que la referencia de comparación.\\
 
-Esa amplitud, sin embargo, no llega directamente al fantoma final. El módulo de corte, descrito en el Capítulo~\ref{ch:diseno-del-producto}, permite al usuario recortar el modelo hasta la región de interés antes de exportar, de modo que las 121 estructuras generadas se reducen a las que efectivamente se necesitan imprimir para el procedimiento. La generación exhaustiva y el recorte selectivo quedan así como dos etapas separadas: primero segmentar todo lo que la imagen permite, y luego decidir qué imprimir, en lugar de decidir de antemano qué segmentar.\\
+Esa amplitud, sin embargo, no llega directamente al fantoma final. El módulo de corte, descrito en el Capítulo~\ref{ch:diseno-del-producto}, permite al usuario recortar el modelo hasta la región de interés antes de exportar, con lo que las 121 estructuras generadas se reducen a las que efectivamente se necesitan imprimir para el procedimiento. La generación exhaustiva y el recorte selectivo quedan así como dos etapas separadas: primero segmentar todo lo que la imagen permite, y luego decidir qué imprimir, en lugar de decidir de antemano qué segmentar.\\
 
 \begin{figure}[h]
   \centering
@@ -230,7 +230,7 @@ El proceso completo toma cerca de \tTotal{} por caso, por debajo del límite de 
 
 La razón es el volumen de archivos. El sistema conserva más de cien estructuras con contenido, cada una en un archivo NIfTI independiente, que deben escribirse y procesarse en el equipo local. El costo no está en el tamaño total ni en la red, sino en la cantidad de operaciones de entrada y salida sobre muchos archivos. El preprocesamiento y la limpieza remota responden a una situación análoga: son operaciones sobre archivos, no de cálculo.\\
 
-La conclusión operativa es que el sistema no está limitado por su capacidad de cómputo sino por su manejo de archivos, de modo que las mejoras de tiempo más rentables no pasan por una GPU más potente. Esta línea se retoma en la sección de mejoras.\\
+La conclusión operativa es que el sistema no está limitado por su capacidad de cómputo sino por su manejo de archivos, y las mejoras de tiempo más rentables no pasan por una GPU más potente. Esta línea se retoma en la sección de mejoras.\\
 
 \subsection{Cumplimiento de los criterios definidos}
 
