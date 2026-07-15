@@ -35,7 +35,7 @@
 \coordinate (split) at (2.0,0);
 
 % ---- Carril superior: FLUJO MANUAL ----
-\node[botbox]                     (mseg)  at (5.0, 2.7) {Segmentación manual\\\scriptsize(según la literatura revisada)};
+\node[botbox]                     (mseg)  at (5.0, 2.7) {Segmentación manual};
 \node[manualbox, right=1.4cm of mseg] (mmesh) {Generación de malla\\\scriptsize(reconstrucción de superficie)};
 
 % ---- Carril inferior: FLUJO PROPUESTO ----
@@ -61,7 +61,7 @@
 \draw[flow] (astl.east)  -| (print.south);
 
 % ---- Anotaciones de tiempo (el borde rojo de la caja marca el cuello de botella) ----
-\node[font=\scriptsize\itshape, text=botDraw,  below=0.2cm of mseg] (mtime) {$\approx$ 2{,}7\,h};
+\node[font=\scriptsize\itshape, text=botDraw,  below=0.2cm of mseg] (mtime) {$\geq$ 2{,}7\,h por caso};
 \node[font=\scriptsize\itshape, text=fastDraw, below=0.2cm of aseg] (atime) {minutos};
 
 % ---- Fondos de carril ----

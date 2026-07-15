@@ -14,7 +14,7 @@ Internamente, el módulo orquesta cuatro etapas sucesivas: el preprocesamiento d
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.6\textwidth]{imagenes/modulo-segmentacion.png}
-  \caption{Interfaz del módulo de segmentación en 3D Slicer. El usuario selecciona el escáner TC, confirma el modo de procesamiento e inicia la ejecución; el resto del flujo ocurre de forma automática.}
+  \caption{Interfaz del módulo de segmentación en 3D Slicer. El panel de control expone el selector del escáner TC, la elección del modo de procesamiento (remoto o local) y el botón de ejecución, junto al indicador de progreso del proceso.}
   \label{fig:modulo-segmentacion}
 \end{figure}
 
@@ -32,7 +32,7 @@ El módulo de corte, denominado \textit{Corte 3D} en la interfaz y \texttt{Corte
   \centering
   \includegraphics[width=0.6\textwidth]{imagenes/modulo-corte-1.png}
   \includegraphics[width=0.6\textwidth]{imagenes/modulo-corte-2.png}
-  \caption{Interfaz del módulo de corte en 3D Slicer. El panel izquierdo permite activar los tres planos de corte, aplicar corte simétrico y configurar la limpieza de malla (eliminación de fragmentos flotantes y cierre de superficie) antes de exportar los archivos STL.}
+  \caption{Interfaz del módulo de corte en 3D Slicer, mostrada en dos partes por su extensión vertical: arriba, los controles de los tres planos de corte y la opción de corte simétrico; abajo, la configuración de limpieza de malla (eliminación de fragmentos flotantes y cierre de superficie) previa a la exportación de los archivos STL.}
   \label{fig:modulo-corte}
 \end{figure}
 
@@ -75,7 +75,7 @@ La solución se implementó como dos módulos (\textit{scripted modules}) de 3D 
 
 La primera etapa del módulo de segmentación es un preprocesamiento que recorta los valores de la imagen al rango $[-1024, 3071]$ unidades Hounsfield, con el fin de descartar valores atípicos provenientes del relleno del escáner que, de no corregirse, degradan la segmentación posterior.\\
 
-El rango escogido no es arbitrario: corresponde al rango de doce bits con signo en que los escáneres de TC codifican nativamente la densidad. Ninguna estructura anatómica humana lo excede, ya que el hueso cortical más denso rara vez supera los 2.000 HU; los valores por sobre ese límite provienen de material metálico, como amalgamas dentales o implantes, o de artefactos del relleno del escáner. La operación satura esos valores en el extremo del rango en lugar de eliminarlos, de modo que no se pierde ningún vóxel ni, por tanto, ninguna estructura.\\
+El rango corresponde a la codificación de doce bits con signo en que los escáneres de TC almacenan nativamente la densidad. Ninguna estructura anatómica humana lo excede, ya que el hueso cortical más denso rara vez supera los 2.000 HU; los valores por sobre ese límite provienen de material metálico, como amalgamas dentales o implantes, o de artefactos del relleno del escáner. La operación satura esos valores en el extremo del rango en lugar de eliminarlos, de modo que no se pierde ningún vóxel ni, por tanto, ninguna estructura.\\
 
 En la práctica, la mayoría de los escáneres ya vienen dentro de este rango, en cuyo caso el módulo detecta que el recorte no altera la imagen y reutiliza el archivo original, evitando reescribir y volver a transferir un volumen idéntico.\\
 
@@ -110,7 +110,7 @@ Una vez generadas todas las máscaras, la etapa de consolidación las unifica en
 
 La decisión tiene una consecuencia deliberada: el módulo conserva todas las estructuras con contenido real, incluidas aquellas que no forman parte del conjunto de referencia. Ese conjunto sirve para comparar modelos, no para limitar la salida del sistema. El alcance de esta diferencia se cuantifica en el Capítulo~\ref{ch:resultados}.\\
 
-Cada estructura conservada se carga en la escena con un color asignado según su tipo de tejido. La asignación se resuelve mediante un diccionario que asocia el nombre de cada estructura a un color, definido en la configuración del módulo y no en el código de procesamiento, de modo que ampliarlo no exige tocar la lógica del flujo. Los colores agrupan las estructuras por familia anatómica: tonos óseos para vértebras, cráneo y costillas; rojizos para la musculatura; azules para el sistema venoso y rojos para el arterial; y un amarillo destacado para los cartílagos laríngeos, que marcan el punto de incisión. El propósito es doble: facilitar el reconocimiento anatómico en la vista tridimensional y determinar el color con que cada pieza se imprimirá, ya que la asignación se conserva al exportar los archivos STL. El diccionario cubre tanto las estructuras del conjunto de referencia como las adicionales que el flujo conserva, entre ellas los cartílagos tiroides y cricoides, el hioides y la laringe, de modo que el punto de incisión de la cricotiroidotomía quede visualmente diferenciado en el fantoma. Cuando una estructura carece de entrada, recibe un color por defecto y el hecho se registra, lo que permite detectar las que aportan las tareas de segmentación sin que el flujo se interrumpa.\\
+Cada estructura conservada se carga en la escena con un color asignado según su tipo de tejido. La asignación se resuelve mediante un diccionario que asocia el nombre de cada estructura a un color, definido en la configuración del módulo y no en el código de procesamiento, de modo que ampliarlo no exige tocar la lógica del flujo. Los colores agrupan las estructuras por familia anatómica: tonos óseos para vértebras, cráneo y costillas; rojizos para la musculatura; azules para el sistema venoso y rojos para el arterial; y un amarillo destacado para los cartílagos laríngeos, que marcan el punto de incisión. Esta asignación cumple dos funciones: facilita el reconocimiento anatómico en la vista tridimensional y determina el color con que cada pieza se imprimirá, ya que se conserva al exportar los archivos STL. El diccionario cubre tanto las estructuras del conjunto de referencia como las adicionales que el flujo conserva, entre ellas los cartílagos tiroides y cricoides, el hioides y la laringe, de modo que el punto de incisión de la cricotiroidotomía quede visualmente diferenciado en el fantoma. Cuando una estructura carece de entrada, recibe un color por defecto y el hecho se registra, lo que permite detectar las que aportan las tareas de segmentación sin que el flujo se interrumpa.\\
 
 El módulo emite además un reporte en formato JSON con las estructuras detectadas, las descartadas por máscara vacía y los tiempos de cada etapa. Este registro no responde a un requisito del producto, ya que el usuario clínico no lo necesita para operar el sistema, sino a una necesidad de este trabajo: es el instrumento que permitió medir la cobertura y los tiempos que se reportan en el Capítulo~\ref{ch:resultados}.\\
 
@@ -128,7 +128,7 @@ La exportación a STL contempla tres transformaciones geométricas configurables
 
 \subsection{Evaluación del motor de segmentación}
 
-La elección de TotalSegmentator no fue \textit{a priori}, sino el resultado de una evaluación comparativa frente a otras dos alternativas (MedSAM y YOLO) sobre diez casos reales de escáneres cervicales. Como término de comparación se dispuso de una segmentación de referencia de 64 estructuras anatómicas, elaborada por un radiólogo especialista. A diferencia del flujo del fantoma, esta evaluación exige una correspondencia estricta entre cada estructura predicha y su contraparte en la referencia, ya que sin ella no es posible calcular métricas de superposición.\\
+La elección de TotalSegmentator surgió de una evaluación comparativa frente a otras dos alternativas (MedSAM y YOLO) sobre diez casos reales de escáneres cervicales. Como término de comparación se dispuso de una segmentación de referencia de 64 estructuras anatómicas, elaborada por un radiólogo especialista. A diferencia del flujo del fantoma, esta evaluación exige una correspondencia estricta entre cada estructura predicha y su contraparte en la referencia, ya que sin ella no es posible calcular métricas de superposición.\\
 
 El primer criterio de selección, enunciado en el Capítulo~\ref{ch:solucion-planteada}, es de carácter eliminatorio y no requiere cálculo alguno: el modelo debe segmentar sin indicaciones manuales por estructura. MedSAM no lo satisface, ya que opera a partir de recuadros delimitadores que acotan cada región de interés; en la evaluación estos se extrajeron de la propia referencia, lo que constituye una condición favorable que en un uso real no existiría. YOLO sí opera sin indicaciones, pero requiere un emparejamiento posterior entre sus detecciones y las estructuras esperadas, que también se resolvió recurriendo a la referencia. Ambas alternativas se evaluaron de todos modos, con el fin de cuantificar cuánto se aproximan a una segmentación clínicamente validada aun operando en condiciones privilegiadas.\\
 

@@ -9,7 +9,7 @@
 \newcommand{\tPreproc}{4 min}
 \newcommand{\tEnvio}{50 s}
 \newcommand{\tSeg}{5 min}
-\newcommand{\tDescarga}{15 min}
+\newcommand{\Local}{15 min}
 \newcommand{\tLimpieza}{3 min}
 \newcommand{\tTotal}{28 min}
 % ---------------------------------------------------------------------------
@@ -52,7 +52,7 @@ La circunstancia anterior habilita un análisis que no estaba previsto y que res
   \end{tabular}
 \end{table}
 
-El resultado es categórico y no admite lectura intermedia. El especialista aceptó sin modificaciones la salida automática en 49 de las 57 estructuras analizadas: toda la musculatura, las glándulas, los ojos, la faringe, los tejidos grasos, la piel y el contorno corporal presentan divergencias iguales o inferiores al 0,7\%, y siete de ellas resultan idénticas vóxel a vóxel. Las correcciones se concentran íntegramente en las siete vértebras cervicales y en la tráquea, con divergencias de entre el 11,7\% y el 26,4\%. No hay ninguna estructura en una zona intermedia.\\
+El patrón de correcciones es nítido. El especialista aceptó sin modificaciones la salida automática en 49 de las 57 estructuras analizadas: toda la musculatura, las glándulas, los ojos, la faringe, los tejidos grasos, la piel y el contorno corporal presentan divergencias iguales o inferiores al 0,7\%, y siete de ellas resultan idénticas vóxel a vóxel. Las correcciones se concentran en las siete vértebras cervicales y en la tráquea, con divergencias de entre el 11,7\% y el 26,4\%. La separación entre ambos grupos es tajante: ninguna estructura queda en un rango intermedio.\\
 
 La lectura clínica es que la segmentación automática de tejido blando alcanza una calidad que un especialista considera aceptable sin retoques, mientras que las estructuras óseas cervicales y la vía aérea requieren revisión. Que estas últimas sean precisamente las que delimitan el punto de incisión de la cricotiroidotomía tiene una implicancia operativa concreta, recogida entre las mejoras propuestas.\\
 
@@ -77,13 +77,13 @@ Con las salvedades anteriores, la Tabla~\ref{tab:comparacion} resume el desempe�
   \end{tabular}
 \end{table}
 
-Las cifras de TotalSegmentator deben leerse con la reserva ya expuesta: al derivar la referencia de su propia salida, su ventaja en estas columnas está sobredeterminada y no constituye evidencia de superioridad. El valor informativo de la tabla está en la otra dirección: ni MedSAM ni YOLO logran aproximarse a una segmentación clínicamente validada, y no lo logran ni siquiera operando en condiciones privilegiadas.\\
+Las cifras de TotalSegmentator deben leerse con la reserva ya expuesta: al derivar la referencia de su propia salida, su ventaja en estas columnas está sobredeterminada y no constituye evidencia de superioridad. Lo informativo de la tabla es lo contrario de lo esperable: ni MedSAM ni YOLO se aproximan a una segmentación clínicamente validada, ni siquiera operando en condiciones privilegiadas.\\
 
-En efecto, ambos modelos se evaluaron en condiciones favorables. MedSAM no es un segmentador autónomo: opera a partir de recuadros delimitadores que acotan cada estructura, y en esta evaluación esos recuadros se extrajeron de la propia segmentación de referencia. Es decir, se le indicó dónde estaba cada estructura antes de pedirle que la segmentara. En un uso real esa información no existe, ya que solo podría provenir de una segmentación previa, que es justamente lo que el sistema busca producir. A YOLO se le aplicó un emparejamiento por solapamiento contra esa misma referencia. Aun así, MedSAM alcanza un Dice de 0,553 y YOLO uno de 0,108, con mediana nula.\\
+Ambos modelos se evaluaron en condiciones favorables. MedSAM no es un segmentador autónomo: opera a partir de recuadros delimitadores que acotan cada estructura, y en esta evaluación esos recuadros se extrajeron de la propia segmentación de referencia. Es decir, se le indicó dónde estaba cada estructura antes de pedirle que la segmentara. En un uso real esa información no existe, ya que solo podría provenir de una segmentación previa, que es justamente lo que el sistema busca producir. A YOLO se le aplicó un emparejamiento por solapamiento contra esa misma referencia. Aun así, MedSAM alcanza un Dice de 0,553 y YOLO uno de 0,108, con mediana nula.\\
 
 La Ilustración~\ref{fig:dice-por-caso} muestra esa concordancia caso a caso. TotalSegmentator se mantiene alto y parejo en los diez, mientras que MedSAM oscila en la zona media y YOLO permanece bajo en todos.\\
 
-Más allá de las cifras, la diferencia entre los tres modelos se aprecia directamente en su salida sobre un mismo caso. La Ilustración~\ref{fig:comparacion-cualitativa} muestra el resultado de los tres sobre el caso 5, una vez procesados por el módulo de corte. TotalSegmentator reconstruye un volumen anatómicamente coherente, en el que las estructuras conservan su forma y posición. MedSAM produce un volumen fragmentado, sin correspondencia anatómica reconocible, pese a haber operado con los recuadros delimitadores extraídos de la referencia. YOLO genera un conjunto de láminas desconectadas entre sí, consecuencia directa de procesar el escáner corte a corte sin coherencia tridimensional. La comparación visual confirma lo que las métricas indican: solo TotalSegmentator entrega una segmentación utilizable para construir un modelo físico.\\
+La diferencia entre los tres modelos también se aprecia directamente en su salida sobre un mismo caso. La Ilustración~\ref{fig:comparacion-cualitativa} muestra el resultado de los tres sobre el caso 5, una vez procesados por el módulo de corte. TotalSegmentator reconstruye un volumen anatómicamente coherente, en el que las estructuras conservan su forma y posición. MedSAM produce un volumen fragmentado, sin correspondencia anatómica reconocible, pese a haber operado con los recuadros delimitadores extraídos de la referencia. YOLO genera un conjunto de láminas desconectadas entre sí, consecuencia directa de procesar el escáner corte a corte sin coherencia tridimensional. La comparación visual confirma lo que las métricas indican: solo TotalSegmentator entrega una segmentación utilizable para construir un modelo físico.\\
  
 \begin{figure}[h]
   \centering
@@ -141,7 +141,7 @@ La cobertura anterior depende del umbral de Dice que se exija para dar una estru
   \end{tabular}
 \end{table}
 
-La cobertura de TotalSegmentator no varía entre umbrales: lo que segmenta, lo segmenta bien, sin una franja intermedia de resultados mediocres. MedSAM pierde más de la mitad de su cobertura al pasar de 0,3 a 0,667, lo que revela que buena parte de las estructuras que aparentaba cubrir lo hacía con segmentaciones deficientes. YOLO se mantiene bajo en todos los umbrales. Las siete estructuras que este último supera de forma consistente son el contorno corporal (\texttt{body}, \texttt{body\_trunc}, \texttt{body\_extremities}, \texttt{head}), la piel, la grasa subcutánea y el músculo esquelético como masa global: todas envolturas externas o regiones de gran volumen y alto contraste. YOLO no segmenta de forma fiable ninguna estructura anatómica interna, que son precisamente las que un fantoma de cricotiroidotomía necesita.\\
+La cobertura de TotalSegmentator no varía entre umbrales: las estructuras que segmenta superan incluso el criterio más estricto, sin acumular resultados de calidad marginal. MedSAM pierde más de la mitad de su cobertura al pasar de 0,3 a 0,667, lo que revela que buena parte de las estructuras que aparentaba cubrir lo hacía con segmentaciones deficientes. YOLO se mantiene bajo en todos los umbrales. Las siete estructuras que este último supera de forma consistente son el contorno corporal (\texttt{body}, \texttt{body\_trunc}, \texttt{body\_extremities}, \texttt{head}), la piel, la grasa subcutánea y el músculo esquelético como masa global: todas envolturas externas o regiones de gran volumen y alto contraste. YOLO no segmenta de forma fiable ninguna estructura anatómica interna, que son justamente las que un fantoma de cricotiroidotomía necesita.\\
 
 \begin{figure}[h]
   \centering
@@ -218,7 +218,7 @@ Los tiempos de la Tabla~\ref{tab:comparacion} corresponden únicamente a la infe
     Preprocesamiento de la TC & \tPreproc  & 14\% \\
     Envío de la TC al servidor & \tEnvio   & 3\%  \\
     Segmentación en GPU & \tSeg            & 18\% \\
-    Descarga de las estructuras segmentadas & \tDescarga & 54\% \\
+    Recuperación y escritura local de las estructuras & \tLocal & 54\% \\
     Limpieza de archivos en el servidor & \tLimpieza & 11\% \\
     \hline
     \textbf{Total} & \textbf{\tTotal} & \textbf{100\%} \\
