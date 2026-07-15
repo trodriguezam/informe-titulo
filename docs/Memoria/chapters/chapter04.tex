@@ -2,7 +2,10 @@
 \label{ch:resultados}
 
 % ---------------------------------------------------------------------------
-% TIEMPOS DEL FLUJO COMPLETO — actualizar tras la optimización de la descarga
+% TIEMPOS DEL FLUJO COMPLETO
+% PENDIENTE: recalcular tras corregir el desempaquetado local. Los valores
+% actuales corresponden a una medición previa y NO reflejan el desglose real
+% (el cuello de botella medido es la escritura local, no la descarga).
 \newcommand{\tPreproc}{4 min}
 \newcommand{\tEnvio}{50 s}
 \newcommand{\tSeg}{5 min}
@@ -78,17 +81,42 @@ Las cifras de TotalSegmentator deben leerse con la reserva ya expuesta: al deriv
 
 En efecto, ambos modelos se evaluaron en condiciones favorables. MedSAM no es un segmentador autónomo: opera a partir de recuadros delimitadores que acotan cada estructura, y en esta evaluación esos recuadros se extrajeron de la propia segmentación de referencia. Es decir, se le indicó dónde estaba cada estructura antes de pedirle que la segmentara. En un uso real esa información no existe, ya que solo podría provenir de una segmentación previa, que es justamente lo que el sistema busca producir. A YOLO se le aplicó un emparejamiento por solapamiento contra esa misma referencia. Aun así, MedSAM alcanza un Dice de 0,553 y YOLO uno de 0,108, con mediana nula.\\
 
-Un artefacto de la métrica requirió corrección antes de calcular estas cifras. El coeficiente de Dice está indefinido cuando la máscara predicha y la de referencia están ambas vacías, y la convención habitual le asigna el valor 1, entendiendo que el modelo acertó al no predecir nada donde no había nada. En la práctica, no todos los escáneres cubren la misma región anatómica: en uno de los diez casos, solo 43 de las 64 estructuras de referencia tienen contenido real. Sobre las 21 restantes, cualquier modelo que no prediga nada obtiene un Dice de 1 sin haber segmentado absolutamente nada. Todas las métricas reportadas excluyen esas estructuras.\\
+La Ilustración~\ref{fig:dice-por-caso} muestra esa concordancia caso a caso. TotalSegmentator se mantiene alto y parejo en los diez, mientras que MedSAM oscila en la zona media y YOLO permanece bajo en todos.\\
 
-Conviene notar que este filtro no favorece al modelo seleccionado, sino lo contrario. Sobre las estructuras de referencia vacía, TotalSegmentator sí genera una predicción y obtiene un Dice de cero; MedSAM y YOLO, en cambio, no predicen nada y reciben el 1 trivial. Descartarlas eleva el promedio de TotalSegmentator (de 0,888 a 0,892) y reduce el de MedSAM (de 0,568 a 0,553) y el de YOLO (de 0,138 a 0,108). El criterio se adoptó por corrección metodológica, y resulta desfavorable para los modelos alternativos únicamente porque eran ellos quienes se beneficiaban del artefacto.\\
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.9\textwidth]{graficos/1_dice_por_caso.png}
+  \caption{Concordancia con la referencia clínica por caso, medida como coeficiente de Dice promedio sobre las estructuras con referencia no vacía.}
+  \label{fig:dice-por-caso}
+\end{figure}
 
-La columna de cobertura recoge la proporción de estructuras cuyo Dice supera 0,3, calculada sobre aquellas con contenido real en cada caso. El umbral se fijó de forma deliberadamente permisiva: no busca certificar una segmentación de calidad clínica, sino distinguir una predicción que guarda relación espacial con la estructura anotada de una que no la tiene.\\
+Desglosada por región anatómica (Ilustración~\ref{fig:radar-categorias}), la concordancia de TotalSegmentator es alta y uniforme en todas las categorías, en tanto que la de MedSAM cae en las estructuras óseas y de vía aérea, y la de YOLO se limita a las regiones de gran volumen.\\
 
-La elección del umbral podría objetarse como arbitraria, de modo que se verificó su incidencia. La Tabla~\ref{tab:sensibilidad} repite el cálculo con tres umbrales: el de 0,3 adoptado, uno intermedio de 0,5, y uno de 0,667, que corresponde a un IoU de 0,5 y equivale al criterio con que la evaluación estándar de detección de objetos considera correcta una predicción \citep{everingham2010pascal}. Esta equivalencia es una analogía y no una identidad, ya que dicho criterio se aplica sobre recuadros delimitadores y no sobre máscaras volumétricas, pero sirve como referencia externa de exigencia.\\
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.72\textwidth]{graficos/2_radar_categorias.png}
+  \caption{Concordancia por región anatómica. Cada eje representa una categoría de estructuras, con el Dice promedio de los diez casos.}
+  \label{fig:radar-categorias}
+\end{figure}
+
+La Ilustración~\ref{fig:niveles-calidad} resume, para cada modelo, cuántas de las 64 estructuras de la referencia alcanzan cada nivel de concordancia. TotalSegmentator concentra la mayoría en los niveles altos; MedSAM se reparte entre niveles medios y bajos; YOLO acumula casi todas sus estructuras en el nivel nulo.\\
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.95\textwidth]{graficos/3_niveles_calidad.png}
+  \caption{Nivel de concordancia por estructura. Cada estructura de la referencia se clasifica según su Dice medio en los diez casos.}
+  \label{fig:niveles-calidad}
+\end{figure}
+
+Un artefacto de la métrica requirió corrección antes de calcular estas cifras. El coeficiente de Dice está indefinido cuando la máscara predicha y la de referencia están ambas vacías, y la convención habitual le asigna el valor 1, entendiendo que el modelo acertó al no predecir nada donde no había nada. En la práctica, no todos los escáneres cubren la misma región anatómica: en uno de los diez casos, solo 43 de las 64 estructuras de referencia tienen contenido real. Sin filtrar, un modelo que no segmenta nada obtiene una puntuación perfecta sobre cada estructura ausente. Por ello, todas las métricas de este capítulo se calculan únicamente sobre las estructuras con referencia no vacía en cada caso. El filtro, adoptado por rigor, perjudica en realidad a las alternativas: TotalSegmentator predice algo en algunas de esas estructuras ausentes, lo que cuenta como falso positivo, mientras que MedSAM y YOLO no predicen nada y se beneficiaban de la puntuación trivial.\\
+
+\subsection{Sensibilidad al umbral de detección}
+
+La cobertura anterior depende del umbral de Dice que se exija para dar una estructura por detectada. Para verificar que la comparación no descansa en un umbral arbitrario, la Tabla~\ref{tab:sensibilidad} reporta la cobertura de cada modelo en tres umbrales: 0,3, 0,5 y 0,667, este último equivalente a una intersección sobre la unión de 0,5, criterio estándar de detección \citep{everingham2010pascal}.\\
 
 \begin{table}[h]
   \centering
-  \caption{Cobertura de cada modelo según el umbral de Dice exigido.}
+  \caption{Cobertura efectiva de cada modelo según el umbral de Dice exigido.}
   \label{tab:sensibilidad}
   \begin{tabular}{lccc}
     \hline
@@ -101,22 +129,24 @@ La elección del umbral podría objetarse como arbitraria, de modo que se verifi
   \end{tabular}
 \end{table}
 
-MedSAM pierde más de la mitad de su cobertura al pasar de 0,3 a 0,667: buena parte de las estructuras que aparentaba cubrir lo hacía con segmentaciones deficientes. YOLO se mantiene bajo en todos los umbrales. Las siete estructuras que este último supera de forma consistente son el contorno corporal (\texttt{body}, \texttt{body\_trunc}, \texttt{body\_extremities}, \texttt{head}), la piel, la grasa subcutánea y el músculo esquelético como masa global: todas envolturas externas o regiones de gran volumen y alto contraste. YOLO no segmenta de forma fiable ninguna estructura anatómica interna, que son precisamente las que un fantoma de cricotiroidotomía necesita.\\
+La cobertura de TotalSegmentator no varía entre umbrales: lo que segmenta, lo segmenta bien, sin una franja intermedia de resultados mediocres. MedSAM pierde más de la mitad de su cobertura al pasar de 0,3 a 0,667, lo que revela que buena parte de las estructuras que aparentaba cubrir lo hacía con segmentaciones deficientes. YOLO se mantiene bajo en todos los umbrales. Las siete estructuras que este último supera de forma consistente son el contorno corporal (\texttt{body}, \texttt{body\_trunc}, \texttt{body\_extremities}, \texttt{head}), la piel, la grasa subcutánea y el músculo esquelético como masa global: todas envolturas externas o regiones de gran volumen y alto contraste. YOLO no segmenta de forma fiable ninguna estructura anatómica interna, que son precisamente las que un fantoma de cricotiroidotomía necesita.\\
 
 \begin{figure}[h]
   \centering
-  \includegraphics[width=0.9\textwidth]{graficos/13_sensibilidad_umbral.png}
+  \includegraphics[width=0.9\textwidth]{graficos/5_sensibilidad_umbral.png}
   \caption{Cobertura de cada modelo en función del umbral de Dice exigido. Las líneas verticales marcan los tres umbrales de la Tabla~\ref{tab:sensibilidad}.}
   \label{fig:sensibilidad}
 \end{figure}
 
-Estos resultados son coherentes con la naturaleza de cada modelo. YOLO fue concebido para detección bidimensional en imágenes naturales y se evaluó procesando la TC corte a corte, una tarea para la que no fue diseñado. MedSAM, aunque especializado en imágenes médicas, depende de indicaciones que en un flujo autónomo no están disponibles, y mostró dificultades en estructuras finas o de bajo contraste. TotalSegmentator está entrenado específicamente para segmentación volumétrica multiclase sobre TC.\\
+Estos resultados son coherentes con la naturaleza de cada modelo. YOLO \citep{jocher2023yolov8} fue concebido para detección bidimensional en imágenes naturales y se evaluó procesando la TC corte a corte, una tarea para la que no fue diseñado. MedSAM, aunque especializado en imágenes médicas, depende de indicaciones que en un flujo autónomo no están disponibles, y mostró dificultades en estructuras finas o de bajo contraste. TotalSegmentator está entrenado específicamente para segmentación volumétrica multiclase sobre TC.\\
+
+La Ilustración~\ref{fig:tiempo-cobertura} cruza las dos dimensiones que importan para el sistema: la cobertura efectiva y el tiempo de inferencia. TotalSegmentator ocupa la región de interés, con cobertura alta y tiempo moderado; MedSAM alcanza un tiempo similar con menor cobertura; YOLO es el más rápido pero con cobertura casi nula, lo que lo descarta pese a su velocidad.\\
 
 \begin{figure}[h]
   \centering
-  \includegraphics[width=0.85\textwidth]{graficos/2_boxplot_dice.png}
-  \caption{Distribución del coeficiente de Dice por modelo sobre los diez casos evaluados.}
-  \label{fig:boxplot-dice}
+  \includegraphics[width=0.82\textwidth]{graficos/6_tiempo_vs_cobertura.png}
+  \caption{Cobertura efectiva frente a tiempo de inferencia. Cada punto tenue es un caso; el punto grande, el promedio de cada modelo.}
+  \label{fig:tiempo-cobertura}
 \end{figure}
 
 \subsection{Fundamento de la selección del motor de segmentación}
@@ -145,8 +175,8 @@ Esa amplitud, sin embargo, no llega directamente al fantoma final. El módulo de
 
 \begin{figure}[h]
   \centering
-  \includegraphics[width=0.9\textwidth]{graficos/5_cobertura.png}
-  \caption{Cobertura por caso y modelo, calculada sobre las estructuras con referencia no vacía en cada caso.}
+  \includegraphics[width=0.9\textwidth]{graficos/4_cobertura_por_caso.png}
+  \caption{Cobertura efectiva por caso y modelo, calculada sobre las estructuras con referencia no vacía en cada caso. La estabilidad entre casos favorece a TotalSegmentator.}
   \label{fig:cobertura-efectiva}
 \end{figure}
 
@@ -157,7 +187,7 @@ Aunque el sistema fue configurado para la región cervical, su arquitectura no e
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.9\textwidth]{imagenes/pie-segmentado.jpeg}
-  \caption{Generalización del flujo a una TC de pie. La imagen superior muestra el resultado de segmentar una TC de un pie mediante el flujo.}
+  \caption{Generalización del flujo a una TC de pie, procesada a través del módulo completo sin modificar el código ni la configuración.}
   \label{fig:pie-segmentado}
 \end{figure}
 
@@ -184,18 +214,11 @@ Los tiempos de la Tabla~\ref{tab:comparacion} corresponden únicamente a la infe
   \end{tabular}
 \end{table}
 
-El proceso completo toma cerca de \tTotal{} por caso, por debajo del límite de 30 minutos fijado en los requisitos, aunque sin holgura. El desglose muestra algo que no era evidente de antemano: la segmentación, que es la etapa computacionalmente exigente y la que motivó toda la infraestructura remota, representa menos de un quinto del tiempo total. Más de la mitad se consume en la descarga de las estructuras segmentadas desde el servidor hacia el equipo local.\\
+El proceso completo toma cerca de \tTotal{} por caso, por debajo del límite de 30 minutos fijado en los requisitos, aunque sin holgura. El desglose muestra algo que no era evidente de antemano: la segmentación, que es la etapa computacionalmente exigente y la que motivó toda la infraestructura remota, representa una fracción menor del tiempo total. La mayor parte se consume en la recuperación y el manejo local de las estructuras segmentadas, no en el cómputo ni en la transferencia por la red.\\
 
-La razón es el volumen de archivos. El sistema conserva más de cien estructuras con contenido, cada una en un archivo NIfTI independiente, y la transferencia se realiza archivo por archivo. El costo no está en el tamaño total transferido sino en la cantidad de transferencias, cada una con su propia negociación de conexión. El preprocesamiento y la limpieza remota responden a una situación análoga: el recorte de valores atípicos opera sobre el volumen completo cargado en memoria, y la limpieza elimina de forma recursiva el árbol de directorios del caso en el servidor, que contiene la TC transferida y las máscaras intermedias de las siete tareas ejecutadas. Ambas son operaciones de entrada y salida sobre muchos archivos, no de cálculo.\\
+La razón es el volumen de archivos. El sistema conserva más de cien estructuras con contenido, cada una en un archivo NIfTI independiente, que deben escribirse y procesarse en el equipo local. El costo no está en el tamaño total ni en la red, sino en la cantidad de operaciones de entrada y salida sobre muchos archivos. El preprocesamiento y la limpieza remota responden a una situación análoga: son operaciones sobre archivos, no de cálculo.\\
 
 La conclusión operativa es que el sistema no está limitado por su capacidad de cómputo sino por su manejo de archivos, de modo que las mejoras de tiempo más rentables no pasan por una GPU más potente. Esta línea se retoma en la sección de mejoras.\\
-
-\begin{figure}[h]
-  \centering
-  \includegraphics[width=0.9\textwidth]{graficos/4_tiempo_inferencia.png}
-  \caption{Tiempo de inferencia por caso y modelo. Corresponde solo a la etapa de segmentación, no al tiempo total del módulo desglosado en la Tabla~\ref{tab:tiempos-etapa}.}
-  \label{fig:tiempo-inferencia}
-\end{figure}
 
 \subsection{Cumplimiento de los criterios definidos}
 
@@ -211,7 +234,7 @@ Los archivos STL producidos se cargan en el laminador e imprimen sin requerir re
 
 \subsection{Fantoma físico impreso}
 
-El recorrido completo se validó materialmente mediante la impresión de varios fantomas a partir de los archivos generados por el sistema, lo que confirma que el flujo entrega un objeto físico coherente con la TC de entrada. Los modelos se imprimieron en PLA (ácido poliláctico, el filamento termoplástico más extendido en impresión doméstica) por deposición de material fundido, en una impresora Prusa XL, a un 60\% del tamaño anatómico real, escala necesaria para ajustar las piezas a las dimensiones de la cama de impresión. La pieza más detallada requirió aproximadamente 23,5 horas de impresión.\\
+El recorrido completo se validó materialmente mediante la impresión de varios fantomas a partir de los archivos generados por el sistema, lo que confirma que el flujo entrega un objeto físico coherente con la TC de entrada. Los modelos se imprimieron en PLA (ácido poliláctico, el filamento termoplástico más extendido en impresión doméstica) por deposición de material fundido, a un 60\% del tamaño anatómico real, escala necesaria para ajustar las piezas a las dimensiones de la cama de impresión. La pieza más detallada requirió aproximadamente 23,5 horas de impresión.\\
 
 La Ilustración~\ref{fig:fantoma-axial} muestra un corte transversal del cuello, en el que se distinguen la piel y el tejido graso subcutáneo, la musculatura cervical, la vértebra y la vía aérea, cada estructura diferenciada por color. La Ilustración~\ref{fig:fantoma-sagital} presenta cortes sagitales de un segundo caso, donde se aprecian las vértebras cervicales y el trayecto de la vía aérea. En ambos casos las estructuras reproducen la anatomía individual del paciente de origen, que es precisamente la diversidad morfológica que los fantomas comerciales genéricos no ofrecen.\\
 
@@ -238,19 +261,13 @@ El sistema cumple los objetivos planteados para el producto, pero la evaluación
 \begin{enumerate}
   \item \textbf{Revisión asistida de vértebras y vía aérea:} el análisis de las correcciones del especialista mostró que la segmentación automática es aceptada sin retoques en el tejido blando, pero requiere revisión en las vértebras cervicales y en la tráquea. Incorporar al módulo una etapa de revisión guiada, que presente al usuario clínico precisamente esas ocho estructuras para su validación o ajuste antes de exportar, concentraría el esfuerzo humano donde el sistema efectivamente lo necesita y dejaría el resto del flujo automatizado.
 
-  \item \textbf{Reducción del tiempo de transferencia:} el desglose de tiempos mostró que la descarga consume más de la mitad del tiempo total, no por el volumen de datos sino por realizarse archivo por archivo sobre más de cien estructuras. Empaquetar las máscaras en un único archivo comprimido antes de transferirlas, y descomprimirlo en el equipo local, reduciría más de cien transferencias a una sola. Es la mejora de mayor impacto por unidad de esfuerzo, y no requiere cambiar el motor de segmentación ni el hardware.
+  \item \textbf{Reducción del tiempo de manejo de archivos:} el desglose de tiempos mostró que la recuperación y escritura local de las estructuras consume la mayor parte del tiempo total, no por el volumen de datos ni por la red, sino por realizarse sobre más de cien archivos independientes. Optimizar la escritura local de estas máscaras es la mejora de mayor impacto por unidad de esfuerzo, y no requiere cambiar el motor de segmentación ni el hardware.
 
   \item \textbf{Evaluación con una referencia independiente:} la limitación metodológica identificada en este trabajo, esto es, que la segmentación de referencia deriva de la propia herramienta evaluada, solo puede resolverse con anotaciones elaboradas sin apoyo de segmentación automática, o bien con anotaciones de un segundo especialista sobre un subconjunto de casos. Ello permitiría cuantificar la precisión real del sistema y no solo su concordancia.
 
   \item \textbf{Fidelidad táctil de los materiales:} los materiales de impresión no reproducen la consistencia del tejido blando real, lo que limita el realismo de la incisión. Explorar la impresión con materiales flexibles o con combinaciones de distinta dureza, diferenciando por ejemplo piel, cartílago y vía aérea, permitiría aproximar mejor la sensación de la maniobra.
 
-  \item \textbf{Automatización del corte:} el recorte del modelo se realiza hoy de forma manual mediante planos interactivos. Detectar automáticamente la región de interés en torno a la membrana cricotiroidea y proponer los planos de corte de manera asistida reduciría la interacción requerida y la variabilidad entre usuarios.
+  \item \textbf{Automatización del corte:} el recorte del modelo se realiza hoy de forma manual mediante planos interactivos. Una selección automática de la región de interés, a partir de las estructuras del punto de incisión ya segmentadas, reduciría aún más la intervención del usuario.
 
-  \item \textbf{Integración hacia la impresión:} el flujo entrega archivos STL que deben abrirse manualmente en el laminador, donde además conviene simplificar la malla. Incorporar al propio módulo esa simplificación, junto con la asignación automática de materiales y colores por tipo de tejido, acortaría el recorrido hasta la impresión.
-
-  \item \textbf{Reducción de la dependencia de infraestructura remota:} el sistema delega la segmentación en una GPU remota, lo que exige conectividad y configuración previa. El desglose de tiempos sugiere que esta dependencia podría ser menos rentable de lo que parecía: la segmentación aporta cinco minutos, mientras que las transferencias y la limpieza asociadas al esquema remoto aportan más de veinte. Evaluar la ejecución local sobre CPU, aun a costa de un mayor tiempo de inferencia, podría resultar competitiva en tiempo total y aumentaría la autonomía del sistema.
-
-  \item \textbf{Configuración de tareas por región anatómica:} las tareas actualmente configuradas están orientadas a cabeza y cuello, y la cobertura obtenida en otras regiones depende de cuáles se ejecuten. Permitir la selección, o la detección automática, del subconjunto de tareas apropiado según la región de la imagen de entrada dejaría que el sistema opere sobre otras zonas anatómicas sin ajustes manuales de configuración.
+  \item \textbf{Extensión a otras regiones anatómicas:} el flujo generaliza a otras zonas del cuerpo, pero la cobertura depende del conjunto de tareas de segmentación configurado. Ampliar y parametrizar ese conjunto permitiría aplicar el sistema a procedimientos distintos de la cricotiroidotomía sin modificar la arquitectura.
 \end{enumerate}
-
-Por último, una vez completada la validación clínica del fantoma, un estudio de usabilidad con estudiantes de medicina permitiría medir el impacto formativo real de la herramienta y ordenar las prioridades de las mejoras anteriores según la experiencia de uso.\\
