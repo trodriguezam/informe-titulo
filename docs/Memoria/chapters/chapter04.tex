@@ -83,6 +83,18 @@ En efecto, ambos modelos se evaluaron en condiciones favorables. MedSAM no es un
 
 La Ilustración~\ref{fig:dice-por-caso} muestra esa concordancia caso a caso. TotalSegmentator se mantiene alto y parejo en los diez, mientras que MedSAM oscila en la zona media y YOLO permanece bajo en todos.\\
 
+Más allá de las cifras, la diferencia entre los tres modelos se aprecia directamente en su salida sobre un mismo caso. La Ilustración~\ref{fig:comparacion-cualitativa} muestra el resultado de los tres sobre el caso 5, una vez procesados por el módulo de corte. TotalSegmentator reconstruye un volumen anatómicamente coherente, en el que las estructuras conservan su forma y posición. MedSAM produce un volumen fragmentado, sin correspondencia anatómica reconocible, pese a haber operado con los recuadros delimitadores extraídos de la referencia. YOLO genera un conjunto de láminas desconectadas entre sí, consecuencia directa de procesar el escáner corte a corte sin coherencia tridimensional. La comparación visual confirma lo que las métricas indican: solo TotalSegmentator entrega una segmentación utilizable para construir un modelo físico.\\
+ 
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.32\textwidth]{imagenes/segmentacion-ts.jpeg}\hfill
+  \includegraphics[width=0.32\textwidth]{imagenes/segmentacion-medsam.jpeg}\hfill
+  \includegraphics[width=0.32\textwidth]{imagenes/segmentacion-yolo.jpeg}
+  \caption{Salida de los tres modelos sobre el caso 5, procesada por el módulo de corte. De izquierda a derecha: TotalSegmentator, con estructuras anatómicas coherentes; MedSAM, con un volumen fragmentado pese a operar con recuadros de la referencia; y YOLO, que produce láminas desconectadas por procesar el escáner corte a corte.}
+  \label{fig:comparacion-cualitativa}
+\end{figure}
+
+
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.9\textwidth]{graficos/1_dice_por_caso.png}
@@ -233,26 +245,41 @@ Sobre esa base, y de forma opcional, los modelos admiten un paso adicional de op
 Los archivos STL producidos se cargan en el laminador e imprimen sin requerir reparación previa de la malla. Dicho esto, es recomendable inspeccionarlos antes de imprimir, para verificar la ausencia de fragmentos flotantes o polígonos mal formados, y simplificar la malla, lo que mejora la calidad del laminado. El sistema no elimina esa revisión, pero reduce la preparación a una inspección visual en lugar de una reconstrucción de la geometría.\\
 
 \subsection{Fantoma físico impreso}
-
-El recorrido completo se validó materialmente mediante la impresión de varios fantomas a partir de los archivos generados por el sistema, lo que confirma que el flujo entrega un objeto físico coherente con la TC de entrada. Los modelos se imprimieron en PLA (ácido poliláctico, el filamento termoplástico más extendido en impresión doméstica) por deposición de material fundido, a un 60\% del tamaño anatómico real, escala necesaria para ajustar las piezas a las dimensiones de la cama de impresión. La pieza más detallada requirió aproximadamente 23,5 horas de impresión.\\
-
-La Ilustración~\ref{fig:fantoma-axial} muestra un corte transversal del cuello, en el que se distinguen la piel y el tejido graso subcutáneo, la musculatura cervical, la vértebra y la vía aérea, cada estructura diferenciada por color. La Ilustración~\ref{fig:fantoma-sagital} presenta cortes sagitales de un segundo caso, donde se aprecian las vértebras cervicales y el trayecto de la vía aérea. En ambos casos las estructuras reproducen la anatomía individual del paciente de origen, que es precisamente la diversidad morfológica que los fantomas comerciales genéricos no ofrecen.\\
-
+ 
+El recorrido completo se validó materialmente mediante la impresión de fantomas a partir de los archivos generados por el sistema, lo que confirma que el flujo entrega un objeto físico coherente con la TC de entrada. El proceso de fabricación no fue inmediato, sino que atravesó tres generaciones sucesivas, cada una motivada por las limitaciones de la anterior.\\
+ 
+La primera generación se imprimió estructura por estructura, en piezas separadas que luego se ensamblaron manualmente con adhesivo. Este enfoque resultó frágil y laborioso: el ensamblado de decenas de piezas pequeñas es propenso a errores de posición y consume un tiempo considerable, además de que las estructuras finas presentaban fragmentos sueltos y baja adherencia. La Ilustración~\ref{fig:fantoma-v1} muestra el resultado de esta primera versión.\\
+ 
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.45\textwidth]{imagenes/fantoma-v1-superior.png}\hfill
+  \includegraphics[width=0.45\textwidth]{imagenes/fantoma-v1.png}
+  \caption{Primera generación del fantoma, impresa en piezas separadas y ensamblada manualmente con adhesivo. El ensamblado de múltiples piezas pequeñas resultó frágil y propenso a errores.}
+  \label{fig:fantoma-v1}
+\end{figure}
+ 
+La segunda generación abandonó el ensamblado de piezas y adoptó la impresión del modelo completo dividido en láminas horizontales, lo que simplificó el proceso y mejoró la integridad estructural del conjunto. Esta versión resolvió la fragilidad del ensamblado, pero la orientación horizontal de las láminas dificultaba la observación de las estructuras internas, que quedaban ocultas entre capas.\\
+ 
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.6\textwidth]{imagenes/fantoma-v2.png}
+  \caption{Segunda generación, impresa en láminas horizontales. La división en láminas eliminó el ensamblado manual, pero la orientación dificultaba la visualización de las estructuras internas.}
+  \label{fig:fantoma-v2}
+\end{figure}
+ 
+La tercera generación, que constituye el resultado final, introdujo dos cambios. Primero, la impresión a color, que permite diferenciar visualmente los tejidos según el mapa de colores del sistema. Segundo, la división del modelo en cuatro láminas verticales, decisión que resuelve simultáneamente dos problemas: mantiene cada lámina dentro de las dimensiones de la cama de impresión y, al separarlas, expone las estructuras internas del cuello, incluida la región del punto de incisión. La Ilustración~\ref{fig:fantoma-final} muestra esta versión.\\
+ 
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.45\textwidth]{imagenes/fantoma-superior.png}\hfill
+  \includegraphics[width=0.45\textwidth]{imagenes/fantoma-axial.png}
+  \caption{Tercera generación del fantoma, impresa a color en cuatro láminas verticales. Los colores diferencian la piel y el tejido graso subcutáneo, la musculatura, las vértebras y la vía aérea. La división vertical mantiene cada lámina dentro de la cama de impresión y deja a la vista las estructuras internas del cuello.}
+  \label{fig:fantoma-final}
+\end{figure}
+ 
+Los modelos se imprimieron en PLA (ácido poliláctico, el filamento termoplástico más extendido en impresión doméstica) por deposición de material fundido, a un 60\% del tamaño anatómico real, escala necesaria para ajustar las piezas a las dimensiones de la cama de impresión. La pieza más detallada requirió aproximadamente 23,5 horas de impresión. En todos los casos, las estructuras reproducen la anatomía individual del paciente de origen, que es precisamente la diversidad morfológica que los fantomas comerciales genéricos no ofrecen.\\
+ 
 Las impresiones se realizaron con un único material y con varios colores, lo que permite distinguir visualmente los tejidos pero mantiene una rigidez uniforme en toda la pieza. En consecuencia, los fantomas obtenidos habilitan la observación y el reconocimiento anatómico de la región de la cricotiroidotomía, pero no reproducen la consistencia diferenciada del tejido blando que requeriría practicar la incisión con realismo táctil. Esta limitación, anticipada en el Capítulo~\ref{ch:problematica}, se aborda entre las mejoras propuestas. La validación clínica del fantoma con el equipo médico se encuentra pendiente.\\
-
-\begin{figure}[h]
-  \centering
-  \includegraphics[width=0.8\textwidth]{imagenes/fantoma-axial.png}
-  \caption{Corte transversal de un fantoma cervical impreso. Los colores diferencian piel y tejido graso subcutáneo, musculatura, vértebra y vía aérea.}
-  \label{fig:fantoma-axial}
-\end{figure}
-
-\begin{figure}[h]
-  \centering
-  \includegraphics[width=0.8\textwidth]{imagenes/fantoma-sagital.png}
-  \caption{Cortes sagitales de un fantoma impreso, con las vértebras cervicales y el trayecto de la vía aérea.}
-  \label{fig:fantoma-sagital}
-\end{figure}
 
 \section{POSIBLES MEJORAS}
 
