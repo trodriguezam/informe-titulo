@@ -246,35 +246,44 @@ Los archivos STL producidos se cargan en el laminador e imprimen sin requerir re
 
 \subsection{Fantoma físico impreso}
  
-El recorrido completo se validó materialmente mediante la impresión de fantomas a partir de los archivos generados por el sistema, lo que confirma que el flujo entrega un objeto físico coherente con la TC de entrada. El proceso de fabricación no fue inmediato, sino que atravesó tres generaciones sucesivas, cada una motivada por las limitaciones de la anterior.\\
+El recorrido completo se validó materialmente mediante la impresión de fantomas a partir de los archivos generados por el sistema, lo que confirma que el flujo entrega un objeto físico coherente con la TC de entrada. La fabricación no fue inmediata: atravesó cuatro generaciones sucesivas, cada una motivada por las limitaciones de la anterior, hasta llegar a un resultado a color que expone las estructuras internas del cuello.\\
  
-La primera generación se imprimió estructura por estructura, en piezas separadas que luego se ensamblaron manualmente con adhesivo. Este enfoque resultó frágil y laborioso: el ensamblado de decenas de piezas pequeñas es propenso a errores de posición y consume un tiempo considerable, además de que las estructuras finas presentaban fragmentos sueltos y baja adherencia. La Ilustración~\ref{fig:fantoma-v1} muestra el resultado de esta primera versión.\\
+La primera generación se imprimió estructura por estructura, en piezas separadas que luego se ensamblaron manualmente con adhesivo. El enfoque resultó frágil y laborioso: el ensamblado de decenas de piezas pequeñas es propenso a errores de posición y consume un tiempo considerable, además de que las estructuras finas presentaban fragmentos sueltos y baja adherencia.\\
  
 \begin{figure}[h]
   \centering
-  \includegraphics[width=0.45\textwidth]{imagenes/fantoma-v1-superior.png}\hfill
-  \includegraphics[width=0.45\textwidth]{imagenes/fantoma-v1.png}
-  \caption{Primera generación del fantoma, impresa en piezas separadas y ensamblada manualmente con adhesivo. El ensamblado de múltiples piezas pequeñas resultó frágil y propenso a errores.}
+  \includegraphics[width=0.46\textwidth]{imagenes/fantoma-v1.png}\hfill
+  \includegraphics[width=0.46\textwidth]{imagenes/fantoma-v1-superior.png}
+  \caption{Primera generación, impresa en piezas separadas y ensamblada con adhesivo. El ensamblado de múltiples piezas pequeñas resultó frágil y propenso a errores.}
   \label{fig:fantoma-v1}
 \end{figure}
  
-La segunda generación abandonó el ensamblado de piezas y adoptó la impresión del modelo completo dividido en láminas horizontales, lo que simplificó el proceso y mejoró la integridad estructural del conjunto. Esta versión resolvió la fragilidad del ensamblado, pero la orientación horizontal de las láminas dificultaba la observación de las estructuras internas, que quedaban ocultas entre capas.\\
+La segunda generación abandonó el ensamblado de piezas y pasó a imprimir el modelo como un bloque, conservando la diferenciación por color de las estructuras. La Ilustración~\ref{fig:fantoma-v2} muestra un corte transversal en el que se distinguen la piel y el tejido graso subcutáneo, la musculatura cervical, la vértebra y, en tono claro, los músculos esternotiroideo y esternocleidomastoideo. Esta versión mejoró la integridad estructural respecto de la anterior, pero mantener el modelo cerrado impedía observar las estructuras internas.\\
  
 \begin{figure}[h]
   \centering
-  \includegraphics[width=0.6\textwidth]{imagenes/fantoma-v2.png}
-  \caption{Segunda generación, impresa en láminas horizontales. La división en láminas eliminó el ensamblado manual, pero la orientación dificultaba la visualización de las estructuras internas.}
+  \includegraphics[width=0.72\textwidth]{imagenes/fantoma-v2-axial.png}
+  \caption{Segunda generación, impresa como bloque con diferenciación por color. Se distinguen la piel y el tejido graso subcutáneo, la musculatura, la vértebra y los músculos esternotiroideo y esternocleidomastoideo.}
   \label{fig:fantoma-v2}
 \end{figure}
  
-La tercera generación, que constituye el resultado final, introdujo dos cambios. Primero, la impresión a color, que permite diferenciar visualmente los tejidos según el mapa de colores del sistema. Segundo, la división del modelo en cuatro láminas verticales, decisión que resuelve simultáneamente dos problemas: mantiene cada lámina dentro de las dimensiones de la cama de impresión y, al separarlas, expone las estructuras internas del cuello, incluida la región del punto de incisión. La Ilustración~\ref{fig:fantoma-final} muestra esta versión.\\
+La tercera generación introdujo la división del modelo en láminas horizontales, lo que permitió inspeccionar el interior sin comprometer la integridad del conjunto. La orientación horizontal de los cortes, sin embargo, dejaba las estructuras del punto de incisión repartidas entre láminas, dificultando su lectura conjunta.\\
  
 \begin{figure}[h]
   \centering
-  \includegraphics[width=0.45\textwidth]{imagenes/fantoma-superior.png}\hfill
-  \includegraphics[width=0.45\textwidth]{imagenes/fantoma-axial.png}
-  \caption{Tercera generación del fantoma, impresa a color en cuatro láminas verticales. Los colores diferencian la piel y el tejido graso subcutáneo, la musculatura, las vértebras y la vía aérea. La división vertical mantiene cada lámina dentro de la cama de impresión y deja a la vista las estructuras internas del cuello.}
-  \label{fig:fantoma-final}
+  \includegraphics[width=0.6\textwidth]{imagenes/fantoma-v3.png}
+  \caption{Tercera generación, dividida en láminas horizontales. La división permitió observar el interior, pero repartía las estructuras del punto de incisión entre distintas láminas.}
+  \label{fig:fantoma-v3}
+\end{figure}
+ 
+La cuarta generación, que constituye el resultado final, dividió el modelo en cuatro láminas verticales. Esta orientación resuelve simultáneamente dos problemas: mantiene cada lámina dentro de las dimensiones de la cama de impresión y, al separarlas, expone en un mismo plano las estructuras internas del cuello, incluida la región del punto de incisión. La Ilustración~\ref{fig:fantoma-v4} muestra esta versión, en la que el mapa de colores del sistema diferencia cada tipo de tejido.\\
+ 
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.46\textwidth]{imagenes/fantoma-v4-superior.png}\hfill
+  \includegraphics[width=0.46\textwidth]{imagenes/fantoma-v4-sagital.png}
+  \caption{Cuarta generación del fantoma, el resultado final, dividida en cuatro láminas verticales. La orientación mantiene cada lámina dentro de la cama de impresión y deja a la vista las estructuras internas del cuello en un mismo plano.}
+  \label{fig:fantoma-v4}
 \end{figure}
  
 Los modelos se imprimieron en PLA (ácido poliláctico, el filamento termoplástico más extendido en impresión doméstica) por deposición de material fundido, a un 60\% del tamaño anatómico real, escala necesaria para ajustar las piezas a las dimensiones de la cama de impresión. La pieza más detallada requirió aproximadamente 23,5 horas de impresión. En todos los casos, las estructuras reproducen la anatomía individual del paciente de origen, que es precisamente la diversidad morfológica que los fantomas comerciales genéricos no ofrecen.\\
