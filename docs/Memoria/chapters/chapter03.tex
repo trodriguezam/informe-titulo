@@ -11,8 +11,12 @@ El módulo de segmentación, denominado \textit{Segmentación Cuello} dentro de 
 
 Internamente, el módulo orquesta cuatro etapas sucesivas: el preprocesamiento de la imagen, la segmentación mediante TotalSegmentator \citep{wasserthal2023totalsegmentator}, la consolidación de las máscaras resultantes en un único conjunto de estructuras, y la carga de dichas estructuras en la escena con una asignación de color según el tipo de tejido. Toda esta complejidad permanece oculta tras una interfaz guiada, de modo que el operador no requiere conocimientos de procesamiento de imágenes ni de la herramienta de segmentación subyacente. Como salida, el módulo genera un archivo independiente por cada estructura detectada, además de un reporte del proceso con las estructuras encontradas y los tiempos de ejecución.\\
 
-% SUGERENCIA DE FIGURA — captura de la interfaz del módulo Segmentación Cuello.
-% Ubicación recomendada: aquí. Es el producto que el evaluador nunca llega a ver.
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.6\textwidth]{imagenes/modulo-segmentacion.png}
+  \caption{XX.}
+  \label{fig:modulo-segmentacion}
+\end{figure}
 
 \subsection{Infraestructura de segmentación remota sobre GPU}
 
@@ -24,8 +28,13 @@ Este ítem desacopla la carga de cómputo del puesto de trabajo del médico: el 
 
 El módulo de corte, denominado \textit{Corte 3D} en la interfaz y \texttt{CorteModule} en el código, toma la segmentación generada por el módulo anterior y la prepara para la impresión. Mediante planos de corte interactivos en las orientaciones axial, coronal y sagital, el usuario recorta los bordes del modelo hasta dejarlo con la forma y el tamaño adecuados para la cama de impresión; una opción de corte simétrico facilita conservar únicamente la zona central del cuello. Una vez aplicados los cortes, el módulo exporta el resultado a archivos STL, uno por cada estructura anatómica, listos para abrirse en un laminador y enviarse a la impresora.\\
 
-% SUGERENCIA DE FIGURA — captura del módulo Corte 3D con los planos activos sobre el modelo.
-% Ubicación recomendada: aquí.
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.6\textwidth]{imagenes/modulo-corte-1.png}
+  \includegraphics[width=0.6\textwidth]{imagenes/modulo-corte-2.png}
+  \caption{XX.}
+  \label{fig:modulo-corte}
+\end{figure}
 
 \subsection{Fantoma anatómico impreso}
 
