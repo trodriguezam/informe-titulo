@@ -137,11 +137,11 @@ Los cuatro criterios apuntan en la misma dirección y ninguno se apoya en la com
 
 \subsection{Cobertura anatómica del sistema integrado}
 
-Integrado en el flujo, el sistema produce 58 de las 64 estructuras que contiene la referencia. Las seis restantes se concentran en la región craneofacial: la mandíbula (\texttt{mandible}), las dos arcadas dentarias (\texttt{teeth\_upper}, \texttt{teeth\_lower}), los senos frontal y maxilar (\texttt{sinus\_frontal}, \texttt{sinus\_maxillary}) y la estructura global de cabeza (\texttt{head}). TotalSegmentator dispone de una tarea adicional, \texttt{craniofacial\_structures}, que las cubre y no requiere licencia, de modo que incorporarla habría igualado la referencia por completo.\\
+Integrado en el flujo, el sistema produce 58 de las 64 estructuras que contiene la referencia. Las seis restantes se concentran en la región craneofacial: la mandíbula (\texttt{mandible}), las dos arcadas dentarias (\texttt{teeth\_upper}, \texttt{teeth\_lower}), los senos frontal y maxilar (\texttt{sinus\_frontal}, \texttt{sinus\_maxillary}) y la estructura global de cabeza (\texttt{head}). Estas seis provienen de una tarea de TotalSegmentator no incluida en la configuración actual, orientada específicamente a la región de interés del proyecto.\\
 
-Se optó deliberadamente por no ejecutarla. Ninguna de esas seis estructuras interviene en la cricotiroidotomía, cuyo punto anatómico de interés queda comprendido en la vía aérea y las estructuras óseas cervicales. Añadir la tarea habría igualado una cifra sin aportar nada al fantoma, a costa de más tiempo de segmentación, más máscaras que transferir y una pieza más voluminosa de imprimir. El criterio que ordena el diseño del sistema es la utilidad del fantoma para el procedimiento, no la coincidencia con el conjunto de referencia.\\
+Conviene invertir la lectura habitual de estas cifras. El sistema no busca reproducir las 64 estructuras de la referencia, sino producir un modelo anatómico útil para la región de cabeza y cuello, y bajo ese objetivo la cifra relevante no es 58 de 64, sino 121: el número de estructuras con contenido real que el flujo conserva y entrega para un caso cervical, casi el doble de las que contiene la referencia. Entre ellas están las cuatro que delimitan el punto de incisión de la cricotiroidotomía (cartílago tiroides, cricoides, hioides y laringe), que la referencia del radiólogo ni siquiera incluye. El sistema demuestra así que, con la configuración de tareas adecuada, es capaz de generar una zona anatómica considerablemente más detallada que la referencia de comparación.\\
 
-Esa cifra, además, mide una sola cosa: cuánto de la referencia reproduce el sistema. No mide cuánto entrega el sistema. Como se explicó en el Capítulo~\ref{ch:diseno-del-producto}, el flujo del fantoma no filtra por nombre contra la lista de referencia, sino que conserva toda estructura con contenido real en el volumen. Aplicado a una TC cervical, el sistema produce del orden de 120 estructuras: las 58 de la referencia y unas sesenta más que esta no contiene, entre ellas los cartílagos tiroides y cricoides, el hioides, la laringe, las carótidas y yugulares internas, el esófago, la glándula tiroides, la médula espinal, las vértebras torácicas superiores, las costillas y las clavículas. El número exacto varía según el campo de visión del escáner. El sistema entrega, por tanto, cerca del doble de estructuras que la referencia contra la cual se lo compara, y varias de las adicionales son precisamente las que definen el punto de incisión de la cricotiroidotomía.\\
+Esa amplitud, sin embargo, no llega directamente al fantoma final. El módulo de corte, descrito en el Capítulo~\ref{ch:diseno-del-producto}, permite al usuario recortar el modelo hasta la región de interés antes de exportar, de modo que las 121 estructuras generadas se reducen a las que efectivamente se necesitan imprimir para el procedimiento. La generación exhaustiva y el recorte selectivo quedan así como dos etapas separadas: primero segmentar todo lo que la imagen permite, y luego decidir qué imprimir, en lugar de decidir de antemano qué segmentar.\\
 
 \begin{figure}[h]
   \centering
@@ -153,6 +153,13 @@ Esa cifra, además, mide una sola cosa: cuánto de la referencia reproduce el si
 \subsection{Generalización a otras regiones anatómicas}
 
 Aunque el sistema fue configurado para la región cervical, su arquitectura no está atada a ella. Para verificarlo se procesó una TC de pie a través del módulo completo, sin modificar el código ni la configuración. El flujo ejecutó sus cinco etapas sin intervención, segmentó las estructuras presentes en el volumen y generó los archivos STL correspondientes. Esto confirma que el recorrido (preprocesamiento, segmentación remota, consolidación por filtro espacial, corte y exportación) es independiente de la anatomía de entrada, lo que se explica por el criterio de consolidación adoptado: al conservar toda máscara con contenido real en lugar de contrastarla contra una lista fija de nombres, el sistema no presupone qué estructuras debería encontrar. Lo que sí depende de la región es el conjunto de tareas de TotalSegmentator que se ejecuta, hoy orientado a cabeza y cuello, de modo que la cobertura alcanzable en otras zonas es menor que la posible. Esta limitación se recoge entre las mejoras propuestas.\\
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.9\textwidth]{graficos/pie-segmentado.jpeg}
+  \caption{Generalización del flujo a una TC de pie. La imagen superior muestra el resultado de segmentar una TC de un pie mediante el flujo.}
+  \label{fig:pie-segmentado}
+\end{figure}
 
 \subsection{Tiempo de procesamiento}
 

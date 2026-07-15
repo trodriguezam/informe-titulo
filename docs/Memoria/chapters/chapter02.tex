@@ -3,7 +3,7 @@
 
 \section{DESCRIPCIÓN DE LA SOLUCIÓN}
 
-Frente a la falta de fantomas anatómicamente diversos para el entrenamiento de procedimientos de emergencia como la cricotiroidotomía, se propone un sistema que automatiza la generación de fantomas de cuello personalizados a partir de escáneres de TC de pacientes reales. La solución reemplaza el flujo manual de segmentación, corrección y exportación, lento y dependiente de un operador con experiencia en herramientas de modelamiento 3D, por un flujo reproducible que un estudiante o docente de medicina puede ejecutar sin conocimientos de procesamiento de imágenes ni de impresión 3D.\\
+Frente a la falta de fantomas anatómicamente diversos para el entrenamiento de procedimientos de emergencia como la cricotiroidotomía, se propone un sistema que automatiza la generación de fantomas de cuello personalizados a partir de escáneres de TC de pacientes reales. La solución reemplaza el flujo manual de segmentación, corrección y exportación, lento y dependiente de un operador con experiencia en herramientas de modelamiento 3D, por un flujo reproducible que un estudiante o docente de medicina puede ejecutar sin conocimientos de procesamiento de imágenes.\\
 
 El sistema se organiza en cuatro etapas: a) ingreso de la TC en formato NIfTI; b) segmentación automática de las estructuras anatómicas relevantes para la vía aérea y el cuello (vértebras cervicales, cartílagos, tráquea, músculos, glándulas y tejidos blandos, entre otras); c) exportación de cada estructura segmentada a un archivo STL independiente, con asignación de color según el tipo de tejido; y d) preparación de los archivos STL en el laminador para su impresión. Estas cuatro etapas se exponen al usuario final a través de dos módulos personalizados de 3D Slicer, de modo que la complejidad interna del flujo (ejecución remota en GPU, consolidación de segmentos, mapeo de colores) queda oculta detrás de una interfaz simple.\\
 
@@ -68,7 +68,7 @@ La elección de la herramienta de segmentación no se dio por sentada, sino que 
 
 \begin{enumerate}
   \item \textbf{Cobertura anatómica:} cuántas de las estructuras de la referencia logra segmentar el modelo con contenido real.
-  \item \textbf{Concordancia con la referencia clínica:} las estructuras segmentadas deben alcanzar un coeficiente de Dice promedio igual o superior a 0,85 respecto de la segmentación de referencia validada por el especialista. Este criterio mide reproducibilidad frente al material clínico disponible, y no precisión frente a una anotación independiente, distinción que se desarrolla en el Capítulo~\ref{ch:resultados}.
+  \item \textbf{Concordancia con la referencia clínica:} cuánto se superpone cada estructura predicha con su contraparte en la referencia, medida mediante el coeficiente de Dice y la intersección sobre la unión (IoU).
   \item \textbf{Tiempo de procesamiento:} el costo temporal por caso, considerando transferencia de archivos y segmentación.
 \end{enumerate}
 
