@@ -7,9 +7,12 @@ Frente a la falta de fantomas anatómicamente diversos para el entrenamiento de 
 
 El sistema se organiza en cuatro etapas: a) ingreso de la TC en formato NIfTI; b) segmentación automática de las estructuras anatómicas relevantes para la vía aérea y el cuello (vértebras cervicales, cartílagos, tráquea, músculos, glándulas y tejidos blandos, entre otras); c) exportación de cada estructura segmentada a un archivo STL independiente, con asignación de color según el tipo de tejido; y d) preparación de los archivos STL en el laminador para su impresión. Estas cuatro etapas se exponen al usuario final a través de dos módulos personalizados de 3D Slicer, que ocultan la complejidad interna del flujo (ejecución remota en GPU, consolidación de segmentos, mapeo de colores) detrás de una interfaz simple.\\
 
-% SUGERENCIA DE FIGURA — diagrama de las cuatro etapas (a–d) de la solución.
-% Ubicación recomendada: aquí, inmediatamente después de enunciarlas.
-% Figura recomendada: un diagrama de las cuatro etapas a–d, justo después de enunciarlas. Es distinto del diagrama de arquitectura de ch03: este es conceptual (qué hace el sistema), aquel es técnico (cómo fluyen los datos). Dejé el comentario marcado.
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.95\textwidth]{diagramas/etapas-solucion.pdf}
+  \caption{Las cuatro etapas de la solución. Las dos primeras las cubre el módulo de segmentación; la tercera, el módulo de corte; la preparación en el laminador queda fuera del sistema.}
+  \label{fig:etapas-solucion}
+\end{figure}
 
 Para la etapa de segmentación automática se evaluaron tres alternativas (TotalSegmentator, MedSAM y YOLO) sobre una base de diez casos de cuello, contrastando su salida contra una segmentación de referencia elaborada por un radiólogo especialista. De esa evaluación se seleccionó TotalSegmentator \citep{wasserthal2023totalsegmentator} como motor de segmentación de la solución. El detalle de la comparación, y una limitación relevante en la naturaleza de la referencia empleada, se exponen en el Capítulo~\ref{ch:resultados}.\\
 

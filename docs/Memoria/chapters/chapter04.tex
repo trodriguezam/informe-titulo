@@ -9,7 +9,7 @@
 \newcommand{\tPreproc}{4 min}
 \newcommand{\tEnvio}{50 s}
 \newcommand{\tSeg}{5 min}
-\newcommand{\Local}{15 min}
+\newcommand{\tLocal}{15 min}
 \newcommand{\tLimpieza}{3 min}
 \newcommand{\tTotal}{28 min}
 % ---------------------------------------------------------------------------
@@ -47,12 +47,12 @@ La circunstancia anterior habilita un análisis que no estaba previsto y que res
     Vértebra C2 & 16,3\% \\
     Tráquea     & 11,7\% \\
     \hline
-    Las 49 estructuras restantes & $\leq$ 0,7\% \\
+    El resto de las estructuras & $\leq$ 0,7\% \\
     \hline
   \end{tabular}
 \end{table}
 
-El patrón de correcciones es nítido. El especialista aceptó sin modificaciones la salida automática en 49 de las 57 estructuras analizadas: toda la musculatura, las glándulas, los ojos, la faringe, los tejidos grasos, la piel y el contorno corporal presentan divergencias iguales o inferiores al 0,7\%, y siete de ellas resultan idénticas vóxel a vóxel. Las correcciones se concentran en las siete vértebras cervicales y en la tráquea, con divergencias de entre el 11,7\% y el 26,4\%. La separación entre ambos grupos es tajante: ninguna estructura queda en un rango intermedio.\\
+El patrón de correcciones es nítido. La musculatura, las glándulas, los ojos, la faringe, los tejidos grasos, la piel y el contorno corporal presentan divergencias iguales o inferiores al 0,7\%, y el especialista las aceptó sin retoques. Las correcciones se concentran en las siete vértebras cervicales y en la tráquea, con divergencias de entre el 11,7\% y el 26,4\%. La separación entre ambos grupos es tajante: ninguna estructura queda en un rango intermedio.\\
 
 La lectura clínica es que la segmentación automática de tejido blando alcanza una calidad que un especialista considera aceptable sin retoques, mientras que las estructuras óseas cervicales y la vía aérea requieren revisión. Que estas últimas sean precisamente las que delimitan el punto de incisión de la cricotiroidotomía tiene una implicancia operativa concreta, recogida entre las mejoras propuestas.\\
 
@@ -64,7 +64,7 @@ Con las salvedades anteriores, la Tabla~\ref{tab:comparacion} resume el desempe�
 
 \begin{table}[h]
   \centering
-  \caption{Concordancia de los tres modelos con la segmentación de referencia, sobre las 618 estructuras con contenido real.}
+  \caption{Concordancia de los tres modelos con la segmentación de referencia, sobre el total de estructuras con contenido real.}
   \label{tab:comparacion}
   \begin{tabular}{lcccc}
     \hline
@@ -168,7 +168,7 @@ Dado que las métricas de superposición no pueden arbitrar de forma imparcial, 
 \begin{enumerate}
   \item \textbf{Autonomía.} Es el único de los tres modelos capaz de segmentar sin indicaciones manuales por estructura. MedSAM requiere recuadros delimitadores que, en un uso real, solo podrían provenir de una segmentación previa, lo que anula el propósito del sistema. YOLO opera sin indicaciones, pero no segmenta ninguna estructura anatómica interna. Este criterio, por sí solo, descarta ambas alternativas.
 
-  \item \textbf{Validación clínica implícita.} El radiólogo del proyecto, sin intervención del equipo, eligió TotalSegmentator como punto de partida para elaborar la referencia y aceptó su salida sin modificaciones en 49 de las 57 estructuras analizadas. Se trata de una validación por parte de un especialista, independiente de cualquier métrica calculada por los autores.
+  \item \textbf{Validación clínica implícita.} El radiólogo del proyecto, sin intervención del equipo, eligió TotalSegmentator como punto de partida para elaborar la referencia y aceptó su salida sin modificaciones en la mayoría de las estructuras, con correcciones circunscritas a las vértebras cervicales y la tráquea. Se trata de una validación por parte de un especialista, independiente de cualquier métrica calculada por los autores.
 
   \item \textbf{Estructuras del punto de incisión.} TotalSegmentator es el único que produce el cartílago tiroides, el cricoides, el hioides y la laringe, que delimitan la membrana cricotiroidea y dan sentido al fantoma.
 
