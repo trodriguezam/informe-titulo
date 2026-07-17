@@ -163,7 +163,7 @@ Cada capítulo es un archivo en `docs/Memoria/chapters/chapterNN.tex`. Para agre
 - Inserción:
 
 ```latex
-\begin{figure}[h]
+\begin{figure}[H]
   \centering
   \includegraphics[width=0.8\textwidth]{ruta/a/figura.pdf}
   \caption{Descripción de la figura.}
@@ -176,7 +176,7 @@ El paquete `\figurename` está renombrado a "Ilustración", así que la figura s
 ### Tablas
 
 ```latex
-\begin{table}[h]
+\begin{table}[H]
   \centering
   \begin{tabular}{lcc}
     \toprule

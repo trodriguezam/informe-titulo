@@ -11,7 +11,7 @@ El módulo de segmentación, denominado \textit{Segmentación Cuello} dentro de 
 
 Internamente, el módulo orquesta cuatro etapas sucesivas: el preprocesamiento de la imagen, la segmentación mediante TotalSegmentator \citep{wasserthal2023totalsegmentator}, la consolidación de las máscaras resultantes en un único conjunto de estructuras, y la carga de dichas estructuras en la escena con una asignación de color según el tipo de tejido. Toda esta complejidad permanece oculta tras una interfaz guiada, de modo que el operador no requiere conocimientos de procesamiento de imágenes ni de la herramienta de segmentación subyacente. Como salida, el módulo genera un archivo independiente por cada estructura detectada, además de un reporte del proceso con las estructuras encontradas y los tiempos de ejecución.\\
 
-\begin{figure}[h]
+\begin{figure}[H]
   \centering
   \includegraphics[width=0.6\textwidth]{imagenes/modulo-segmentacion.png}
   \caption{Interfaz del módulo de segmentación en 3D Slicer. El panel de control expone el selector del escáner TC, la elección del modo de procesamiento (remoto o local) y el botón de ejecución, junto al indicador de progreso del proceso.}
@@ -28,10 +28,10 @@ Este ítem desacopla la carga de cómputo del puesto de trabajo del médico: el 
 
 El módulo de corte, denominado \textit{Corte 3D} en la interfaz y \texttt{CorteModule} en el código, toma la segmentación generada por el módulo anterior y la prepara para la impresión. Mediante planos de corte interactivos en las orientaciones axial, coronal y sagital, el usuario recorta los bordes del modelo hasta dejarlo con la forma y el tamaño adecuados para la cama de impresión; una opción de corte simétrico facilita conservar únicamente la zona central del cuello. Una vez aplicados los cortes, el módulo exporta el resultado a archivos STL, uno por cada estructura anatómica, listos para abrirse en un laminador y enviarse a la impresora.\\
 
-\begin{figure}[h]
+\begin{figure}[H]
   \centering
-  \includegraphics[width=0.6\textwidth]{imagenes/modulo-corte-1.png}
-  \includegraphics[width=0.6\textwidth]{imagenes/modulo-corte-2.png}
+  \includegraphics[width=0.49\textwidth]{imagenes/modulo-corte-1.png}
+  \includegraphics[width=0.49\textwidth]{imagenes/modulo-corte-2.png}
   \caption{Interfaz del módulo de corte en 3D Slicer, mostrada en dos partes por su extensión vertical: arriba, los controles de los tres planos de corte y la opción de corte simétrico; abajo, la configuración de limpieza de malla (eliminación de fragmentos flotantes y cierre de superficie) previa a la exportación de los archivos STL.}
   \label{fig:modulo-corte}
 \end{figure}
@@ -52,7 +52,7 @@ El proceso comienza cuando el usuario selecciona un escáner TC en formato NIfTI
 
 A partir de ese punto, el módulo de corte toma el control: el usuario recorta el modelo mediante planos interactivos, aplica las rutinas de preparación de malla y exporta cada estructura a su archivo STL correspondiente. Estos archivos abandonan el sistema y continúan su recorrido en el laminador, donde se generan las instrucciones de impresión.\\
 
-\begin{figure}[h]
+\begin{figure}[H]
   \centering
   \includegraphics[width=0.9\textwidth]{diagramas/arquitectura.pdf}
   \caption{Flujo de datos del sistema, desde el escáner TC de entrada hasta los archivos STL. La segmentación se ejecuta en el servidor remoto con GPU; el resto del procesamiento ocurre en el equipo local.}
@@ -81,7 +81,7 @@ En la práctica, la mayoría de los escáneres ya vienen dentro de este rango, e
 
 La segmentación se obtiene ejecutando sucesivamente siete tareas de TotalSegmentator, cuyas máscaras se complementan para cubrir el conjunto de estructuras de interés del cuello. Ninguna tarea aislada basta: la tarea base no fue entrenada para la región cervical, y las estructuras que definen el punto anatómico de la cricotiroidotomía (el cartílago tiroides y el cricoides) provienen de una tarea especializada de cabeza y cuello. La Tabla~\ref{tab:tasks} detalla el aporte de cada una.\\
 
-\begin{table}[h]
+\begin{table}[H]
   \centering
   \caption{Tareas de TotalSegmentator ejecutadas por el módulo de segmentación y estructuras que aporta cada una.}
   \label{tab:tasks}

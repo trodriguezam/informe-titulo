@@ -5,9 +5,9 @@
 
 La cricotiroidotomía de emergencia consiste en una incisión a través de la membrana cricotiroidea para establecer una vía aérea permeable cuando otras maniobras han fallado. Es un procedimiento poco frecuente, de alto riesgo, que debe ejecutarse en pocos minutos y que se apoya en el reconocimiento de la anatomía cervical del paciente bajo condiciones de urgencia. A diferencia de otras competencias clínicas que se desarrollan mediante observación o simulación en pantalla, la incisión exige una destreza táctil y espacial que se adquiere practicando sobre estructuras físicas tridimensionales. Los fantomas anatómicos, entendidos como modelos físicos que replican la anatomía humana, son una de las herramientas estándar para ese entrenamiento \citep{raekerjordan2022phantoms}.\\
 
-\begin{figure}[h]
+\begin{figure}[H]
   \centering
-  \includegraphics[width=0.8\textwidth]{imagenes/diagrama-sagital.jpeg}
+  \includegraphics[width=0.8\textwidth]{imagenes/diagrama-sagital.png}
   \caption{Corte sagital de un cuello segmentado por el sistema, con las estructuras que delimitan el punto de incisión de la cricotiroidotomía: el hueso hioides, el cartílago tiroides, el cartílago cricoides y la vía aérea. La membrana cricotiroidea, señalada en rojo, es el punto donde se practica la incisión.}
   \label{fig:diagrama-sagital}
 \end{figure}
@@ -20,7 +20,7 @@ Esta dependencia del trabajo manual experto hace que la producción de fantomas 
 
 El presente proyecto nace de la identificación de esta brecha. Si se lograra automatizar la segmentación anatómica a partir de imágenes TC e integrar ese proceso en un flujo de trabajo que culmine en la impresión de un fantoma físico personalizado, sería posible producir modelos anatómicos diversos con un costo operacional sustancialmente menor. Ello permitiría a las instituciones médicas acceder a una biblioteca creciente de fantomas basados en casos reales, enriqueciendo la calidad del entrenamiento en procedimientos de urgencia como la cricotiroidotomía.\\
 
-\begin{figure}[h]
+\begin{figure}[H]
   \centering
   \includegraphics[width=0.9\textwidth]{diagramas/comparacion-flujo.pdf}
   \caption{Flujo manual de fabricación de fantomas, según la literatura, frente al flujo automatizado propuesto. La segmentación manual concentra el mayor costo de tiempo del proceso tradicional.}

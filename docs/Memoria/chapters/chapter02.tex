@@ -7,7 +7,7 @@ Frente a la falta de fantomas anatómicamente diversos para el entrenamiento de 
 
 El sistema se organiza en cuatro etapas: a) ingreso de la TC en formato NIfTI; b) segmentación automática de las estructuras anatómicas relevantes para la vía aérea y el cuello (vértebras cervicales, cartílagos, tráquea, músculos, glándulas y tejidos blandos, entre otras); c) exportación de cada estructura segmentada a un archivo STL independiente, con asignación de color según el tipo de tejido; y d) preparación de los archivos STL en el laminador para su impresión. Estas cuatro etapas se exponen al usuario final a través de dos módulos personalizados de 3D Slicer, que ocultan la complejidad interna del flujo (ejecución remota en GPU, consolidación de segmentos, mapeo de colores) detrás de una interfaz simple.\\
 
-\begin{figure}[h]
+\begin{figure}[H]
   \centering
   \includegraphics[width=0.95\textwidth]{diagramas/etapas-solucion.pdf}
   \caption{Las cuatro etapas de la solución. Las dos primeras las cubre el módulo de segmentación; la tercera, el módulo de corte; la preparación en el laminador queda fuera del sistema.}
