@@ -194,7 +194,7 @@ Esa amplitud, sin embargo, no llega directamente al fantoma final. El módulo de
 
 \subsection{Generalización a otras regiones anatómicas}
 
-Aunque el sistema fue configurado para la región cervical, su arquitectura no está atada a ella. Para verificarlo se procesó una TC de pie a través del módulo completo, sin modificar el código ni la configuración. El flujo ejecutó sus cinco etapas sin intervención, segmentó las estructuras presentes en el volumen y generó los archivos STL correspondientes. Esto confirma que el recorrido (preprocesamiento, segmentación remota, consolidación por filtro espacial, corte y exportación) es independiente de la anatomía de entrada, lo que se explica por el criterio de consolidación adoptado: al conservar toda máscara con contenido real en lugar de contrastarla contra una lista fija de nombres, el sistema no presupone qué estructuras debería encontrar. Lo que sí depende de la región es el conjunto de tareas de TotalSegmentator que se ejecuta, hoy orientado a cabeza y cuello, de modo que la cobertura alcanzable en otras zonas es menor que la posible. Esta limitación se recoge entre las mejoras propuestas.\\
+Aunque el sistema fue configurado para la región cervical, su arquitectura no está atada a ella. Para verificarlo se procesó una TC de pie a través del módulo completo, sin modificar el código ni la configuración. El flujo ejecutó sus cuatro etapas sin intervención, segmentó las estructuras presentes en el volumen y generó los archivos STL correspondientes. Esto confirma que el recorrido (preprocesamiento, segmentación remota, consolidación por filtro espacial, corte y exportación) es independiente de la anatomía de entrada, lo que se explica por el criterio de consolidación adoptado: al conservar toda máscara con contenido real en lugar de contrastarla contra una lista fija de nombres, el sistema no presupone qué estructuras debería encontrar. Lo que sí depende de la región es el conjunto de tareas de TotalSegmentator que se ejecuta, hoy orientado a cabeza y cuello, de modo que la cobertura alcanzable en otras zonas es menor que la posible. Esta limitación se recoge entre las mejoras propuestas.\\
 
 \begin{figure}[H]
   \centering
@@ -205,7 +205,7 @@ Aunque el sistema fue configurado para la región cervical, su arquitectura no e
 
 \subsection{Tiempo de procesamiento}
 
-Los tiempos de la Tabla~\ref{tab:comparacion} corresponden únicamente a la inferencia de cada modelo, que es la magnitud comparable entre las tres herramientas. El tiempo que percibe el usuario es distinto y mayor, ya que la inferencia es solo una de las cinco etapas que ejecuta el módulo. La Tabla~\ref{tab:tiempos-etapa} desglosa una ejecución completa sobre un caso de TC cervical.\\
+Los tiempos de la Tabla~\ref{tab:comparacion} corresponden únicamente a la inferencia de cada modelo, que es la magnitud comparable entre las tres herramientas. El tiempo que percibe el usuario es distinto y mayor, ya que la inferencia es solo una de las etapas que ejecuta el módulo. La Tabla~\ref{tab:tiempos-etapa} desglosa una ejecución completa sobre un caso de TC cervical.\\
 
 \begin{table}[H]
   \centering
