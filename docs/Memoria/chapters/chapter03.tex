@@ -116,7 +116,7 @@ El módulo emite además un reporte en formato JSON con las estructuras detectad
 
 \subsection{Ejecución remota sobre GPU}
 
-La ejecución remota se implementó utilizando exclusivamente herramientas estándar (SSH y SCP), disponibles en los tres sistemas operativos de destino (Linux, macOS y Windows), sin dependencias adicionales. La secuencia consiste en crear un directorio de trabajo en el servidor, transferir la TC preprocesada, ejecutar el \textit{script} de segmentación sobre la GPU, recuperar las estructuras resultantes y eliminar los archivos temporales del servidor.\\
+La ejecución remota se implementó utilizando exclusivamente herramientas estándar (SSH y SCP), disponibles en los dos sistemas operativos de destino (macOS y Windows), sin dependencias adicionales. La secuencia consiste en crear un directorio de trabajo en el servidor, transferir la TC preprocesada, ejecutar el \textit{script} de segmentación sobre la GPU, recuperar las estructuras resultantes y eliminar los archivos temporales del servidor.\\
 
 Durante la implementación se debieron resolver incompatibilidades propias de la comunicación entre sistemas operativos distintos, en particular en la codificación de caracteres de la salida de los comandos remotos, que se normalizó a UTF-8 para evitar fallos de lectura. Asimismo, se forzó el vaciado inmediato de los \textit{buffers} de salida de los subprocesos, para que el progreso reportado al usuario refleje el avance real y no aparente bloqueos.\\
 
