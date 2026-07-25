@@ -50,6 +50,10 @@ La circunstancia anterior habilita un análisis que no estaba previsto y que res
     El resto de las estructuras & $\leq$ 0,7\% \\
     \hline
   \end{tabular}
+  \begin{minipage}{\textwidth}
+    \centering
+    \normalsize Fuente: Elaboración propia.\\
+  \end{minipage}
 \end{table}
 
 El patrón de correcciones es nítido. La musculatura, las glándulas, los ojos, la faringe, los tejidos grasos, la piel y el contorno corporal presentan divergencias iguales o inferiores al 0,7\%, y el especialista las aceptó sin retoques. Las correcciones se concentran en las siete vértebras cervicales y en la tráquea, con divergencias de entre el 11,7\% y el 26,4\%. La separación entre ambos grupos es tajante: ninguna estructura queda en un rango intermedio.\\
@@ -75,6 +79,10 @@ Con las salvedades anteriores, la Tabla~\ref{tab:comparacion} resume el desempe�
     YOLOv8x-seg      & 13,4\% & 0,108 & 0,085 & $\sim$0,8 min \\
     \hline
   \end{tabular}
+  \begin{minipage}{\textwidth}
+    \centering
+    \normalsize Fuente: Elaboración propia.\\
+  \end{minipage}
 \end{table}
 
 Las cifras de TotalSegmentator deben leerse con la reserva ya expuesta: al derivar la referencia de su propia salida, su ventaja en estas columnas está sobredeterminada y no constituye evidencia de superioridad. Lo informativo de la tabla es lo contrario de lo esperable: ni MedSAM ni YOLO se aproximan a una segmentación clínicamente validada, ni siquiera operando en condiciones privilegiadas.\\
@@ -92,6 +100,10 @@ La diferencia entre los tres modelos también se aprecia directamente en su sali
   \includegraphics[width=0.49\textwidth]{imagenes/segmentacion-yolo.png}
   \caption{Salida de los tres modelos sobre el caso 5, procesada por el módulo de corte. De izquierda a derecha: TotalSegmentator, con estructuras anatómicas coherentes; MedSAM, con un volumen fragmentado pese a operar con recuadros de la referencia; y YOLO, que produce láminas desconectadas por procesar el escáner corte a corte.}
   \label{fig:comparacion-cualitativa}
+  \begin{minipage}{\textwidth}
+    \centering
+    \normalsize Fuente: Elaboración propia.\\
+  \end{minipage}
 \end{figure}
 
 Un artefacto de la métrica requirió corrección antes de calcular estas cifras. El coeficiente de Dice está indefinido cuando la máscara predicha y la de referencia están ambas vacías, y la convención habitual le asigna el valor 1, entendiendo que el modelo acertó al no predecir nada donde no había nada. En la práctica, no todos los escáneres cubren la misma región anatómica: en uno de los diez casos, solo 43 de las 64 estructuras de referencia tienen contenido real. Sin filtrar, un modelo que no segmenta nada obtiene una puntuación perfecta sobre cada estructura ausente. Por ello, todas las métricas de este capítulo se calculan únicamente sobre las estructuras con referencia no vacía en cada caso. El filtro, adoptado por rigor, perjudica en realidad a las alternativas: TotalSegmentator predice algo en algunas de esas estructuras ausentes, lo que cuenta como falso positivo, mientras que MedSAM y YOLO no predicen nada y se beneficiaban de la puntuación trivial.\\
@@ -101,6 +113,10 @@ Un artefacto de la métrica requirió corrección antes de calcular estas cifras
   \includegraphics[width=0.9\textwidth]{graficos/1_dice_por_caso.png}
   \caption{Concordancia con la referencia clínica por caso, medida como coeficiente de Dice promedio sobre las estructuras con referencia no vacía.}
   \label{fig:dice-por-caso}
+  \begin{minipage}{\textwidth}
+    \centering
+    \normalsize Fuente: Elaboración propia.\\
+  \end{minipage}
 \end{figure}
 
 Desglosada por región anatómica (Figura~\ref{fig:radar-categorias}), la concordancia de TotalSegmentator es alta y uniforme en todas las categorías, en tanto que la de MedSAM cae en las estructuras óseas y de vía aérea, y la de YOLO se limita a las regiones de gran volumen.\\
@@ -110,6 +126,10 @@ Desglosada por región anatómica (Figura~\ref{fig:radar-categorias}), la concor
   \includegraphics[width=0.72\textwidth]{graficos/2_radar_categorias.png}
   \caption{Concordancia por región anatómica. Cada eje representa una categoría de estructuras, con el Dice promedio de los diez casos.}
   \label{fig:radar-categorias}
+  \begin{minipage}{\textwidth}
+    \centering
+    \normalsize Fuente: Elaboración propia.\\
+  \end{minipage}
 \end{figure}
 
 La Figura~\ref{fig:niveles-calidad} resume, para cada modelo, cuántas de las 64 estructuras de la referencia alcanzan cada nivel de concordancia. TotalSegmentator concentra la mayoría en los niveles altos; MedSAM se reparte entre niveles medios y bajos; YOLO acumula casi todas sus estructuras en el nivel nulo.\\
@@ -119,6 +139,10 @@ La Figura~\ref{fig:niveles-calidad} resume, para cada modelo, cuántas de las 64
   \includegraphics[width=0.95\textwidth]{graficos/3_niveles_calidad.png}
   \caption{Nivel de concordancia por estructura. Cada estructura de la referencia se clasifica según su Dice medio en los diez casos.}
   \label{fig:niveles-calidad}
+  \begin{minipage}{\textwidth}
+    \centering
+    \normalsize Fuente: Elaboración propia.\\
+  \end{minipage}
 \end{figure}
 
 \subsection{Sensibilidad al umbral de detección}
@@ -138,6 +162,10 @@ La cobertura anterior depende del umbral de Dice que se exija para dar una estru
     YOLOv8x-seg      & 13,4\% & 7,6\%  & 6,3\%  \\
     \hline
   \end{tabular}
+  \begin{minipage}{\textwidth}
+    \centering
+    \normalsize Fuente: Elaboración propia.\\
+  \end{minipage}
 \end{table}
 
 La cobertura de TotalSegmentator no varía entre umbrales: las estructuras que segmenta superan incluso el criterio más estricto, sin acumular resultados de calidad marginal. MedSAM pierde más de la mitad de su cobertura al pasar de 0,3 a 0,667, lo que revela que buena parte de las estructuras que aparentaba cubrir lo hacía con segmentaciones deficientes. YOLO se mantiene bajo en todos los umbrales. Las siete estructuras que este último supera de forma consistente son el contorno corporal (\texttt{body}, \texttt{body\_trunc}, \texttt{body\_extremities}, \texttt{head}), la piel, la grasa subcutánea y el músculo esquelético como masa global: todas envolturas externas o regiones de gran volumen y alto contraste. YOLO no segmenta de forma fiable ninguna estructura anatómica interna, que son justamente las que un fantoma de cricotiroidotomía necesita.\\
@@ -147,6 +175,10 @@ La cobertura de TotalSegmentator no varía entre umbrales: las estructuras que s
   \includegraphics[width=0.9\textwidth]{graficos/5_sensibilidad_umbral.png}
   \caption{Cobertura de cada modelo en función del umbral de Dice exigido. Las líneas verticales marcan los tres umbrales de la Tabla~\ref{tab:sensibilidad}.}
   \label{fig:sensibilidad}
+  \begin{minipage}{\textwidth}
+    \centering
+    \normalsize Fuente: Elaboración propia.\\
+  \end{minipage}
 \end{figure}
 
 Estos resultados son coherentes con la naturaleza de cada modelo. YOLO fue concebido para detección bidimensional en imágenes naturales y se evaluó procesando la TC corte a corte, una tarea para la que no fue diseñado. MedSAM, aunque especializado en imágenes médicas, depende de indicaciones que en un flujo autónomo no están disponibles, y mostró dificultades en estructuras finas o de bajo contraste. TotalSegmentator está entrenado específicamente para segmentación volumétrica multiclase sobre TC.\\
@@ -158,6 +190,10 @@ La Figura~\ref{fig:tiempo-cobertura} cruza las dos dimensiones que importan para
   \includegraphics[width=0.82\textwidth]{graficos/6_tiempo_vs_cobertura.png}
   \caption{Cobertura efectiva frente a tiempo de inferencia. Cada punto tenue es un caso; el punto grande, el promedio de cada modelo.}
   \label{fig:tiempo-cobertura}
+  \begin{minipage}{\textwidth}
+    \centering
+    \normalsize Fuente: Elaboración propia.\\
+  \end{minipage}
 \end{figure}
 
 \subsection{Fundamento de la selección del motor de segmentación}
@@ -191,6 +227,10 @@ Concordancia y cobertura miden aspectos distintos y conviene no confundirlas. La
   \includegraphics[width=0.9\textwidth]{graficos/4_cobertura_por_caso.png}
   \caption{Cobertura efectiva por caso y modelo, calculada sobre las estructuras con referencia no vacía en cada caso. La estabilidad entre casos favorece a TotalSegmentator.}
   \label{fig:cobertura-efectiva}
+  \begin{minipage}{\textwidth}
+    \centering
+    \normalsize Fuente: Elaboración propia.\\
+  \end{minipage}
 \end{figure}
 
 \subsection{Generalización a otras regiones anatómicas}
@@ -202,6 +242,10 @@ Aunque el sistema fue configurado para la región cervical, su arquitectura no e
   \includegraphics[width=0.9\textwidth]{imagenes/pie-segmentado.jpeg}
   \caption{Generalización del flujo a una TC de pie, procesada a través del módulo completo sin modificar el código ni la configuración.}
   \label{fig:pie-segmentado}
+  \begin{minipage}{\textwidth}
+    \centering
+    \normalsize Fuente: Elaboración propia.\\
+  \end{minipage}
 \end{figure}
 
 \subsection{Tiempo de procesamiento}
@@ -225,6 +269,10 @@ Los tiempos de la Tabla~\ref{tab:comparacion} corresponden únicamente a la infe
     \textbf{Total} & \textbf{\tTotal} & \textbf{100\%} \\
     \hline
   \end{tabular}
+  \begin{minipage}{\textwidth}
+    \centering
+    \normalsize Fuente: Elaboración propia.\\
+  \end{minipage}
 \end{table}
 
 El proceso completo toma cerca de \tTotal{} por caso, por debajo del límite de 30 minutos fijado en los requisitos, aunque sin holgura. El desglose muestra algo que no era evidente de antemano: la segmentación, que es la etapa computacionalmente exigente y la que motivó toda la infraestructura remota, representa una fracción menor del tiempo total. La mayor parte se consume en la recuperación y el manejo local de las estructuras segmentadas, no en el cómputo ni en la transferencia por la red.\\
@@ -265,6 +313,10 @@ La Tabla~\ref{tab:cumplimiento} sintetiza el estado de cada requisito definido e
     CC5 & Escalabilidad a otras regiones & Cumple \\
     \hline
   \end{tabular}
+  \begin{minipage}{\textwidth}
+    \centering
+    \normalsize Fuente: Elaboración propia.\\
+  \end{minipage}
 \end{table}
 
 El único requisito con cumplimiento parcial es la usabilidad (CC3): se satisface por construcción, pero no ha sido verificada con usuarios clínicos, lo que constituye la limitación principal del trabajo.\\
@@ -289,6 +341,10 @@ La primera generación se imprimió estructura por estructura, en piezas separad
   \includegraphics[width=0.46\textwidth]{imagenes/fantoma-v1-superior.png}
   \caption{Primera generación, impresa en piezas separadas y ensamblada con adhesivo. El ensamblado de múltiples piezas pequeñas resultó frágil y propenso a errores.}
   \label{fig:fantoma-v1}
+  \begin{minipage}{\textwidth}
+    \centering
+    \normalsize Fuente: Elaboración propia.\\
+  \end{minipage}
 \end{figure}
  
 La segunda generación abandonó el ensamblado de piezas y pasó a imprimir el modelo como un bloque, conservando la diferenciación por color de las estructuras. La Figura~\ref{fig:fantoma-v2} muestra un corte transversal en el que se distinguen la piel y el tejido graso subcutáneo, la musculatura cervical, la vértebra y, en tono claro, los músculos esternotiroideo y esternocleidomastoideo. Esta versión mejoró la integridad estructural respecto de la anterior, pero mantener el modelo cerrado impedía observar las estructuras internas.\\
@@ -298,6 +354,10 @@ La segunda generación abandonó el ensamblado de piezas y pasó a imprimir el m
   \includegraphics[width=0.72\textwidth]{imagenes/fantoma-v2-axial.png}
   \caption{Segunda generación, impresa como bloque con diferenciación por color. Se distinguen la piel y el tejido graso subcutáneo, la musculatura, la vértebra y los músculos esternotiroideo y esternocleidomastoideo.}
   \label{fig:fantoma-v2}
+  \begin{minipage}{\textwidth}
+    \centering
+    \normalsize Fuente: Elaboración propia.\\
+  \end{minipage}
 \end{figure}
  
 La tercera generación introdujo la división del modelo en láminas horizontales, lo que permitió inspeccionar el interior sin comprometer la integridad del conjunto. La orientación horizontal, sin embargo, trajo dos inconvenientes: exigía una gran cantidad de soportes de impresión, que encarecen el material y el tiempo y dejan marcas al retirarse, y repartía las estructuras del punto de incisión entre láminas, lo que dificultaba su lectura conjunta. Ambos problemas motivaron el paso a cortes verticales.\\
@@ -307,6 +367,10 @@ La tercera generación introdujo la división del modelo en láminas horizontale
   \includegraphics[width=0.6\textwidth]{imagenes/fantoma-v3.png}
   \caption{Tercera generación, dividida en láminas horizontales. La división permitió observar el interior, pero repartía las estructuras del punto de incisión entre distintas láminas.}
   \label{fig:fantoma-v3}
+  \begin{minipage}{\textwidth}
+    \centering
+    \normalsize Fuente: Elaboración propia.\\
+  \end{minipage}
 \end{figure}
  
 La cuarta generación, que constituye el resultado final, dividió el modelo en cuatro láminas verticales. Esta orientación resuelve los problemas anteriores: mantiene cada lámina dentro de las dimensiones de la cama de impresión, reduce los soportes necesarios y, al separarlas, expone en un mismo plano las estructuras internas del cuello, incluida la región del punto de incisión. La Figura~\ref{fig:fantoma-v4} muestra esta versión, en la que el mapa de colores del sistema diferencia cada tipo de tejido.\\
@@ -317,6 +381,10 @@ La cuarta generación, que constituye el resultado final, dividió el modelo en 
   \includegraphics[width=0.46\textwidth]{imagenes/fantoma-v4-sagital.png}
   \caption{Cuarta generación del fantoma, el resultado final, dividida en cuatro láminas verticales. La orientación mantiene cada lámina dentro de la cama de impresión y deja a la vista las estructuras internas del cuello en un mismo plano.}
   \label{fig:fantoma-v4}
+  \begin{minipage}{\textwidth}
+    \centering
+    \normalsize Fuente: Elaboración propia.\\
+  \end{minipage}
 \end{figure}
  
 Los modelos se prepararon en el laminador PrusaSlicer y se imprimieron en una Prusa XL de múltiples cabezales, con boquilla de 0,4 mm, en PLA (ácido poliláctico, el filamento termoplástico más extendido en impresión doméstica) por deposición de material fundido, a un 60\% del tamaño anatómico real, escala necesaria para ajustar las piezas a las dimensiones de la cama de impresión. La pieza más detallada requirió aproximadamente 23,5 horas de impresión. El proceso no estuvo exento de dificultades: se produjeron fallos en los cabezales, cortes de suministro eléctrico y errores de \textit{firmware} de la impresora, que obligaron a repetir impresiones y prolongaron la fabricación. En todos los casos, las estructuras reproducen la anatomía individual del paciente de origen, que es precisamente la diversidad morfológica que los fantomas comerciales genéricos no ofrecen.\\
