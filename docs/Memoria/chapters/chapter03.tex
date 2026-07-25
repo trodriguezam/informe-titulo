@@ -25,7 +25,7 @@ La interfaz general de 3D Slicer, la cual se puede apreciar en la Figura~\ref{fi
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.8\textwidth]{imagenes/interfaz-general.png}
-  \caption{Menú de módulos de 3D Slicer con la categoría \textit{Proyecto Título}, desde la que se accede a los dos módulos del sistema.}
+  \caption{Menú de módulos de 3D Slicer, con la categoría \textit{Proyecto Título}.}
   \label{fig:interfaz-general}
   \begin{minipage}{\textwidth}
     \centering
@@ -42,7 +42,7 @@ Internamente, el módulo orquesta cuatro etapas sucesivas: el preprocesamiento d
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.6\textwidth]{imagenes/modulo-segmentacion.png}
-  \caption{Interfaz del módulo de segmentación en 3D Slicer. El panel de control expone el selector del escáner TC, la elección del modo de procesamiento (remoto o local) y el botón de ejecución, junto al indicador de progreso del proceso.}
+  \caption{Interfaz del módulo de segmentación en 3D Slicer.}
   \label{fig:modulo-segmentacion}
   \begin{minipage}{\textwidth}
     \centering
@@ -64,7 +64,7 @@ El módulo de corte, denominado \textit{Corte 3D} en la interfaz y \texttt{Corte
   \centering
   \includegraphics[width=0.49\textwidth]{imagenes/modulo-corte-1.png}
   \includegraphics[width=0.49\textwidth]{imagenes/modulo-corte-2.png}
-  \caption{Interfaz del módulo de corte en 3D Slicer, mostrada en dos partes por su extensión vertical: a la izquierda, los controles de los tres planos de corte y la opción de corte simétrico; a la derecha, la configuración de limpieza de malla (eliminación de fragmentos flotantes y cierre de superficie) previa a la exportación de los archivos STL.}
+  \caption{Interfaz del módulo de corte en 3D Slicer: controles de corte (izquierda) y preparación de malla previa a la exportación STL (derecha).}
   \label{fig:modulo-corte}
   \begin{minipage}{\textwidth}
     \centering
@@ -91,7 +91,7 @@ A partir de ese punto, el módulo de corte toma el control: el usuario recorta e
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.9\textwidth]{diagramas/arquitectura.pdf}
-  \caption{Flujo de datos del sistema, desde el escáner TC de entrada hasta los archivos STL. La segmentación se ejecuta en el servidor remoto con GPU; el resto del procesamiento ocurre en el equipo local.}
+  \caption{Flujo de datos del sistema, desde el escáner TC de entrada hasta los archivos STL.}
   \label{fig:arquitectura}
   \begin{minipage}{\textwidth}
     \centering
@@ -123,7 +123,7 @@ Una tarea de TotalSegmentator es un modelo especializado, entrenado para segment
 
 \begin{table}[H]
   \centering
-  \caption{Tareas de TotalSegmentator ejecutadas por el módulo de segmentación y estructuras que aporta cada una.}
+  \caption{Tareas de TotalSegmentator ejecutadas y estructuras que aporta cada una.}
   \label{tab:tasks}
   \begin{tabular}{p{3.4cm}p{7.2cm}c}
     \hline
@@ -154,7 +154,7 @@ Una vez generadas todas las máscaras, la etapa de consolidación las unifica en
 
 La decisión tiene una consecuencia deliberada: el módulo conserva todas las estructuras con contenido real, incluidas aquellas que no forman parte del conjunto de referencia. Ese conjunto sirve para comparar modelos, no para limitar la salida del sistema. El alcance de esta diferencia se cuantifica en el Capítulo~\ref{ch:resultados}.\\
 
-Cada estructura conservada se carga en la escena con un color asignado según su tipo de tejido. La asignación se resuelve mediante un diccionario que asocia el nombre de cada estructura a un color, definido en la configuración del módulo y no en el código de procesamiento, así ampliarlo no exige tocar la lógica del flujo. Los colores agrupan las estructuras por familia anatómica: tonos óseos para vértebras, cráneo y costillas; rojizos para la musculatura; azules para el sistema venoso y rojos para el arterial; y un amarillo destacado para los cartílagos laríngeos, que marcan el punto de incisión. Esta asignación cumple dos funciones: facilita el reconocimiento anatómico en la vista tridimensional y determina el color con que cada pieza se imprimirá, ya que se conserva al exportar los archivos STL. El diccionario cubre tanto las estructuras del conjunto de referencia como las adicionales que el flujo conserva, entre ellas los cartílagos tiroides y cricoides, el hioides y la laringe, para que el punto de incisión de la cricotiroidotomía quede visualmente diferenciado en el fantoma. Cuando una estructura carece de entrada, recibe un color por defecto y el hecho se registra, lo que permite detectar las que aportan las tareas de segmentación sin que el flujo se interrumpa.\\
+Cada estructura conservada se carga en la escena con un color asignado según su tipo de tejido. La asignación se resuelve mediante un diccionario que asocia el nombre de cada estructura a un color, definido en la configuración del módulo y no en el código de procesamiento, así ampliarlo no exige tocar la lógica del flujo. Los colores agrupan las estructuras por familia anatómica: tonos óseos para vértebras, cráneo y costillas; rojizos para la musculatura; azules para el sistema venoso y rojos para el arterial; y un amarillo destacado para los cartílagos laríngeos, que marcan el punto de incisión. Esta asignación facilita el reconocimiento anatómico en la vista tridimensional y sirve de referencia para elegir el filamento de cada pieza. El color no se conserva en el archivo STL, que solo contiene la geometría de la superficie; el color definitivo de impresión se asigna manualmente por pieza en el laminador. El diccionario cubre tanto las estructuras del conjunto de referencia como las adicionales que el flujo conserva, entre ellas los cartílagos tiroides y cricoides, el hioides y la laringe, para que el punto de incisión de la cricotiroidotomía quede visualmente diferenciado en el fantoma. Cuando una estructura carece de entrada, recibe un color por defecto y el hecho se registra, lo que permite detectar las que aportan las tareas de segmentación sin que el flujo se interrumpa.\\
 
 El módulo emite además un reporte en formato JSON con las estructuras detectadas, las descartadas por máscara vacía y los tiempos de cada etapa. Este registro no responde a un requisito del producto, ya que el usuario clínico no lo necesita para operar el sistema, sino a una necesidad de este trabajo: es el instrumento que permitió medir la cobertura y los tiempos que se reportan en el Capítulo~\ref{ch:resultados}.\\
 

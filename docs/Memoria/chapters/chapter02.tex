@@ -10,7 +10,7 @@ El sistema se organiza en cuatro etapas: a) ingreso de la TC en formato NIfTI; b
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.95\textwidth]{diagramas/etapas-solucion.pdf}
-  \caption{Las cuatro etapas de la solución. Las dos primeras las cubre el módulo de segmentación; la tercera, el módulo de corte; la preparación en el laminador queda fuera del sistema.}
+  \caption{Etapas de la solución, agrupadas por módulo. La preparación en el laminador queda fuera del sistema.}
   \label{fig:etapas-solucion}
   \begin{minipage}{\textwidth}
     \centering
@@ -44,7 +44,7 @@ En lo operacional, el usuario final no requiere formación en procesamiento de i
   \item Consolidar los segmentos obtenidos descartando únicamente aquellos sin contenido (máscaras vacías), con independencia de la imagen de entrada.
   \item Permitir la visualización de las superficies tridimensionales generadas dentro de 3D Slicer.
   \item Permitir el corte y la reorientación de las estructuras mediante planos interactivos.
-  \item Exportar cada estructura segmentada a un archivo STL independiente, asignando un color según el tipo de tejido, listo para su impresión.
+  \item Exportar cada estructura segmentada a un archivo STL independiente, listo para su impresión. El color con que se distingue cada tejido no forma parte del archivo STL, sino que se asigna manualmente en el laminador al preparar la impresión.
 \end{enumerate}
 
 \subsection{Requisitos operacionales}
@@ -99,7 +99,7 @@ La Tabla~\ref{tab:requisitos} reúne los requisitos y criterios anteriores junto
 
 \begin{table}[H]
   \centering
-  \caption{Requisitos del sistema y su criterio de verificación. Fuente: Elaboración propia.}
+  \caption{Requisitos del sistema y su criterio de verificación.}
   \label{tab:requisitos}
   \small
   \begin{tabular}{p{1.1cm} p{6.2cm} p{5.6cm}}
@@ -111,7 +111,7 @@ La Tabla~\ref{tab:requisitos} reúne los requisitos y criterios anteriores junto
     RF3 & Consolidación independiente de la imagen & Conserva las máscaras con contenido y descarta las vacías \\
     RF4 & Visualización 3D en Slicer & Muestra las superficies antes de exportar \\
     RF5 & Corte y reorientación con planos & Recorta el modelo antes de imprimir \\
-    RF6 & Exportación a STL con color por tejido & Un archivo STL por estructura, coloreado \\
+    RF6 & Exportación de cada estructura a un archivo STL independiente & Genera un archivo STL por cada estructura conservada \\
     RO1 & Operación sin GPU local & El cómputo pesado corre en la máquina remota \\
     RO2 & STL imprimibles sin reparación & Se cargan en el laminador sin corregir la malla \\
     RO3 & Tiempo por caso $\leq$ 30 min & Tiempo total de una ejecución completa \\
