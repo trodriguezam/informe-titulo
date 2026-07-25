@@ -81,9 +81,9 @@ Las cifras de TotalSegmentator deben leerse con la reserva ya expuesta: al deriv
 
 Ambos modelos se evaluaron en condiciones favorables. MedSAM no es un segmentador autónomo: opera a partir de recuadros delimitadores que acotan cada estructura, y en esta evaluación esos recuadros se extrajeron de la propia segmentación de referencia. Es decir, se le indicó dónde estaba cada estructura antes de pedirle que la segmentara. En un uso real esa información no existe, ya que solo podría provenir de una segmentación previa, que es justamente lo que el sistema busca producir. A YOLO se le aplicó un emparejamiento por solapamiento contra esa misma referencia. Aun así, MedSAM alcanza un Dice de 0,553 y YOLO uno de 0,108, con mediana nula.\\
 
-La Ilustración~\ref{fig:dice-por-caso} muestra esa concordancia caso a caso. TotalSegmentator se mantiene alto y parejo en los diez, mientras que MedSAM oscila en la zona media y YOLO permanece bajo en todos.\\
+La Figura~\ref{fig:dice-por-caso} muestra esa concordancia caso a caso. TotalSegmentator se mantiene alto y parejo en los diez, mientras que MedSAM oscila en la zona media y YOLO permanece bajo en todos.\\
 
-La diferencia entre los tres modelos también se aprecia directamente en su salida sobre un mismo caso. La Ilustración~\ref{fig:comparacion-cualitativa} muestra el resultado de los tres sobre el caso 5, una vez procesados por el módulo de corte. TotalSegmentator reconstruye un volumen anatómicamente coherente, en el que las estructuras conservan su forma y posición. MedSAM produce un volumen fragmentado, sin correspondencia anatómica reconocible, pese a haber operado con los recuadros delimitadores extraídos de la referencia. YOLO genera un conjunto de láminas desconectadas entre sí, consecuencia directa de procesar el escáner corte a corte sin coherencia tridimensional. La comparación visual confirma lo que las métricas indican: solo TotalSegmentator entrega una segmentación utilizable para construir un modelo físico.\\
+La diferencia entre los tres modelos también se aprecia directamente en su salida sobre un mismo caso. La Figura~\ref{fig:comparacion-cualitativa} muestra el resultado de los tres sobre el caso 5, una vez procesados por el módulo de corte. TotalSegmentator reconstruye un volumen anatómicamente coherente, en el que las estructuras conservan su forma y posición. MedSAM produce un volumen fragmentado, sin correspondencia anatómica reconocible, pese a haber operado con los recuadros delimitadores extraídos de la referencia. YOLO genera un conjunto de láminas desconectadas entre sí, consecuencia directa de procesar el escáner corte a corte sin coherencia tridimensional. La comparación visual confirma lo que las métricas indican: solo TotalSegmentator entrega una segmentación utilizable para construir un modelo físico.\\
  
 \begin{figure}[H]
   \centering
@@ -94,6 +94,7 @@ La diferencia entre los tres modelos también se aprecia directamente en su sali
   \label{fig:comparacion-cualitativa}
 \end{figure}
 
+Un artefacto de la métrica requirió corrección antes de calcular estas cifras. El coeficiente de Dice está indefinido cuando la máscara predicha y la de referencia están ambas vacías, y la convención habitual le asigna el valor 1, entendiendo que el modelo acertó al no predecir nada donde no había nada. En la práctica, no todos los escáneres cubren la misma región anatómica: en uno de los diez casos, solo 43 de las 64 estructuras de referencia tienen contenido real. Sin filtrar, un modelo que no segmenta nada obtiene una puntuación perfecta sobre cada estructura ausente. Por ello, todas las métricas de este capítulo se calculan únicamente sobre las estructuras con referencia no vacía en cada caso. El filtro, adoptado por rigor, perjudica en realidad a las alternativas: TotalSegmentator predice algo en algunas de esas estructuras ausentes, lo que cuenta como falso positivo, mientras que MedSAM y YOLO no predicen nada y se beneficiaban de la puntuación trivial.\\
 
 \begin{figure}[H]
   \centering
@@ -102,7 +103,7 @@ La diferencia entre los tres modelos también se aprecia directamente en su sali
   \label{fig:dice-por-caso}
 \end{figure}
 
-Desglosada por región anatómica (Ilustración~\ref{fig:radar-categorias}), la concordancia de TotalSegmentator es alta y uniforme en todas las categorías, en tanto que la de MedSAM cae en las estructuras óseas y de vía aérea, y la de YOLO se limita a las regiones de gran volumen.\\
+Desglosada por región anatómica (Figura~\ref{fig:radar-categorias}), la concordancia de TotalSegmentator es alta y uniforme en todas las categorías, en tanto que la de MedSAM cae en las estructuras óseas y de vía aérea, y la de YOLO se limita a las regiones de gran volumen.\\
 
 \begin{figure}[H]
   \centering
@@ -111,7 +112,7 @@ Desglosada por región anatómica (Ilustración~\ref{fig:radar-categorias}), la 
   \label{fig:radar-categorias}
 \end{figure}
 
-La Ilustración~\ref{fig:niveles-calidad} resume, para cada modelo, cuántas de las 64 estructuras de la referencia alcanzan cada nivel de concordancia. TotalSegmentator concentra la mayoría en los niveles altos; MedSAM se reparte entre niveles medios y bajos; YOLO acumula casi todas sus estructuras en el nivel nulo.\\
+La Figura~\ref{fig:niveles-calidad} resume, para cada modelo, cuántas de las 64 estructuras de la referencia alcanzan cada nivel de concordancia. TotalSegmentator concentra la mayoría en los niveles altos; MedSAM se reparte entre niveles medios y bajos; YOLO acumula casi todas sus estructuras en el nivel nulo.\\
 
 \begin{figure}[H]
   \centering
@@ -119,8 +120,6 @@ La Ilustración~\ref{fig:niveles-calidad} resume, para cada modelo, cuántas de 
   \caption{Nivel de concordancia por estructura. Cada estructura de la referencia se clasifica según su Dice medio en los diez casos.}
   \label{fig:niveles-calidad}
 \end{figure}
-
-Un artefacto de la métrica requirió corrección antes de calcular estas cifras. El coeficiente de Dice está indefinido cuando la máscara predicha y la de referencia están ambas vacías, y la convención habitual le asigna el valor 1, entendiendo que el modelo acertó al no predecir nada donde no había nada. En la práctica, no todos los escáneres cubren la misma región anatómica: en uno de los diez casos, solo 43 de las 64 estructuras de referencia tienen contenido real. Sin filtrar, un modelo que no segmenta nada obtiene una puntuación perfecta sobre cada estructura ausente. Por ello, todas las métricas de este capítulo se calculan únicamente sobre las estructuras con referencia no vacía en cada caso. El filtro, adoptado por rigor, perjudica en realidad a las alternativas: TotalSegmentator predice algo en algunas de esas estructuras ausentes, lo que cuenta como falso positivo, mientras que MedSAM y YOLO no predicen nada y se beneficiaban de la puntuación trivial.\\
 
 \subsection{Sensibilidad al umbral de detección}
 
@@ -150,9 +149,9 @@ La cobertura de TotalSegmentator no varía entre umbrales: las estructuras que s
   \label{fig:sensibilidad}
 \end{figure}
 
-Estos resultados son coherentes con la naturaleza de cada modelo. YOLO \citep{jocher2023yolov8} fue concebido para detección bidimensional en imágenes naturales y se evaluó procesando la TC corte a corte, una tarea para la que no fue diseñado. MedSAM, aunque especializado en imágenes médicas, depende de indicaciones que en un flujo autónomo no están disponibles, y mostró dificultades en estructuras finas o de bajo contraste. TotalSegmentator está entrenado específicamente para segmentación volumétrica multiclase sobre TC.\\
+Estos resultados son coherentes con la naturaleza de cada modelo. YOLO fue concebido para detección bidimensional en imágenes naturales y se evaluó procesando la TC corte a corte, una tarea para la que no fue diseñado. MedSAM, aunque especializado en imágenes médicas, depende de indicaciones que en un flujo autónomo no están disponibles, y mostró dificultades en estructuras finas o de bajo contraste. TotalSegmentator está entrenado específicamente para segmentación volumétrica multiclase sobre TC.\\
 
-La Ilustración~\ref{fig:tiempo-cobertura} cruza las dos dimensiones que importan para el sistema: la cobertura efectiva y el tiempo de inferencia. TotalSegmentator ocupa la región de interés, con cobertura alta y tiempo moderado; MedSAM alcanza un tiempo similar con menor cobertura; YOLO es el más rápido pero con cobertura casi nula, lo que lo descarta pese a su velocidad.\\
+La Figura~\ref{fig:tiempo-cobertura} cruza las dos dimensiones que importan para el sistema: la cobertura efectiva y el tiempo de inferencia. TotalSegmentator ocupa la región de interés, con cobertura alta y tiempo moderado; MedSAM alcanza un tiempo similar con menor cobertura; YOLO es el más rápido pero con cobertura casi nula, lo que lo descarta pese a su velocidad.\\
 
 \begin{figure}[H]
   \centering
@@ -181,9 +180,11 @@ Los cuatro criterios apuntan en la misma dirección y ninguno se apoya en la com
 
 Integrado en el flujo, el sistema produce 58 de las 64 estructuras que contiene la referencia. Las seis restantes se concentran en la región craneofacial: la mandíbula (\texttt{mandible}), las dos arcadas dentarias (\texttt{teeth\_upper}, \texttt{teeth\_lower}), los senos frontal y maxilar (\texttt{sinus\_ frontal}, \texttt{sinus\_maxillary}) y la estructura global de cabeza (\texttt{head}). Estas seis provienen de una tarea de TotalSegmentator no incluida en la configuración actual, orientada específicamente a la región de interés del proyecto.\\
 
-Conviene invertir la lectura habitual de estas cifras. El sistema no busca reproducir las 64 estructuras de la referencia, sino producir un modelo anatómico útil para la región de cabeza y cuello, y bajo ese objetivo la cifra relevante no es 58 de 64, sino 121: el número de estructuras con contenido real que el flujo conserva y entrega para un caso cervical, casi el doble de las que contiene la referencia. Entre ellas están las cuatro que delimitan el punto de incisión de la cricotiroidotomía (cartílago tiroides, cricoides, hioides y laringe), que la referencia del radiólogo ni siquiera incluye. El sistema demuestra así que, con la configuración de tareas adecuada, es capaz de generar una zona anatómica considerablemente más detallada que la referencia de comparación.\\
+Estas cifras se entienden mejor desde el objetivo del sistema que desde la referencia. El sistema no busca reproducir las 64 estructuras de la referencia, sino producir un modelo anatómico útil para la región de cabeza y cuello, y bajo ese objetivo la cifra relevante no es 58 de 64, sino 121: el número de estructuras con contenido real que el flujo conserva y entrega para un caso cervical, casi el doble de las que contiene la referencia. Entre ellas están las cuatro que delimitan el punto de incisión de la cricotiroidotomía (cartílago tiroides, cricoides, hioides y laringe), que la referencia del radiólogo ni siquiera incluye. El sistema demuestra así que, con la configuración de tareas adecuada, es capaz de generar una zona anatómica considerablemente más detallada que la referencia de comparación.\\
 
 Esa amplitud, sin embargo, no llega directamente al fantoma final. El módulo de corte, descrito en el Capítulo~\ref{ch:diseno-del-producto}, permite al usuario recortar el modelo hasta la región de interés antes de exportar, con lo que las 121 estructuras generadas se reducen a las que efectivamente se necesitan imprimir para el procedimiento. La generación exhaustiva y el recorte selectivo quedan así como dos etapas separadas: primero segmentar todo lo que la imagen permite, y luego decidir qué imprimir, en lugar de decidir de antemano qué segmentar.\\
+
+Concordancia y cobertura miden aspectos distintos y conviene no confundirlas. La Figura~\ref{fig:dice-por-caso} muestra qué tan bien se superpone lo que cada modelo segmenta; la Figura~\ref{fig:cobertura-efectiva}, qué proporción de las estructuras de referencia alcanza a segmentar. Un modelo podría concordar muy bien en las pocas estructuras que detecta y aun así cubrir pocas, de modo que ambas se reportan por separado.\\
 
 \begin{figure}[H]
   \centering
@@ -236,6 +237,38 @@ La conclusión operativa es que el sistema no está limitado por su capacidad de
 
 Los resultados anteriores permiten contrastar el sistema con los criterios enunciados en el Capítulo~\ref{ch:solucion-planteada}. El criterio de autonomía se cumple: el motor seleccionado segmenta sin requerir indicaciones manuales por estructura, lo que hace posible el flujo automatizado. El criterio de cobertura de las estructuras del procedimiento también se cumple: el sistema produce el cartílago tiroides, el cricoides, el hioides, la laringe y la tráquea, que delimitan la región de la maniobra. El requisito de tiempo, fijado en un máximo de 30 minutos por caso, se satisface con \tTotal{}. Los archivos STL producidos se cargan en el laminador sin requerir reparación previa de la malla. Los criterios de usabilidad y portabilidad se satisfacen por construcción, aunque la usabilidad no ha sido verificada con usuarios clínicos, lo que constituye la limitación principal del trabajo.\\
 
+La Tabla~\ref{tab:cumplimiento} sintetiza el estado de cada requisito definido en el Capítulo~\ref{ch:solucion-planteada}.\\
+
+\begin{table}[H]
+  \centering
+  \caption{Cumplimiento de los requisitos. Fuente: Elaboración propia.}
+  \label{tab:cumplimiento}
+  \small
+  \begin{tabular}{p{1.1cm} p{8.6cm} p{2.4cm}}
+    \hline
+    \textbf{ID} & \textbf{Requisito} & \textbf{Estado} \\
+    \hline
+    RF1 & Ingreso de la TC en NIfTI, anonimizado & Cumple \\
+    RF2 & Segmentación automática remota sobre GPU & Cumple \\
+    RF3 & Consolidación independiente de la imagen & Cumple \\
+    RF4 & Visualización 3D en Slicer & Cumple \\
+    RF5 & Corte y reorientación con planos & Cumple \\
+    RF6 & Exportación a STL con color por tejido & Cumple \\
+    RO1 & Operación sin GPU local & Cumple \\
+    RO2 & STL imprimibles sin reparación & Cumple \\
+    RO3 & Tiempo por caso $\leq$ 30 min & Cumple \\
+    RO4 & Costo de material reducido & Cumple \\
+    CC1 & Autonomía (eliminatorio) & Cumple \\
+    CC2 & Cobertura de las estructuras del procedimiento & Cumple \\
+    CC3 & Usabilidad & Parcial \\
+    CC4 & Portabilidad & Cumple \\
+    CC5 & Escalabilidad a otras regiones & Cumple \\
+    \hline
+  \end{tabular}
+\end{table}
+
+El único requisito con cumplimiento parcial es la usabilidad (CC3): se satisface por construcción, pero no ha sido verificada con usuarios clínicos, lo que constituye la limitación principal del trabajo.\\
+
 \subsection{Generación del modelo imprimible}
 
 Como resultado del flujo completo, el sistema produce, a partir de una TC cervical, un conjunto de archivos STL (uno por estructura anatómica) centrados, orientados y cerrados, aptos para cargarse en un laminador e imprimirse sin correcciones previas. El recorrido que va desde la imagen médica hasta el modelo imprimible queda así cubierto de forma automatizada y operable por personal sin formación en procesamiento de imágenes.\\
@@ -258,7 +291,7 @@ La primera generación se imprimió estructura por estructura, en piezas separad
   \label{fig:fantoma-v1}
 \end{figure}
  
-La segunda generación abandonó el ensamblado de piezas y pasó a imprimir el modelo como un bloque, conservando la diferenciación por color de las estructuras. La Ilustración~\ref{fig:fantoma-v2} muestra un corte transversal en el que se distinguen la piel y el tejido graso subcutáneo, la musculatura cervical, la vértebra y, en tono claro, los músculos esternotiroideo y esternocleidomastoideo. Esta versión mejoró la integridad estructural respecto de la anterior, pero mantener el modelo cerrado impedía observar las estructuras internas.\\
+La segunda generación abandonó el ensamblado de piezas y pasó a imprimir el modelo como un bloque, conservando la diferenciación por color de las estructuras. La Figura~\ref{fig:fantoma-v2} muestra un corte transversal en el que se distinguen la piel y el tejido graso subcutáneo, la musculatura cervical, la vértebra y, en tono claro, los músculos esternotiroideo y esternocleidomastoideo. Esta versión mejoró la integridad estructural respecto de la anterior, pero mantener el modelo cerrado impedía observar las estructuras internas.\\
  
 \begin{figure}[H]
   \centering
@@ -267,7 +300,7 @@ La segunda generación abandonó el ensamblado de piezas y pasó a imprimir el m
   \label{fig:fantoma-v2}
 \end{figure}
  
-La tercera generación introdujo la división del modelo en láminas horizontales, lo que permitió inspeccionar el interior sin comprometer la integridad del conjunto. La orientación horizontal de los cortes, sin embargo, dejaba las estructuras del punto de incisión repartidas entre láminas, dificultando su lectura conjunta.\\
+La tercera generación introdujo la división del modelo en láminas horizontales, lo que permitió inspeccionar el interior sin comprometer la integridad del conjunto. La orientación horizontal, sin embargo, trajo dos inconvenientes: exigía una gran cantidad de soportes de impresión, que encarecen el material y el tiempo y dejan marcas al retirarse, y repartía las estructuras del punto de incisión entre láminas, lo que dificultaba su lectura conjunta. Ambos problemas motivaron el paso a cortes verticales.\\
  
 \begin{figure}[H]
   \centering
@@ -276,7 +309,7 @@ La tercera generación introdujo la división del modelo en láminas horizontale
   \label{fig:fantoma-v3}
 \end{figure}
  
-La cuarta generación, que constituye el resultado final, dividió el modelo en cuatro láminas verticales. Esta orientación resuelve simultáneamente dos problemas: mantiene cada lámina dentro de las dimensiones de la cama de impresión y, al separarlas, expone en un mismo plano las estructuras internas del cuello, incluida la región del punto de incisión. La Ilustración~\ref{fig:fantoma-v4} muestra esta versión, en la que el mapa de colores del sistema diferencia cada tipo de tejido.\\
+La cuarta generación, que constituye el resultado final, dividió el modelo en cuatro láminas verticales. Esta orientación resuelve los problemas anteriores: mantiene cada lámina dentro de las dimensiones de la cama de impresión, reduce los soportes necesarios y, al separarlas, expone en un mismo plano las estructuras internas del cuello, incluida la región del punto de incisión. La Figura~\ref{fig:fantoma-v4} muestra esta versión, en la que el mapa de colores del sistema diferencia cada tipo de tejido.\\
  
 \begin{figure}[H]
   \centering
@@ -286,9 +319,11 @@ La cuarta generación, que constituye el resultado final, dividió el modelo en 
   \label{fig:fantoma-v4}
 \end{figure}
  
-Los modelos se imprimieron en PLA (ácido poliláctico, el filamento termoplástico más extendido en impresión doméstica) por deposición de material fundido, a un 60\% del tamaño anatómico real, escala necesaria para ajustar las piezas a las dimensiones de la cama de impresión. La pieza más detallada requirió aproximadamente 23,5 horas de impresión. En todos los casos, las estructuras reproducen la anatomía individual del paciente de origen, que es precisamente la diversidad morfológica que los fantomas comerciales genéricos no ofrecen.\\
- 
-Las impresiones se realizaron con un único material y con varios colores, lo que permite distinguir visualmente los tejidos pero mantiene una rigidez uniforme en toda la pieza. En consecuencia, los fantomas obtenidos habilitan la observación y el reconocimiento anatómico de la región de la cricotiroidotomía, pero no reproducen la consistencia diferenciada del tejido blando que requeriría practicar la incisión con realismo táctil. Esta limitación, anticipada en el Capítulo~\ref{ch:problematica}, se aborda entre las mejoras propuestas. La validación clínica del fantoma con el equipo médico se encuentra pendiente.\\
+Los modelos se prepararon en el laminador PrusaSlicer y se imprimieron en una Prusa XL de múltiples cabezales, con boquilla de 0,4 mm, en PLA (ácido poliláctico, el filamento termoplástico más extendido en impresión doméstica) por deposición de material fundido, a un 60\% del tamaño anatómico real, escala necesaria para ajustar las piezas a las dimensiones de la cama de impresión. La pieza más detallada requirió aproximadamente 23,5 horas de impresión. El proceso no estuvo exento de dificultades: se produjeron fallos en los cabezales, cortes de suministro eléctrico y errores de \textit{firmware} de la impresora, que obligaron a repetir impresiones y prolongaron la fabricación. En todos los casos, las estructuras reproducen la anatomía individual del paciente de origen, que es precisamente la diversidad morfológica que los fantomas comerciales genéricos no ofrecen.\\
+
+El material es el único insumo recurrente del proceso. A partir del filamento empleado, un rollo de PLA de 1,75 mm de diámetro a un valor de \$14.990 CLP por kilogramo, y considerando la escala de impresión al 60\%, un fantoma consume entre unos 274 y 297 gramos de filamento según el número de estructuras que se impriman, lo que equivale a entre \$4.100 y \$4.500 CLP aproximadamente. La cifra contrasta con el rango de USD 100 a más de USD 1.000 por modelo que la literatura reporta para los modelos anatómicos personalizados de referencia comercial (Capítulo~\ref{ch:problematica}), y confirma que el requisito de costo reducido se cumple con holgura.
+
+Las impresiones se realizaron con un único material y con varios colores, lo que permite distinguir visualmente los tejidos pero mantiene una rigidez uniforme en toda la pieza. En consecuencia, los fantomas obtenidos habilitan la observación y el reconocimiento anatómico de la región de la cricotiroidotomía, pero no reproducen la consistencia diferenciada del tejido blando que requeriría practicar la incisión con realismo táctil. Esta limitación, anticipada en el Capítulo~\ref{ch:problematica}, se aborda entre las mejoras propuestas. La validación clínica del fantoma con la Dra. Marcela Garrido se encuentra pendiente.\\
 
 \section{POSIBLES MEJORAS}
 

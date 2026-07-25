@@ -8,7 +8,7 @@ Basada en el [template original](https://github.com/ingUANDES/PlantillaMemoria) 
 - Portada calzada al `.docx` oficial (16pt header, 18pt título, 16pt nombre, 12pt resto).
 - Capítulos del índice en MAYÚSCULAS (`1. INTRODUCCIÓN`, `BIBLIOGRAFÍA`, `A. ANEXOS`).
 - Todos los títulos a 12pt.
-- Índices renombrados: "Índice de Ilustraciones" / "Índice de Tablas".
+- Índices renombrados: "Índice de Figuras" / "Índice de Tablas".
 - Co-guía condicional (la línea desaparece si no aplica).
 - Hyperlinks sin recuadros rojos.
 - `.vscode/settings.json` con la receta de compilación lista — **Cmd+Opt+B** simplemente funciona.
@@ -171,7 +171,7 @@ Cada capítulo es un archivo en `docs/Memoria/chapters/chapterNN.tex`. Para agre
 \end{figure}
 ```
 
-El paquete `\figurename` está renombrado a "Ilustración", así que la figura saldrá rotulada `Ilustración 1: Descripción de la figura.`
+El paquete `\figurename` está renombrado a "Figura", así que la figura saldrá rotulada `Figura 1: Descripción de la figura.`
 
 ### Tablas
 

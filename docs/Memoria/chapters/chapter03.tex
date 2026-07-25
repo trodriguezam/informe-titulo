@@ -5,11 +5,31 @@
 
 El producto desarrollado se compone de cuatro ítems principales que, en conjunto, conforman el recorrido completo desde la imagen médica hasta el fantoma físico imprimible: a) un módulo de segmentación automática; b) una infraestructura de cómputo remoto sobre una GPU dedicada que sustenta dicha segmentación; c) un módulo de corte y exportación; y d) el fantoma anatómico impreso, entendido como el entregable final del sistema. Los dos primeros ítems operan encadenados para producir las estructuras anatómicas segmentadas a partir del escáner; el tercero las adapta a las restricciones geométricas de la impresión 3D; y el cuarto materializa el resultado en un modelo físico apto para el entrenamiento clínico. Cada ítem se describe a continuación, dejando la forma en que se relacionan entre sí para la sección de arquitectura.\\
 
+\subsection{Instalación y acceso a los módulos}
+
+Ambos módulos se distribuyen en un mismo repositorio y se incorporan a 3D Slicer como módulos con \textit{script}, sin pasar por el gestor de extensiones. La instalación se realiza una sola vez: se descarga el repositorio y, en \textit{Edit → Application Settings → Modules}, se agrega la carpeta raíz (la que contiene los archivos \texttt{FantomaModule.py} y \texttt{CorteModule.py}) a la lista de rutas de módulos adicionales. Tras reiniciar la aplicación, ambos módulos quedan disponibles en el menú desplegable de módulos, bajo la categoría \textit{Proyecto Título}. En la Figura~\ref{fig:instalacion-modulos} se muestra como debiese resultar la correcta instalación del módulo.\\
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\textwidth]{imagenes/instalacion-modulos.png}
+  \caption{Registro de los módulos en 3D Slicer mediante la ruta de módulos adicionales. Fuente: Elaboración propia.}
+  \label{fig:instalacion-modulos}
+\end{figure}
+
+La interfaz general de 3D Slicer, la cual se puede apreciar en la Figura~\ref{fig:interfaz-general}, organiza la ventana en un panel que carga los módulos a la izquierda, donde cada módulo expone sus controles, y un área de visualización a la derecha con las vistas anatómicas y la vista tridimensional. Para operar el sistema, el usuario selecciona primero \textit{Segmentación Cuello} en el menú de módulos y, una vez generado el modelo, \textit{Corte 3D}, sin necesidad de recorrer el resto de los módulos que ofrece la aplicación.\\
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\textwidth]{imagenes/interfaz-general.png}
+  \caption{Menú de módulos de 3D Slicer con la categoría \textit{Proyecto Título}, desde la que se accede a los dos módulos del sistema. Fuente: Elaboración propia.}
+  \label{fig:interfaz-general}
+\end{figure}
+
 \subsection{Módulo de segmentación automática}
 
 El módulo de segmentación, denominado \textit{Segmentación Cuello} dentro de 3D Slicer e identificado en el código como \texttt{FantomaModule}, constituye el punto de entrada del sistema. Su responsabilidad es transformar un escáner TC cervical, entregado en formato NIfTI (\texttt{.nii} o \texttt{.nii.gz}), en un conjunto de estructuras anatómicas segmentadas y coloreadas, visibles en la vista tridimensional de Slicer. El usuario selecciona el archivo de la TC, confirma el modo de procesamiento (remoto o local) e inicia la ejecución; el resto del flujo ocurre de forma automática.\\
 
-Internamente, el módulo orquesta cuatro etapas sucesivas: el preprocesamiento de la imagen, la segmentación mediante TotalSegmentator \citep{wasserthal2023totalsegmentator}, la consolidación de las máscaras resultantes en un único conjunto de estructuras, y la carga de dichas estructuras en la escena con una asignación de color según el tipo de tejido. Toda esta complejidad permanece oculta tras una interfaz guiada, de modo que el operador no requiere conocimientos de procesamiento de imágenes ni de la herramienta de segmentación subyacente. Como salida, el módulo genera un archivo independiente por cada estructura detectada, además de un reporte del proceso con las estructuras encontradas y los tiempos de ejecución.\\
+Internamente, el módulo orquesta cuatro etapas sucesivas: el preprocesamiento de la imagen, la segmentación mediante TotalSegmentator \citep{wasserthal2023totalsegmentator}, la consolidación de las máscaras resultantes en un único conjunto de estructuras, y la carga de dichas estructuras en la escena con una asignación de color según el tipo de tejido. Toda esta complejidad permanece oculta tras una interfaz guiada, de modo que el operador no requiere conocimientos de procesamiento de imágenes ni de la herramienta de segmentación subyacente. Como salida, el módulo genera, por cada estructura detectada, tanto su máscara en formato NIfTI como su archivo STL, además de un reporte del proceso con las estructuras encontradas y los tiempos de ejecución. La exportación a STL está disponible, entonces, en los dos módulos: el de segmentación entrega un archivo por estructura apenas termina el proceso, y el de corte los vuelve a exportar tras recortar y reorientar el modelo.\\
 
 \begin{figure}[H]
   \centering
@@ -20,7 +40,7 @@ Internamente, el módulo orquesta cuatro etapas sucesivas: el preprocesamiento d
 
 \subsection{Infraestructura de segmentación remota sobre GPU}
 
-La segmentación con TotalSegmentator es computacionalmente exigente y se beneficia del uso de una unidad de procesamiento gráfico. Para evitar que el equipo clínico deba contar con hardware especializado, este ítem traslada el cómputo a una máquina dedicada con GPU, a la que el módulo de segmentación accede de forma transparente. La comunicación se realiza mediante SSH y SCP (\textit{Secure Copy Protocol}) sobre una red privada virtual (VPN, \textit{Virtual Private Network}), lo que permite enviar el escáner preprocesado, ejecutar la segmentación en el servidor y recuperar las estructuras resultantes sin intervención manual del usuario.\\
+La segmentación con TotalSegmentator es computacionalmente exigente y se beneficia del uso de una unidad de procesamiento gráfico (GPU). Para evitar que el equipo clínico deba contar con hardware especializado, este ítem traslada el cómputo a una máquina dedicada con GPU, a la que el módulo de segmentación accede de forma transparente. La comunicación se realiza mediante SSH (\textit{Secure Shell}) y SCP (\textit{Secure Copy Protocol}) sobre una red privada virtual (VPN, \textit{Virtual Private Network}), lo que permite enviar el escáner preprocesado, ejecutar la segmentación en el servidor y recuperar las estructuras resultantes sin intervención manual del usuario.\\
 
 Este ítem desacopla la carga de cómputo del puesto de trabajo del médico: el equipo local solo necesita ejecutar 3D Slicer y mantener la conexión con el servidor, mientras que el procesamiento pesado recae en la máquina remota. De este modo, el mismo flujo de trabajo puede ejecutarse desde equipos sin GPU dedicada, como los habituales en un contexto docente, lo que amplía la portabilidad del sistema.\\
 
@@ -46,7 +66,7 @@ La arquitectura se organiza en torno a dos ejes de separación que ordenan el di
 
 \subsection{Flujo de datos}
 
-El recorrido de los datos sigue una secuencia lineal de etapas, desde el escáner TC de entrada hasta los archivos STL listos para imprimir. La Ilustración~\ref{fig:arquitectura} resume este flujo.\\
+El recorrido de los datos sigue una secuencia lineal de etapas, desde el escáner TC de entrada hasta los archivos STL listos para imprimir. La Figura~\ref{fig:arquitectura} resume este flujo.\\
 
 El proceso comienza cuando el usuario selecciona un escáner TC en formato NIfTI a través del módulo de segmentación. La imagen se preprocesa localmente, recortando los valores de intensidad atípicos que provienen del relleno del escáner, y el resultado se transfiere al servidor remoto mediante SCP. En el servidor, TotalSegmentator ejecuta sucesivamente las distintas tareas de segmentación sobre la GPU, generando una máscara por cada estructura anatómica reconocida. Estas máscaras se recuperan al equipo local, también por SCP, donde la etapa de consolidación las unifica en un único conjunto de estructuras. A continuación, las estructuras se cargan en la escena de 3D Slicer con una asignación de color según el tipo de tejido, momento en que el usuario puede inspeccionar visualmente el resultado en la vista tridimensional.\\
 
@@ -75,11 +95,11 @@ La solución se implementó como dos módulos (\textit{scripted modules}) de 3D 
 
 La primera etapa del módulo de segmentación es un preprocesamiento que recorta los valores de la imagen al rango $[-1024, 3071]$ unidades Hounsfield, con el fin de descartar valores atípicos provenientes del relleno del escáner que, de no corregirse, degradan la segmentación posterior.\\
 
-El rango corresponde a la codificación de doce bits con signo en que los escáneres de TC almacenan nativamente la densidad. Ninguna estructura anatómica humana lo excede, ya que el hueso cortical más denso rara vez supera los 2.000 HU; los valores por sobre ese límite provienen de material metálico, como amalgamas dentales o implantes, o de artefactos del relleno del escáner. La operación satura esos valores en el extremo del rango en lugar de eliminarlos, de modo que no se pierde ningún vóxel ni, por tanto, ninguna estructura.\\
+El rango corresponde a la codificación de doce bits con signo en que los escáneres de TC almacenan nativamente la densidad. Ninguna estructura anatómica humana lo excede, ya que el hueso cortical más denso rara vez supera los 2.000 HU; los valores por sobre ese límite provienen de material metálico, como amalgamas dentales o implantes, o de artefactos del relleno del escáner. La operación satura esos valores en el extremo del rango en lugar de eliminarlos, de modo que no se pierde ningún vóxel, cada punto del volumen tridimensional y equivalente al píxel en tres dimensiones, ni, por tanto, ninguna estructura.\\
 
 En la práctica, la mayoría de los escáneres ya vienen dentro de este rango, en cuyo caso el módulo detecta que el recorte no altera la imagen y reutiliza el archivo original, evitando reescribir y volver a transferir un volumen idéntico.\\
 
-La segmentación se obtiene ejecutando sucesivamente siete tareas de TotalSegmentator, cuyas máscaras se complementan para cubrir el conjunto de estructuras de interés del cuello. Ninguna tarea aislada basta: la tarea base no fue entrenada para la región cervical, y las estructuras que definen el punto anatómico de la cricotiroidotomía (el cartílago tiroides y el cricoides) provienen de una tarea especializada de cabeza y cuello. La Tabla~\ref{tab:tasks} detalla el aporte de cada una.\\
+Una tarea de TotalSegmentator es un modelo especializado, entrenado para segmentar un grupo determinado de estructuras anatómicas. La segmentación se obtiene ejecutando sucesivamente siete de estas tareas, cuyas máscaras se complementan para cubrir el conjunto de estructuras de interés del cuello. Ninguna tarea aislada basta: la tarea base no fue entrenada para la región cervical, y las estructuras que definen el punto anatómico de la cricotiroidotomía (el cartílago tiroides y el cricoides) provienen de una tarea especializada de cabeza y cuello. La Tabla~\ref{tab:tasks} detalla el aporte de cada una.\\
 
 \begin{table}[H]
   \centering
@@ -106,7 +126,7 @@ Una restricción técnica relevante es que TotalSegmentator no puede ejecutarse 
 
 \subsection{Consolidación de las estructuras}
 
-Una vez generadas todas las máscaras, la etapa de consolidación las unifica en un único conjunto de estructuras aplicando un filtro espacial: se conserva toda máscara que contenga al menos un vóxel no nulo y se descartan las vacías. Este criterio, y no una lista fija de nombres, es lo que hace al sistema independiente de la imagen de entrada. Las estructuras que no aparecen en el volumen analizado quedan vacías y se eliminan solas, sin necesidad de mantener un catálogo que actualizar cada vez que se agrega una tarea.\\
+Una vez generadas todas las máscaras, la etapa de consolidación las unifica en un único conjunto de estructuras aplicando un filtro espacial. El filtro revisa el contenido de cada máscara y conserva toda aquella con al menos un vóxel no nulo, descartando las que quedaron completamente vacías porque la estructura no aparece en el volumen analizado. La decisión depende, entonces, de lo que la imagen realmente contiene y no de una lista fija de nombres de estructuras esperadas. Esa es la diferencia con el filtro que emplea la comparación de modelos, que exige que el nombre de cada estructura figure en la referencia: el filtro espacial deja pasar cualquier estructura con contenido, incluidas las que la referencia no anota, y es lo que hace al sistema independiente de la imagen de entrada. Las estructuras que no aparecen en el volumen analizado quedan vacías y se eliminan solas, sin necesidad de mantener un catálogo que actualizar cada vez que se agrega una tarea.\\
 
 La decisión tiene una consecuencia deliberada: el módulo conserva todas las estructuras con contenido real, incluidas aquellas que no forman parte del conjunto de referencia. Ese conjunto sirve para comparar modelos, no para limitar la salida del sistema. El alcance de esta diferencia se cuantifica en el Capítulo~\ref{ch:resultados}.\\
 
@@ -146,6 +166,6 @@ y mide la superposición entre ambas regiones, ponderando al doble la intersecci
 
 y constituye una medida más estricta de la misma superposición. Ambos coeficientes toman valores en el intervalo $[0,1]$, donde $1$ indica coincidencia perfecta, y están relacionados de forma monótona mediante $\mathrm{IoU} = \mathrm{Dice}\,/\,(2 - \mathrm{Dice})$.\\
 
-Una particularidad de estas métricas exige atención. Cuando $P$ y $G$ están ambos vacíos, el denominador se anula y el coeficiente queda indefinido. La convención habitual, adoptada también por la implementación empleada en este trabajo, es asignarle en ese caso el valor $1$, entendiendo que el modelo acertó al no predecir nada donde no había nada que predecir. Esta convención es razonable de forma aislada, pero introduce un sesgo cuando se promedia sobre un conjunto de estructuras que no siempre están presentes en el volumen analizado, cuestión que se aborda en el Capítulo~\ref{ch:resultados}.\\
+Una particularidad de estas métricas exige atención. Cuando $P$ y $G$ están ambos vacíos, el denominador se anula y el coeficiente queda indefinido. La convención habitual \citep{taha2015metrics}, adoptada también por la implementación empleada en este trabajo, es asignarle en ese caso el valor $1$, entendiendo que el modelo acertó al no predecir nada donde no había nada que predecir. Esta convención es razonable de forma aislada, pero introduce un sesgo cuando se promedia sobre un conjunto de estructuras que no siempre están presentes en el volumen analizado, cuestión que se aborda en el Capítulo~\ref{ch:resultados}.\\
 
 A estas dos métricas se sumaron dos criterios de carácter práctico: la cobertura anatómica, entendida como la proporción de las estructuras de referencia que el modelo logra segmentar con contenido no vacío, y el tiempo de procesamiento por caso. Los resultados de esta evaluación, junto con una limitación relevante en la naturaleza de la segmentación de referencia, se presentan y discuten en el Capítulo~\ref{ch:resultados}.\\

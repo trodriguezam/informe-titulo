@@ -11,7 +11,7 @@ The thesis text is in **Spanish** (`babel [spanish, activeacute]`). When editing
 ## Repository layout
 
 - `docs/Memoria/memoria.tex` — main entry point. Author/title/advisor metadata is set via `\newcommand` at the top (lines 5–25). **Edit these first**; don't put author metadata anywhere else.
-- `docs/Memoria/core/preambulo.tex` — all package imports, geometry, theorem environments, color definitions, Spanish renames (`\figurename` → "Ilustración"), `titlesec` chapter/section formatting. Add new packages here.
+- `docs/Memoria/core/preambulo.tex` — all package imports, geometry, theorem environments, color definitions, Spanish renames (`\figurename` → "Figura"), `titlesec` chapter/section formatting. Add new packages here.
 - `docs/Memoria/core/primeras_paginas.tex` — title page (TikZ-based), agradecimientos, ToC/LoT/LoF, resumen.
 - `docs/Memoria/chapters/chapterNN.tex` — one chapter per file, included from `memoria.tex`.
 - `docs/Memoria/attachments/anexo_*.tex` — appendices, after `\appendix`.

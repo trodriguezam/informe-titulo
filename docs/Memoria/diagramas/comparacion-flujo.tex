@@ -4,7 +4,7 @@
 \usepackage{mathptmx}          % Times, para coincidir con el cuerpo del informe
 \usepackage{xcolor}
 \usepackage{tikz}
-\usetikzlibrary{positioning,arrows.meta,calc,fit,backgrounds,decorations.pathreplacing}
+\usetikzlibrary{positioning,arrows.meta,calc,fit,backgrounds,decorations.pathreplacing,shapes.symbols}
 
 % Paleta (coincide con diagramas/arquitectura.pdf)
 \definecolor{autoFill}{HTML}{E8EEF6}   \definecolor{autoDraw}{HTML}{2F5496}
@@ -25,6 +25,10 @@
   manualbox/.style={base, draw=manualDraw, fill=manualFill},
   botbox/.style={base, draw=botDraw, line width=1.3pt, fill=manualFill},
   sharedbox/.style={base, draw=sharedDraw, fill=sharedFill},
+  expcloud/.style={cloud, cloud puffs=11, cloud puff arc=120,
+                   draw=manualDraw, fill=manualFill, line width=0.8pt,
+                   align=center, minimum width=2.6cm, minimum height=1.7cm,
+                   inner sep=0pt, font=\scriptsize},
   flow/.style={-{Stealth[length=3mm,width=2.5mm]}, line width=1.0pt, draw=arrowCol,
                rounded corners=3pt},
   lbl/.style={font=\scriptsize\itshape, fill=white, inner sep=1.5pt},
@@ -37,6 +41,7 @@
 % ---- Carril superior: FLUJO MANUAL ----
 \node[botbox]                     (mseg)  at (5.0, 2.7) {Segmentación manual};
 \node[manualbox, right=1.4cm of mseg] (mmesh) {Generación de malla\\\scriptsize(reconstrucción de superficie)};
+\node[expcloud, right=1.5cm of mmesh] (mknow) {Conocimiento\\experto en\\impresión 3D};
 
 % ---- Carril inferior: FLUJO PROPUESTO ----
 \node[autobox]                    (aseg)  at (4.6,-2.7) {Segmentación automática\\\scriptsize(TotalSegmentator, GPU)};
@@ -44,7 +49,7 @@
 \node[autobox, right=1.1cm of acorte] (astl)   {Exportación STL\\\scriptsize(una por estructura)};
 
 % ---- Salida compartida ----
-\node[sharedbox] (print) at (17.0,0) {Impresión 3D};
+\node[sharedbox] (print) at (18.5,0) {Impresión 3D};
 
 % ---- Flechas: bifurcación desde la entrada ----
 \draw[flow] (tc.east) -- (split);
@@ -53,11 +58,12 @@
 
 % ---- Flechas internas de cada carril ----
 \draw[flow] (mseg)  -- (mmesh);
+\draw[flow] (mmesh) -- (mknow);
 \draw[flow] (aseg)  -- (acorte);
 \draw[flow] (acorte)-- (astl);
 
 % ---- Convergencia a la salida ----
-\draw[flow] (mmesh.east) -| (print.north);
+\draw[flow] (mknow.east) -| (print.north);
 \draw[flow] (astl.east)  -| (print.south);
 
 % ---- Anotaciones de tiempo (el borde rojo de la caja marca el cuello de botella) ----
@@ -67,7 +73,7 @@
 % ---- Fondos de carril ----
 \begin{scope}[on background layer]
   \node[draw=laneManualDraw, line width=0.8pt, dotted, rounded corners=5pt,
-        fill=laneManual, fit=(mseg)(mmesh)(mtime), inner sep=12pt] (zoneM) {};
+        fill=laneManual, fit=(mseg)(mmesh)(mknow)(mtime), inner sep=12pt] (zoneM) {};
   \node[draw=laneAutoDraw, line width=0.8pt, dotted, rounded corners=5pt,
         fill=laneAuto, fit=(aseg)(acorte)(astl)(atime), inner sep=12pt] (zoneA) {};
 \end{scope}
