@@ -3,15 +3,17 @@
 
 % ---------------------------------------------------------------------------
 % TIEMPOS DEL FLUJO COMPLETO
-% PENDIENTE: recalcular tras corregir el desempaquetado local. Los valores
-% actuales corresponden a una medición previa y NO reflejan el desglose real
-% (el cuello de botella medido es la escritura local, no la descarga).
-\newcommand{\tPreproc}{4 min}
-\newcommand{\tEnvio}{50 s}
-\newcommand{\tSeg}{5 min}
-\newcommand{\tLocal}{15 min}
-\newcommand{\tLimpieza}{3 min}
-\newcommand{\tTotal}{28 min}
+% Valores reales, promediados sobre los diez casos cervicales medidos de punta
+% a punta (ventana final del modulo de segmentacion). El cuello de botella es
+% la recuperacion y escritura local de las estructuras, no la red ni la GPU.
+\newcommand{\tPreproc}{4,2 min}
+\newcommand{\tEnvio}{27 s}
+\newcommand{\tSeg}{4,3 min}
+\newcommand{\tLocal}{15,1 min}
+\newcommand{\tSlicer}{4,9 min}
+\newcommand{\tExport}{1,5 min}
+\newcommand{\tOtros}{8 s}
+\newcommand{\tTotal}{30,5 min}
 % ---------------------------------------------------------------------------
 
 \section{RESULTADOS OBTENIDOS}
@@ -228,9 +230,9 @@ Los cuatro criterios apuntan en la misma dirección y ninguno se apoya en la com
 
 Integrado en el flujo, el sistema produce 58 de las 64 estructuras que contiene la referencia. Las seis restantes se concentran en la región craneofacial: la mandíbula (\texttt{mandible}), las dos arcadas dentarias (\texttt{teeth\_upper}, \texttt{teeth\_lower}), los senos frontal y maxilar (\texttt{sinus\_ frontal}, \texttt{sinus\_maxillary}) y la estructura global de cabeza (\texttt{head}). Estas seis provienen de una tarea de TotalSegmentator no incluida en la configuración actual, orientada específicamente a la región de interés del proyecto.\\
 
-Estas cifras se entienden mejor desde el objetivo del sistema que desde la referencia. El sistema no busca reproducir las 64 estructuras de la referencia, sino producir un modelo anatómico útil para la región de cabeza y cuello, y bajo ese objetivo la cifra relevante no es 58 de 64, sino 121: el número de estructuras con contenido real que el flujo conserva y entrega para un caso cervical, casi el doble de las que contiene la referencia. Entre ellas están las cuatro que delimitan el punto de incisión de la cricotiroidotomía (cartílago tiroides, cricoides, hioides y laringe), que la referencia del radiólogo ni siquiera incluye. El sistema demuestra así que, con la configuración de tareas adecuada, es capaz de generar una zona anatómica considerablemente más detallada que la referencia de comparación.\\
+Estas cifras se entienden mejor desde el objetivo del sistema que desde la referencia. El sistema no busca reproducir las 64 estructuras de la referencia, sino producir un modelo anatómico útil para la región de cabeza y cuello, y bajo ese objetivo la cifra relevante no es 58 de 64, sino un valor que, promediado en los 10 casos de estudio, gira en torno a 120: el número de estructuras con contenido real que el flujo conserva y entrega para un caso cervical, casi el doble de las que contiene la referencia. Entre ellas están las cuatro que delimitan el punto de incisión de la cricotiroidotomía (cartílago tiroides, cricoides, hioides y laringe), que la referencia del radiólogo ni siquiera incluye. El sistema demuestra así que, con la configuración de tareas adecuada, es capaz de generar una zona anatómica considerablemente más detallada que la referencia de comparación.\\
 
-Esa amplitud, sin embargo, no llega directamente al fantoma final. El módulo de corte, descrito en el Capítulo~\ref{ch:diseno-del-producto}, permite al usuario recortar el modelo hasta la región de interés antes de exportar, con lo que las 121 estructuras generadas se reducen a las que efectivamente se necesitan imprimir para el procedimiento. La generación exhaustiva y el recorte selectivo quedan así como dos etapas separadas: primero segmentar todo lo que la imagen permite, y luego decidir qué imprimir, en lugar de decidir de antemano qué segmentar.\\
+Esa amplitud, sin embargo, no llega directamente al fantoma final. El módulo de corte, descrito en el Capítulo~\ref{ch:diseno-del-producto}, permite al usuario recortar el modelo hasta la región de interés antes de exportar, con lo que las más de cien estructuras generadas se reducen a las que efectivamente se necesitan imprimir para el procedimiento. La generación exhaustiva y el recorte selectivo quedan así como dos etapas separadas: primero segmentar todo lo que la imagen permite, y luego decidir qué imprimir, en lugar de decidir de antemano qué segmentar.\\
 
 Concordancia y cobertura miden aspectos distintos y conviene no confundirlas. La Figura~\ref{fig:dice-por-caso} muestra qué tan bien se superpone lo que cada modelo segmenta; la Figura~\ref{fig:cobertura-efectiva}, qué proporción de las estructuras de referencia alcanza a segmentar. Un modelo podría concordar muy bien en las pocas estructuras que detecta y aun así cubrir pocas, de modo que ambas se reportan por separado.\\
 
@@ -264,22 +266,24 @@ Aunque el sistema fue configurado para la región cervical, su arquitectura no e
 
 \subsection{Tiempo de procesamiento}
 
-Los tiempos de la Tabla~\ref{tab:comparacion} corresponden únicamente a la inferencia de cada modelo, que es la magnitud comparable entre las tres herramientas. El tiempo que percibe el usuario es distinto y mayor, ya que la inferencia es solo una de las etapas que ejecuta el módulo. La Tabla~\ref{tab:tiempos-etapa} desglosa una ejecución completa sobre un caso de TC cervical.\\
+Los tiempos de la Tabla~\ref{tab:comparacion} corresponden únicamente a la inferencia de cada modelo, que es la magnitud comparable entre las tres herramientas. El tiempo que percibe el usuario es distinto y mayor, ya que la inferencia es solo una de las etapas que ejecuta el módulo. La Tabla~\ref{tab:tiempos-etapa} desglosa el tiempo de una ejecución completa del módulo, promediado sobre los diez casos cervicales medidos de punta a punta.\\
 
-\begin{table}[H]
+ \begin{table}[H]
   \centering
-  \caption{Desglose del tiempo de una ejecución completa del módulo de segmentación, en modo remoto.}
+  \caption{Desglose del tiempo de una ejecución completa del módulo de segmentación en modo remoto, promediado sobre los diez casos cervicales.}
   \vspace{5pt}
   \label{tab:tiempos-etapa}
   \begin{tabular}{lcc}
     \hline
     \textbf{Etapa} & \textbf{Tiempo} & \textbf{Proporción} \\
     \hline
-    Preprocesamiento de la TC & \tPreproc  & 14\% \\
-    Envío de la TC al servidor & \tEnvio   & 3\%  \\
-    Segmentación en GPU & \tSeg            & 18\% \\
-    Recuperación y escritura local de las estructuras & \tLocal & 54\% \\
-    Limpieza de archivos en el servidor & \tLimpieza & 11\% \\
+    Preprocesamiento de la TC & \tPreproc & 14\% \\
+    Envío de la TC al servidor & \tEnvio & 1\% \\
+    Segmentación en GPU & \tSeg & 14\% \\
+    Recuperación y escritura local de las estructuras & \tLocal & 49\% \\
+    Carga en Slicer & \tSlicer & 16\% \\
+    Exportación de los STL & \tExport & 5\% \\
+    Otros (limpieza, consolidación y overhead) & \tOtros & $<$1\% \\
     \hline
     \textbf{Total} & \textbf{\tTotal} & \textbf{100\%} \\
     \hline
@@ -291,7 +295,7 @@ Los tiempos de la Tabla~\ref{tab:comparacion} corresponden únicamente a la infe
   \end{minipage}
 \end{table}
 
-El proceso completo toma cerca de \tTotal{} por caso, por debajo del límite de 30 minutos fijado en los requisitos, aunque sin holgura. El desglose muestra algo que no era evidente de antemano: la segmentación, que es la etapa computacionalmente exigente y la que motivó toda la infraestructura remota, representa una fracción menor del tiempo total. La mayor parte se consume en la recuperación y el manejo local de las estructuras segmentadas, no en el cómputo ni en la transferencia por la red.\\
+En promedio, el proceso completo toma cerca de \tTotal{} por caso, apenas por encima del límite de 30 minutos fijado en los requisitos. La dispersión entre casos es amplia, de 24 a 45,7 minutos: la mediana se sitúa en 27,9 minutos y siete de los diez casos quedan dentro del límite, mientras que los tres que lo exceden lo hacen por una carga en Slicer inusualmente alta, la etapa más variable del flujo. El desglose muestra, además, algo que no era evidente de antemano: la segmentación, que es la etapa computacionalmente exigente y la que motivó toda la infraestructura remota, representa una fracción menor del tiempo total. La mayor parte se consume en la recuperación y el manejo local de las estructuras segmentadas, no en el cómputo ni en la transferencia por la red.\\
 
 La razón es el volumen de archivos. El sistema conserva más de cien estructuras con contenido, cada una en un archivo NIfTI independiente, que deben escribirse y procesarse en el equipo local. El costo no está en el tamaño total ni en la red, sino en la cantidad de operaciones de entrada y salida sobre muchos archivos. El preprocesamiento y la limpieza remota responden a una situación análoga: son operaciones sobre archivos, no de cálculo.\\
 
@@ -299,7 +303,7 @@ La conclusión operativa es que el sistema no está limitado por su capacidad de
 
 \subsection{Cumplimiento de los criterios definidos}
 
-Los resultados anteriores permiten contrastar el sistema con los criterios enunciados en el Capítulo~\ref{ch:solucion-planteada}. El criterio de autonomía se cumple: el motor seleccionado segmenta sin requerir indicaciones manuales por estructura, lo que hace posible el flujo automatizado. El criterio de cobertura de las estructuras del procedimiento también se cumple: el sistema produce el cartílago tiroides, el cricoides, el hioides, la laringe y la tráquea, que delimitan la región de la maniobra. El requisito de tiempo, fijado en un máximo de 30 minutos por caso, se satisface con \tTotal{}. Los archivos STL producidos se cargan en el laminador sin requerir reparación previa de la malla. Los criterios de usabilidad y portabilidad se satisfacen por construcción, aunque la usabilidad no ha sido verificada con usuarios clínicos, lo que constituye la limitación principal del trabajo.\\
+Los resultados anteriores permiten contrastar el sistema con los criterios enunciados en el Capítulo~\ref{ch:solucion-planteada}. El criterio de autonomía se cumple: el motor seleccionado segmenta sin requerir indicaciones manuales por estructura, lo que hace posible el flujo automatizado. El criterio de cobertura de las estructuras del procedimiento también se cumple: el sistema produce el cartílago tiroides, el cricoides, el hioides, la laringe y la tráquea, que delimitan la región de la maniobra. El requisito de tiempo, fijado en un máximo de 30 minutos por caso, se cumple parcialmente: la mediana de los diez casos (27,9 minutos) y siete de ellos quedan dentro del límite, pero el promedio se sitúa apenas por encima, en \tTotal{}, por la variabilidad de la carga en Slicer.
 
 La Tabla~\ref{tab:cumplimiento} sintetiza el estado de cada requisito definido en el Capítulo~\ref{ch:solucion-planteada}.\\
 
@@ -321,7 +325,7 @@ La Tabla~\ref{tab:cumplimiento} sintetiza el estado de cada requisito definido e
     RF6 & Exportación de cada estructura a un archivo STL independiente & Cumple \\
     RO1 & Operación sin GPU local & Cumple \\
     RO2 & STL imprimibles sin reparación & Cumple \\
-    RO3 & Tiempo por caso $\leq$ 30 min & Cumple \\
+    RO3 & Tiempo por caso $\leq$ 30 min & Parcial \\
     RO4 & Costo de material reducido & Cumple \\
     CC1 & Autonomía (eliminatorio) & Cumple \\
     CC2 & Cobertura de las estructuras del procedimiento & Cumple \\
@@ -337,7 +341,7 @@ La Tabla~\ref{tab:cumplimiento} sintetiza el estado de cada requisito definido e
   \end{minipage}
 \end{table}
 
-El único requisito con cumplimiento parcial es la usabilidad (CC3): se satisface por construcción, pero no ha sido verificada con usuarios clínicos, lo que constituye la limitación principal del trabajo.\\
+Dos requisitos quedan con cumplimiento parcial. El tiempo por caso (RO3) se mantiene dentro del límite de 30 minutos en la mediana y en siete de los diez casos, pero el promedio lo supera de forma marginal por la variabilidad de la carga en Slicer; la mejora de mayor impacto para cerrarlo, la optimización de la escritura local, se detalla entre las mejoras propuestas. La usabilidad (CC3) se satisface por construcción, pero no ha sido verificada con usuarios clínicos, lo que constituye la limitación principal del trabajo.\\
 
 \subsection{Generación del modelo imprimible}
 
