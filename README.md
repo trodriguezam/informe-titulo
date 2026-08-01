@@ -123,7 +123,6 @@ Toda la información personal del documento (nombre, título, carrera, profesor 
 
 \newcommand{\resumen}{...}
 \newcommand{\agradecimientos}{...}
-\newcommand{\dedicatoria}{...}
 ```
 
 **No** dupliques estos datos en `primeras_paginas.tex` — la portada los lee de aquí.

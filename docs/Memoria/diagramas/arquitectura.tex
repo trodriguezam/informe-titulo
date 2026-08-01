@@ -32,7 +32,7 @@
 ]
 
 % ---- Columna local (vertical) ----
-\node[box]                        (ct)    at (0,0) {Escáner TC de entrada\\(NIfTI)};
+\node[box]                        (ct)    at (0,0) {TC de entrada\\(NIfTI)};
 \node[box, below=0.7cm of ct]     (prep)           {Preprocesamiento\\\scriptsize(recorte de unidades Hounsfield)};
 \node[box, below=2.2cm of prep]   (consol)         {Consolidación de estructuras\\\scriptsize(filtro espacial: descarta máscaras vacías)};
 \node[box, below=0.7cm of consol] (slicer)         {Carga en 3D Slicer\\\scriptsize(coloreado por tipo de tejido)};

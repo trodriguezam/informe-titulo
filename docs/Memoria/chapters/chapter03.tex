@@ -7,7 +7,7 @@ El producto desarrollado se compone de cuatro ítems principales que, en conjunt
 
 \subsection{Instalación y acceso a los módulos}
 
-Ambos módulos se distribuyen en un mismo repositorio y se incorporan a 3D Slicer como módulos con \textit{script}, sin pasar por el gestor de extensiones. La instalación se realiza una sola vez: se descarga el repositorio y, en \textit{Edit → Application Settings → Modules}, se agrega la carpeta raíz (la que contiene los archivos \texttt{FantomaModule.py} y \texttt{CorteModule.py}) a la lista de rutas de módulos adicionales. Tras reiniciar la aplicación, ambos módulos quedan disponibles en el menú desplegable de módulos, bajo la categoría \textit{Proyecto Título}. En la Figura~\ref{fig:instalacion-modulos} se muestra como debiese resultar la correcta instalación del módulo.\\
+Ambos módulos se distribuyen en un mismo repositorio y se incorporan a 3D Slicer como módulos con \textit{script}, sin pasar por el gestor de extensiones. La instalación se realiza una sola vez: se descarga el repositorio y, en \textit{Edit → Application Settings → Modules}, se agrega la carpeta raíz (la que contiene los archivos \texttt{FantomaModule.py} y \texttt{CorteModule.py}) a la lista de rutas de módulos adicionales. Tras reiniciar la aplicación, ambos módulos quedan disponibles en el menú desplegable de módulos, bajo la categoría \textit{Proyecto Título}. La Figura~\ref{fig:instalacion-modulos} muestra cómo debiese verse el registro correcto de los módulos.\\
 
 \begin{figure}[H]
   \centering
@@ -37,9 +37,9 @@ La interfaz general de 3D Slicer, la cual se puede apreciar en la Figura~\ref{fi
 
 \subsection{Módulo de segmentación automática}
 
-El módulo de segmentación, denominado \textit{Segmentación Cuello} dentro de 3D Slicer e identificado en el código como \texttt{FantomaModule}, constituye el punto de entrada del sistema. Su responsabilidad es transformar un escáner TC cervical, entregado en formato NIfTI (\texttt{.nii} o \texttt{.nii.gz}), en un conjunto de estructuras anatómicas segmentadas y coloreadas, visibles en la vista tridimensional de Slicer. El usuario selecciona el archivo de la TC, confirma el modo de procesamiento (remoto o local) e inicia la ejecución; el resto del flujo ocurre de forma automática.\\
+El módulo de segmentación, denominado \textit{Segmentación Cuello} dentro de 3D Slicer e identificado en el código como \texttt{FantomaModule}, constituye el punto de entrada del sistema. Su responsabilidad es transformar una TC cervical, entregado en formato NIfTI (\texttt{.nii} o \texttt{.nii.gz}), en un conjunto de estructuras anatómicas segmentadas y coloreadas, visibles en la vista tridimensional de Slicer. El usuario selecciona el archivo de la TC, confirma el modo de procesamiento (remoto o local) e inicia la ejecución; el resto del flujo ocurre de forma automática.\\
 
-Internamente, el módulo orquesta cuatro etapas sucesivas: el preprocesamiento de la imagen, la segmentación mediante TotalSegmentator \citep{wasserthal2023totalsegmentator}, la consolidación de las máscaras resultantes en un único conjunto de estructuras, y la carga de dichas estructuras en la escena con una asignación de color según el tipo de tejido. Toda esta complejidad permanece oculta tras una interfaz guiada, de modo que el operador no requiere conocimientos de procesamiento de imágenes ni de la herramienta de segmentación subyacente. Como salida, el módulo genera, por cada estructura detectada, tanto su máscara en formato NIfTI como su archivo STL, además de un reporte del proceso con las estructuras encontradas y los tiempos de ejecución. La exportación a STL está disponible, entonces, en los dos módulos: el de segmentación entrega un archivo por estructura apenas termina el proceso, y el de corte los vuelve a exportar tras recortar y reorientar el modelo.\\
+Internamente, el módulo orquesta cuatro etapas sucesivas: el preprocesamiento de la imagen, la segmentación mediante TotalSegmentator \citep{wasserthal2023totalsegmentator}, la consolidación de las máscaras resultantes en un único conjunto de estructuras, y la carga de dichas estructuras en la escena con una asignación de color según el tipo de tejido. Toda esta complejidad permanece oculta tras una interfaz guiada, de modo que el operador no requiere conocimientos de procesamiento de imágenes ni de la herramienta de segmentación subyacente. Como salida, el módulo genera, por cada estructura detectada, tanto su máscara en formato NIfTI como su archivo STL, además de un reporte del proceso con las estructuras encontradas y los tiempos de ejecución. La exportación a STL está disponible, entonces, en los dos módulos: el de segmentación entrega un archivo por estructura apenas termina el proceso, y el de corte los vuelve a exportar tras recortar y reorientar el modelo. La Figura~\ref{fig:modulo-segmentacion} muestra la interfaz con que el usuario opera esta etapa.\\
 
 \begin{figure}[H]
   \centering
@@ -61,7 +61,7 @@ Este ítem desacopla la carga de cómputo del puesto de trabajo del médico: el 
 
 \subsection{Módulo de corte y exportación}
 
-El módulo de corte, denominado \textit{Corte 3D} en la interfaz y \texttt{CorteModule} en el código, toma la segmentación generada por el módulo anterior y la prepara para la impresión. Mediante planos de corte interactivos en las orientaciones axial, coronal y sagital, el usuario recorta los bordes del modelo hasta dejarlo con la forma y el tamaño adecuados para la cama de impresión; una opción de corte simétrico facilita conservar únicamente la zona central del cuello. Una vez aplicados los cortes, el módulo exporta el resultado a archivos STL, uno por cada estructura anatómica, listos para abrirse en un laminador y enviarse a la impresora.\\
+El módulo de corte, denominado \textit{Corte 3D} en la interfaz y \texttt{CorteModule} en el código, toma la segmentación generada por el módulo anterior y la prepara para la impresión. Mediante planos de corte interactivos en las orientaciones axial, coronal y sagital, el usuario recorta los bordes del modelo hasta dejarlo con la forma y el tamaño adecuados para la cama de impresión; una opción de corte simétrico facilita conservar únicamente la zona central del cuello. Una vez aplicados los cortes, el módulo exporta el resultado a archivos STL, uno por cada estructura anatómica, listos para abrirse en un laminador y enviarse a la impresora. La Figura~\ref{fig:modulo-corte} muestra sus dos paneles de control.\\
 
 \begin{figure}[H]
   \centering
@@ -86,16 +86,16 @@ La arquitectura se organiza en torno a dos ejes de separación que ordenan el di
 
 \subsection{Flujo de datos}
 
-El recorrido de los datos sigue una secuencia lineal de etapas, desde el escáner TC de entrada hasta los archivos STL listos para imprimir. La Figura~\ref{fig:arquitectura} resume este flujo.\\
+El recorrido de los datos sigue una secuencia lineal de etapas, desde la TC de entrada hasta los archivos STL listos para imprimir. La Figura~\ref{fig:arquitectura} resume este flujo.\\
 
-El proceso comienza cuando el usuario selecciona un escáner TC en formato NIfTI a través del módulo de segmentación. La imagen se preprocesa localmente, recortando los valores de intensidad atípicos que provienen del relleno del escáner, y el resultado se transfiere al servidor remoto mediante SCP. En el servidor, TotalSegmentator ejecuta sucesivamente las distintas tareas de segmentación sobre la GPU, generando una máscara por cada estructura anatómica reconocida. Estas máscaras se recuperan al equipo local, también por SCP, donde la etapa de consolidación las unifica en un único conjunto de estructuras. A continuación, las estructuras se cargan en la escena de 3D Slicer con una asignación de color según el tipo de tejido, momento en que el usuario puede inspeccionar visualmente el resultado en la vista tridimensional.\\
+El proceso comienza cuando el usuario selecciona una TC en formato NIfTI a través del módulo de segmentación. La imagen se preprocesa localmente, recortando los valores de intensidad atípicos que provienen del relleno del escáner, y el resultado se transfiere al servidor remoto mediante SCP. En el servidor, TotalSegmentator ejecuta sucesivamente las distintas tareas de segmentación sobre la GPU, generando una máscara por cada estructura anatómica reconocida. Estas máscaras se recuperan al equipo local, también por SCP, donde la etapa de consolidación las unifica en un único conjunto de estructuras. A continuación, las estructuras se cargan en la escena de 3D Slicer con una asignación de color según el tipo de tejido, momento en que el usuario puede inspeccionar visualmente el resultado en la vista tridimensional.\\
 
 A partir de ese punto, el módulo de corte toma el control: el usuario recorta el modelo mediante planos interactivos, aplica las rutinas de preparación de malla y exporta cada estructura a su archivo STL correspondiente. Estos archivos abandonan el sistema y continúan su recorrido en el laminador, donde se generan las instrucciones de impresión.\\
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.9\textwidth]{diagramas/arquitectura.pdf}
-  \caption{Flujo de datos del sistema, desde el escáner TC de entrada hasta los archivos STL.}
+  \caption{Flujo de datos del sistema, desde la TC de entrada hasta los archivos STL.}
   \label{fig:arquitectura}
   \begin{minipage}{\textwidth}
     \centering
@@ -120,7 +120,7 @@ La solución se implementó como dos módulos (\textit{scripted modules}) de 3D 
 
 La primera etapa del módulo de segmentación es un preprocesamiento que recorta los valores de la imagen al rango $[-1024, 3071]$ unidades Hounsfield, con el fin de descartar valores atípicos provenientes del relleno del escáner que, de no corregirse, degradan la segmentación posterior.\\
 
-El rango corresponde a la codificación de doce bits con signo en que los escáneres de TC almacenan nativamente la densidad. Ninguna estructura anatómica humana lo excede, ya que el hueso cortical más denso rara vez supera los 2.000 HU; los valores por sobre ese límite provienen de material metálico, como amalgamas dentales o implantes, o de artefactos del relleno del escáner. La operación satura esos valores en el extremo del rango en lugar de eliminarlos, de modo que no se pierde ningún vóxel, cada punto del volumen tridimensional y equivalente al píxel en tres dimensiones, ni, por tanto, ninguna estructura.\\
+El rango corresponde a la codificación de doce bits con signo en que los escáneres de TC almacenan nativamente la densidad. Ninguna estructura anatómica humana lo excede, ya que el hueso cortical más denso rara vez supera los 2.000~HU; los valores por sobre ese límite provienen de material metálico, como amalgamas dentales o implantes, o de artefactos del relleno del escáner. La operación satura esos valores en el extremo del rango en lugar de eliminarlos, de modo que no se pierde ningún vóxel, es decir, ningún punto del volumen tridimensional, equivalente al píxel en tres dimensiones, ni, por tanto, ninguna estructura.\\
 
 En la práctica, la mayoría de los escáneres ya vienen dentro de este rango, en cuyo caso el módulo detecta que el recorte no altera la imagen y reutiliza el archivo original, evitando reescribir y volver a transferir un volumen idéntico.\\
 
@@ -137,9 +137,9 @@ Una tarea de TotalSegmentator es un modelo especializado, entrenado para segment
     \hline
     \texttt{total} & Vértebras cervicales y torácicas, tráquea, esófago, glándula tiroides, grandes vasos, médula espinal & No \\
     \texttt{body} & Contorno corporal, tronco, extremidades y piel & No \\
-    \texttt{head\_glands\_ cavities} & Ojos, cristalinos, nervios ópticos, glándulas parótidas y submandibulares, faringe, cavidades nasales, paladar & No \\
+    \texttt{head\_glands\_\-cavities} & Ojos, cristalinos, nervios ópticos, glándulas parótidas y submandibulares, faringe, cavidades nasales, paladar & No \\
     \texttt{head\_muscles} & Maseteros, temporales, pterigoideos, lengua, digástricos & No \\
-    \texttt{headneck\_bones\_ vessels} & Cartílago tiroides, cricoides, hioides, laringe, carótidas internas, yugulares internas & No \\
+    \texttt{headneck\_bones\_\-vessels} & Cartílago tiroides, cricoides, hioides, laringe, carótidas internas, yugulares internas & No \\
     \texttt{headneck\_muscles} & Esternocleidomastoideos, constrictores faríngeos, trapecios, platisma, escalenos, esternotiroideos, tirohioideos, prevertebrales & No \\
     \texttt{tissue\_types} & Músculo esquelético, grasa subcutánea, grasa de torso & Sí \\
     \hline
@@ -147,7 +147,7 @@ Una tarea de TotalSegmentator es un modelo especializado, entrenado para segment
   \begin{minipage}{\textwidth}
     \centering
     \vspace{5pt}
-    \normalsize Fuente: Elaboración propia a partir de \citep{wasserthal2023totalsegmentator}.\\
+    \normalsize Fuente: Elaboración propia a partir de \citet{wasserthal2023totalsegmentator}.\\
   \end{minipage}
 \end{table}
 
@@ -157,11 +157,11 @@ Una restricción técnica relevante es que TotalSegmentator no puede ejecutarse 
 
 \subsection{Consolidación de las estructuras}
 
-Una vez generadas todas las máscaras, la etapa de consolidación las unifica en un único conjunto de estructuras aplicando un filtro espacial. El filtro revisa el contenido de cada máscara y conserva toda aquella con al menos un vóxel no nulo, descartando las que quedaron completamente vacías porque la estructura no aparece en el volumen analizado. La decisión depende, entonces, de lo que la imagen realmente contiene y no de una lista fija de nombres de estructuras esperadas. Esa es la diferencia con el filtro que emplea la comparación de modelos, que exige que el nombre de cada estructura figure en la referencia: el filtro espacial deja pasar cualquier estructura con contenido, incluidas las que la referencia no anota, y es lo que hace al sistema independiente de la imagen de entrada. Las estructuras que no aparecen en el volumen analizado quedan vacías y se eliminan solas, sin necesidad de mantener un catálogo que actualizar cada vez que se agrega una tarea.\\
+Una vez generadas todas las máscaras, la etapa de consolidación las unifica en un único conjunto de estructuras aplicando un filtro espacial. El filtro revisa el contenido de cada máscara y conserva toda aquella con al menos un vóxel no nulo, descartando las que quedaron completamente vacías porque la estructura no aparece en el volumen analizado. La decisión depende, entonces, de lo que la imagen realmente contiene y no de una lista fija de nombres de estructuras esperadas. Esa es la diferencia con el filtro que emplea la comparación de modelos, que exige que el nombre de cada estructura figure en la referencia: el filtro espacial deja pasar cualquier estructura con contenido, incluidas las que la referencia no anota, y es lo que hace al sistema independiente de la imagen de entrada. Como consecuencia, no es necesario mantener un catálogo de estructuras esperadas que haya que actualizar cada vez que se agrega una tarea.\\
 
 La decisión tiene una consecuencia deliberada: el módulo conserva todas las estructuras con contenido real, incluidas aquellas que no forman parte del conjunto de referencia. Ese conjunto sirve para comparar modelos, no para limitar la salida del sistema. El alcance de esta diferencia se cuantifica en el Capítulo~\ref{ch:resultados}.\\
 
-Cada estructura conservada se carga en la escena con un color asignado según su tipo de tejido. La asignación se resuelve mediante un diccionario que asocia el nombre de cada estructura a un color, definido en la configuración del módulo y no en el código de procesamiento, así ampliarlo no exige tocar la lógica del flujo. Los colores agrupan las estructuras por familia anatómica: tonos óseos para vértebras, cráneo y costillas; rojizos para la musculatura; azules para el sistema venoso y rojos para el arterial; y un amarillo destacado para los cartílagos laríngeos, que marcan el punto de incisión. Esta asignación facilita el reconocimiento anatómico en la vista tridimensional y sirve de referencia para elegir el filamento de cada pieza. El color no se conserva en el archivo STL, que solo contiene la geometría de la superficie; el color definitivo de impresión se asigna manualmente por pieza en el laminador. El diccionario cubre tanto las estructuras del conjunto de referencia como las adicionales que el flujo conserva, entre ellas los cartílagos tiroides y cricoides, el hioides y la laringe, para que el punto de incisión de la cricotiroidotomía quede visualmente diferenciado en el fantoma. Cuando una estructura carece de entrada, recibe un color por defecto y el hecho se registra, lo que permite detectar las que aportan las tareas de segmentación sin que el flujo se interrumpa.\\
+Cada estructura conservada se carga en la escena con un color asignado según su tipo de tejido. La asignación se resuelve mediante un diccionario que asocia el nombre de cada estructura a un color, definido en la configuración del módulo y no en el código de procesamiento, de modo que ampliarlo no exige tocar la lógica del flujo. Los colores agrupan las estructuras por familia anatómica: tonos óseos para vértebras, cráneo y costillas; rojizos para la musculatura; azules para el sistema venoso y rojos para el arterial; y un amarillo destacado para los cartílagos laríngeos, que marcan el punto de incisión. Esta asignación facilita el reconocimiento anatómico en la vista tridimensional y sirve de referencia para elegir el filamento de cada pieza. El color no se conserva en el archivo STL, que solo contiene la geometría de la superficie; el color definitivo de impresión se asigna manualmente por pieza en el laminador. El diccionario cubre tanto las estructuras del conjunto de referencia como las adicionales que el flujo conserva, entre ellas los cartílagos tiroides y cricoides, el hioides y la laringe, para que el punto de incisión de la cricotiroidotomía quede visualmente diferenciado en el fantoma. Cuando una estructura carece de entrada, recibe un color por defecto y el hecho se registra, lo que permite detectar las estructuras nuevas que aportan las tareas de segmentación sin que el flujo se interrumpa.\\
 
 El módulo emite además un reporte en formato JSON con las estructuras detectadas, las descartadas por máscara vacía y los tiempos de cada etapa. Este registro no responde a un requisito del producto, ya que el usuario clínico no lo necesita para operar el sistema, sino a una necesidad de este trabajo: es el instrumento que permitió medir la cobertura y los tiempos que se reportan en el Capítulo~\ref{ch:resultados}.\\
 
@@ -171,7 +171,7 @@ La ejecución remota se implementó utilizando exclusivamente herramientas está
 
 Durante la implementación se debieron resolver incompatibilidades propias de la comunicación entre sistemas operativos distintos, en particular en la codificación de caracteres de la salida de los comandos remotos, que se normalizó a UTF-8 para evitar fallos de lectura. Asimismo, se forzó el vaciado inmediato de los \textit{buffers} de salida de los subprocesos, para que el progreso reportado al usuario refleje el avance real y no aparente bloqueos.\\
 
-\subsection{Módulo de corte y exportación}
+\subsection{Implementación del corte y la preparación de la malla}
 
 El módulo de corte opera sobre el nodo de segmentación presente en la escena. Para cada estructura obtiene su representación de superficie mediante la interfaz correspondiente de Slicer y le aplica los planos de corte definidos por el usuario. Antes de exportar, se ejecutan rutinas de preparación de la malla: limpieza de triángulos degenerados, eliminación de fragmentos flotantes y cierre de superficies. Estas rutinas son las que permiten que el modelo resultante sea imprimible sin reparación previa, uno de los requisitos operacionales del sistema.\\
 
