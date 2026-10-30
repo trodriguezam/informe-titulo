@@ -22,7 +22,7 @@ Los resultados se organizan en tres planos. El primero caracteriza la segmentaci
 
 \subsection{Naturaleza de la segmentación de referencia}
 
-La evaluación se planteó originalmente contra una segmentación manual independiente. Al auditar los datos entregados, sin embargo, se constató que la referencia no fue elaborada desde cero: el radiólogo del proyecto ejecutó TotalSegmentator sobre los diez casos y revisó y corrigió manualmente su salida, práctica habitual en el ámbito clínico. Este hecho se declara aquí porque condiciona la interpretación de las métricas de superposición y, por tanto, la validez del argumento con que se selecciona el motor de segmentación.\\
+La evaluación se planteó originalmente contra una segmentación manual independiente. Al auditar los datos entregados, sin embargo, se constató que la referencia no fue elaborada desde cero: el radiólogo del proyecto ejecutó TotalSegmentator sobre los diez casos, y revisó y corrigió manualmente su salida. Este hecho se declara aquí porque condiciona la interpretación de las métricas de superposición y, por tanto, la validez del argumento con que se selecciona el motor de segmentación.\\
 
 La consecuencia es directa. Un coeficiente de Dice calculado entre TotalSegmentator y esta referencia no mide precisión frente a una anotación independiente, sino concordancia entre el modelo y una versión corregida de su propia salida. Lo mismo ocurre con la cobertura: al derivar de TotalSegmentator, la referencia contiene por construcción aquello que TotalSegmentator detecta. Ninguna de estas dos métricas puede arbitrar de forma imparcial entre TotalSegmentator y las alternativas, y así se las reporta en lo que sigue: como medidas de concordancia, no de precisión.\\
 
